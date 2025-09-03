@@ -5,10 +5,6 @@
 #include <glm/glm.hpp>
 #include <spdlog.h>
 
-// to replace
-struct Position { int x{ 0 }, y{ 0 }; };
-// to replace
-struct Velocity { int dx{ 0 }, dy{ 0 }; };
 
 struct TransformComponent {
 	glm::vec2 position;
@@ -30,15 +26,6 @@ struct RigidBodyComponent {
 	}
 };
 
-// 16x16 NES-ish tile index (palette-free for now)
-// to replace
-struct Sprite {
-    int tileIndex{ 0 };
-    int w{ 16 };
-    int h{ 16 };
-};
-
-// Sprite Component
 struct SpriteComponent {
 public:
 	std::string assetId;
@@ -64,21 +51,22 @@ public:
 	}
 };
 
-// to replace with tagging system
-// Simple tag for the player
-struct Player {};
+struct BoxColliderComponent {
+	int width;
+	int height;
+	glm::vec2 offset;
 
-// to replace
-// Map coordinates + solid flag for collisions later
-struct Collider { bool solid{ true }; };
+	BoxColliderComponent(int width = 32, int height = 32, glm::vec2 offset = glm::vec2(0)) {
+		this->width = width;
+		this->height = height;
+		this->offset = offset;
+	}
+};
 
-// to replace
-// Script hook id
-struct ScriptRef { std::string onInteract; };
 
-// to replace
-// Camera follows a target entity
-struct CameraFollow {};
+struct CameraFollowComponent {
+	CameraFollowComponent() = default;
+};
 
 struct AnimationComponent {
 	int numFrames;
@@ -96,5 +84,45 @@ struct AnimationComponent {
 	}
 };
 
-// all below to replace
-struct KeyboardControlComponent { int i = 0; };
+struct KeyboardControlComponent {
+	glm::vec2 upVelocity;
+	glm::vec2 rightVelocity;
+	glm::vec2 downVelocity;
+	glm::vec2 leftVelocity;
+
+	KeyboardControlComponent(glm::vec2 upVelocity = glm::vec2(0), glm::vec2 rightVelocity = glm::vec2(0), glm::vec2 downVelocity = glm::vec2(0), glm::vec2 leftVelocity = glm::vec2(0)) {
+		this->upVelocity = upVelocity;
+		this->rightVelocity = rightVelocity;
+		this->downVelocity = downVelocity;
+		this->leftVelocity = leftVelocity;
+	}
+};
+
+struct ScriptComponent {
+	sol::function func;
+
+	ScriptComponent(sol::function func = sol::lua_nil) {
+		this->func = func;
+	}
+};
+
+struct TextComponent {
+	glm::vec2 position;
+	std::string text;
+	std::string assetId;
+	SDL_Color color;
+	bool isFixed;
+
+	TextLabelComponent(glm::vec2 position = glm::vec2(0), std::string text = "", std::string assetId = "", const SDL_Color color = { 0, 0, 0 }, bool isFixed = true) {
+		this->position = position;
+		this->text = text;
+		this->assetId = assetId;
+		this->color = color;
+		this->isFixed = isFixed;
+	}
+};
+
+// to replace with tagging system
+// Simple tag for the player
+struct Player {};
+

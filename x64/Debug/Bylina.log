@@ -1,2 +1,319 @@
 ﻿  main.cpp
-  Bylina.vcxproj -> D:\source\repos\Bylina\x64\Debug\Bylina.exe
+D:\source\repos\Bylina\Bylina\src\components.hpp(116,2): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
+  (compiling source file 'src/main.cpp')
+  
+D:\source\repos\Bylina\Bylina\src\components.hpp(116,2): warning C4183: 'TextLabelComponent': missing return type; assumed to be a member function returning 'int'
+  (compiling source file 'src/main.cpp')
+  
+D:\source\repos\Bylina\Bylina\src\systems\RenderColliderSystem.h(7,13): error C2084: function 'void movementSystem(entt::registry &,const Uint8 *)' already has a body
+  (compiling source file 'src/main.cpp')
+      D:\source\repos\Bylina\Bylina\src\systems\MovementSystem.h(7,13):
+      see previous definition of 'movementSystem'
+  
+D:\source\repos\Bylina\Bylina\src\systems\RenderGUISystem.h(11,32): error C2504: 'System': base class undefined
+  (compiling source file 'src/main.cpp')
+  
+D:\source\repos\Bylina\Bylina\src\systems\RenderGUISystem.h(15,37): error C2065: 'Registry': undeclared identifier
+  (compiling source file 'src/main.cpp')
+  
+D:\source\repos\Bylina\Bylina\src\systems\RenderGUISystem.h(15,26): error C2923: 'std::unique_ptr': 'Registry' is not a valid template type argument for parameter '_Ty'
+  (compiling source file 'src/main.cpp')
+      D:\source\repos\Bylina\Bylina\src\systems\RenderGUISystem.h(15,37):
+      see declaration of 'Registry'
+  
+D:\source\repos\Bylina\Bylina\src\systems\RenderGUISystem.h(15,26): error C2976: 'std::unique_ptr': too few template arguments
+  (compiling source file 'src/main.cpp')
+      D:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\memory(3347,7):
+      see declaration of 'std::unique_ptr'
+  
+D:\source\repos\Bylina\Bylina\src\systems\RenderGUISystem.h(15,48): error C2955: 'std::unique_ptr': use of class template requires template argument list
+  (compiling source file 'src/main.cpp')
+      D:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\memory(3347,7):
+      see declaration of 'std::unique_ptr'
+  
+D:\source\repos\Bylina\Bylina\src\systems\RenderGUISystem.h(15,80): error C2065: 'AssetStore': undeclared identifier
+  (compiling source file 'src/main.cpp')
+  
+D:\source\repos\Bylina\Bylina\src\systems\RenderGUISystem.h(15,69): error C2923: 'std::unique_ptr': 'AssetStore' is not a valid template type argument for parameter '_Ty'
+  (compiling source file 'src/main.cpp')
+      D:\source\repos\Bylina\Bylina\src\systems\RenderGUISystem.h(15,80):
+      see declaration of 'AssetStore'
+  
+D:\source\repos\Bylina\Bylina\src\systems\RenderGUISystem.h(15,69): error C2976: 'std::unique_ptr': too few template arguments
+  (compiling source file 'src/main.cpp')
+      D:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\memory(3347,7):
+      see declaration of 'std::unique_ptr'
+  
+D:\source\repos\Bylina\Bylina\src\systems\RenderGUISystem.h(15,93): error C2955: 'std::unique_ptr': use of class template requires template argument list
+  (compiling source file 'src/main.cpp')
+      D:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\memory(3347,7):
+      see declaration of 'std::unique_ptr'
+  
+D:\source\repos\Bylina\Bylina\src\systems\RenderGUISystem.h(44,24): error C3861: 'GetSystemEntities': identifier not found
+  (compiling source file 'src/main.cpp')
+  
+D:\source\repos\Bylina\Bylina\src\systems\RenderGUISystem.h(44,15): error C3531: 'entity': a symbol whose type contains 'auto' must have an initializer
+  (compiling source file 'src/main.cpp')
+  
+D:\source\repos\Bylina\Bylina\src\systems\RenderGUISystem.h(44,22): error C2143: syntax error: missing ';' before ':'
+  (compiling source file 'src/main.cpp')
+  
+D:\source\repos\Bylina\Bylina\src\systems\RenderGUISystem.h(44,43): error C2143: syntax error: missing ';' before ')'
+  (compiling source file 'src/main.cpp')
+  
+D:\source\repos\Bylina\Bylina\src\systems\RenderGUISystem.h(46,61): error C2059: syntax error: ')'
+  (compiling source file 'src/main.cpp')
+  
+D:\source\repos\Bylina\Bylina\src\systems\RenderGUISystem.h(47,26): error C3536: 'component': cannot be used before it is initialized
+  (compiling source file 'src/main.cpp')
+  
+D:\source\repos\Bylina\Bylina\src\systems\RenderGUISystem.h(82,6): error C2065: 'Entity': undeclared identifier
+  (compiling source file 'src/main.cpp')
+  
+D:\source\repos\Bylina\Bylina\src\systems\RenderGUISystem.h(82,13): error C2146: syntax error: missing ';' before identifier 'enemy'
+  (compiling source file 'src/main.cpp')
+  
+D:\source\repos\Bylina\Bylina\src\systems\RenderGUISystem.h(82,13): error C2065: 'enemy': undeclared identifier
+  (compiling source file 'src/main.cpp')
+  
+D:\source\repos\Bylina\Bylina\src\systems\RenderGUISystem.h(82,21): error C2678: binary '->': no operator found which takes a left-hand operand of type 'const std::unique_ptr' (or there is no acceptable conversion)
+  (compiling source file 'src/main.cpp')
+      D:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\memory(3452,37):
+      could be '_Get_deleter_pointer_type<_Ty,remove_reference<_Ty2>::type,void>::type std::unique_ptr<_Ty,_Dx>::operator ->(void) noexcept const'
+          D:\source\repos\Bylina\Bylina\src\systems\RenderGUISystem.h(82,21):
+          '_Get_deleter_pointer_type<_Ty,remove_reference<_Ty2>::type,void>::type std::unique_ptr<_Ty,_Dx>::operator ->(void) noexcept const': cannot convert 'this' pointer from 'const std::unique_ptr' to 'const std::unique_ptr<_Ty,_Dx> &'
+              D:\source\repos\Bylina\Bylina\src\systems\RenderGUISystem.h(82,21):
+              Reason: cannot convert from 'const std::unique_ptr' to 'const std::unique_ptr<_Ty,_Dx>'
+              D:\source\repos\Bylina\Bylina\src\systems\RenderGUISystem.h(82,21):
+              Conversion requires a second user-defined-conversion operator or constructor
+      D:\source\repos\Bylina\Bylina\src\systems\RenderGUISystem.h(82,21):
+      while trying to match the argument list '(const std::unique_ptr)'
+  
+D:\source\repos\Bylina\Bylina\src\systems\RenderGUISystem.h(82,31): error C2039: 'CreateEntity': is not a member of 'std::unique_ptr'
+  (compiling source file 'src/main.cpp')
+      D:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\memory(3347,7):
+      see declaration of 'std::unique_ptr'
+  
+D:\source\repos\Bylina\Bylina\src\systems\RenderGUISystem.h(83,6): error C2065: 'enemy': undeclared identifier
+  (compiling source file 'src/main.cpp')
+  
+D:\source\repos\Bylina\Bylina\src\systems\RenderGUISystem.h(84,6): error C2065: 'enemy': undeclared identifier
+  (compiling source file 'src/main.cpp')
+  
+D:\source\repos\Bylina\Bylina\src\systems\RenderGUISystem.h(85,6): error C2065: 'enemy': undeclared identifier
+  (compiling source file 'src/main.cpp')
+  
+D:\source\repos\Bylina\Bylina\src\systems\RenderGUISystem.h(86,6): error C2065: 'enemy': undeclared identifier
+  (compiling source file 'src/main.cpp')
+  
+D:\source\repos\Bylina\Bylina\src\systems\RenderGUISystem.h(87,6): error C2065: 'enemy': undeclared identifier
+  (compiling source file 'src/main.cpp')
+  
+D:\source\repos\Bylina\Bylina\src\systems\RenderGUISystem.h(88,6): error C2065: 'enemy': undeclared identifier
+  (compiling source file 'src/main.cpp')
+  
+D:\source\repos\Bylina\Bylina\src\systems\RenderGUISystem.h(88,25): error C2065: 'ProjectileEmitterComponent': undeclared identifier
+  (compiling source file 'src/main.cpp')
+  
+D:\source\repos\Bylina\Bylina\src\systems\RenderGUISystem.h(89,6): error C2065: 'enemy': undeclared identifier
+  (compiling source file 'src/main.cpp')
+  
+D:\source\repos\Bylina\Bylina\src\systems\RenderGUISystem.h(89,25): error C2065: 'HealthComponent': undeclared identifier
+  (compiling source file 'src/main.cpp')
+  
+D:\source\repos\Bylina\Bylina\src\systems\RenderSystem.h(7,29): error C2504: 'System': base class undefined
+  (compiling source file 'src/main.cpp')
+  
+D:\source\repos\Bylina\Bylina\src\systems\RenderSystem.h(14,55): error C2065: 'AssetStore': undeclared identifier
+  (compiling source file 'src/main.cpp')
+  
+D:\source\repos\Bylina\Bylina\src\systems\RenderSystem.h(14,44): error C2923: 'std::unique_ptr': 'AssetStore' is not a valid template type argument for parameter '_Ty'
+  (compiling source file 'src/main.cpp')
+      D:\source\repos\Bylina\Bylina\src\systems\RenderSystem.h(14,55):
+      see declaration of 'AssetStore'
+  
+D:\source\repos\Bylina\Bylina\src\systems\RenderSystem.h(14,44): error C2976: 'std::unique_ptr': too few template arguments
+  (compiling source file 'src/main.cpp')
+      D:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\memory(3347,7):
+      see declaration of 'std::unique_ptr'
+  
+D:\source\repos\Bylina\Bylina\src\systems\RenderSystem.h(14,68): error C2955: 'std::unique_ptr': use of class template requires template argument list
+  (compiling source file 'src/main.cpp')
+      D:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\memory(3347,7):
+      see declaration of 'std::unique_ptr'
+  
+D:\source\repos\Bylina\Bylina\src\systems\RenderSystem.h(10,4): error C3861: 'RequireComponent': identifier not found
+  (compiling source file 'src/main.cpp')
+  
+D:\source\repos\Bylina\Bylina\src\systems\RenderSystem.h(11,4): error C3861: 'RequireComponent': identifier not found
+  (compiling source file 'src/main.cpp')
+  
+D:\source\repos\Bylina\Bylina\src\systems\RenderSystem.h(23,23): error C3861: 'GetSystemEntities': identifier not found
+  (compiling source file 'src/main.cpp')
+  
+D:\source\repos\Bylina\Bylina\src\systems\RenderSystem.h(23,14): error C3531: 'entity': a symbol whose type contains 'auto' must have an initializer
+  (compiling source file 'src/main.cpp')
+  
+D:\source\repos\Bylina\Bylina\src\systems\RenderSystem.h(23,21): error C2143: syntax error: missing ';' before ':'
+  (compiling source file 'src/main.cpp')
+  
+D:\source\repos\Bylina\Bylina\src\systems\RenderSystem.h(23,42): error C2143: syntax error: missing ';' before ')'
+  (compiling source file 'src/main.cpp')
+  
+D:\source\repos\Bylina\Bylina\src\systems\RenderSystem.h(25,77): error C2059: syntax error: ')'
+  (compiling source file 'src/main.cpp')
+  
+D:\source\repos\Bylina\Bylina\src\systems\RenderSystem.h(26,83): error C2059: syntax error: ')'
+  (compiling source file 'src/main.cpp')
+  
+D:\source\repos\Bylina\Bylina\src\systems\RenderSystem.h(72,6): error C2678: binary '->': no operator found which takes a left-hand operand of type 'std::unique_ptr' (or there is no acceptable conversion)
+  (compiling source file 'src/main.cpp')
+      D:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\memory(3452,37):
+      could be '_Get_deleter_pointer_type<_Ty,remove_reference<_Ty2>::type,void>::type std::unique_ptr<_Ty,_Dx>::operator ->(void) noexcept const'
+          D:\source\repos\Bylina\Bylina\src\systems\RenderSystem.h(72,6):
+          '_Get_deleter_pointer_type<_Ty,remove_reference<_Ty2>::type,void>::type std::unique_ptr<_Ty,_Dx>::operator ->(void) noexcept const': cannot convert 'this' pointer from 'std::unique_ptr' to 'const std::unique_ptr<_Ty,_Dx> &'
+              D:\source\repos\Bylina\Bylina\src\systems\RenderSystem.h(72,6):
+              Reason: cannot convert from 'std::unique_ptr' to 'const std::unique_ptr<_Ty,_Dx>'
+              D:\source\repos\Bylina\Bylina\src\systems\RenderSystem.h(72,6):
+              Conversion requires a second user-defined-conversion operator or constructor
+      D:\source\repos\Bylina\Bylina\src\systems\RenderSystem.h(72,6):
+      while trying to match the argument list '(std::unique_ptr)'
+  
+D:\source\repos\Bylina\Bylina\src\systems\RenderSystem.h(72,18): error C2039: 'GetTexture': is not a member of 'std::unique_ptr'
+  (compiling source file 'src/main.cpp')
+      D:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\memory(3347,7):
+      see declaration of 'std::unique_ptr'
+  
+D:\source\repos\Bylina\Bylina\src\systems\RenderSystem.h(70,5): error C2660: 'SDL_RenderCopyEx': function does not take 6 arguments
+  (compiling source file 'src/main.cpp')
+      D:\source\repos\Bylina\Bylina\libs\sdl2\include\SDL_render.h(1459,29):
+      see declaration of 'SDL_RenderCopyEx'
+      D:\source\repos\Bylina\Bylina\src\systems\RenderSystem.h(70,5):
+      while trying to match the argument list '(SDL_Renderer *, SDL_Rect *, SDL_Rect *, const double, int, const SDL_RendererFlip)'
+  
+D:\source\repos\Bylina\Bylina\src\systems\RenderTextSystem.h(7,33): error C2504: 'System': base class undefined
+  (compiling source file 'src/main.cpp')
+  
+D:\source\repos\Bylina\Bylina\src\systems\RenderTextSystem.h(13,54): error C2065: 'AssetStore': undeclared identifier
+  (compiling source file 'src/main.cpp')
+  
+D:\source\repos\Bylina\Bylina\src\systems\RenderTextSystem.h(13,43): error C2923: 'std::unique_ptr': 'AssetStore' is not a valid template type argument for parameter '_Ty'
+  (compiling source file 'src/main.cpp')
+      D:\source\repos\Bylina\Bylina\src\systems\RenderTextSystem.h(13,54):
+      see declaration of 'AssetStore'
+  
+D:\source\repos\Bylina\Bylina\src\systems\RenderTextSystem.h(13,43): error C2976: 'std::unique_ptr': too few template arguments
+  (compiling source file 'src/main.cpp')
+      D:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\memory(3347,7):
+      see declaration of 'std::unique_ptr'
+  
+D:\source\repos\Bylina\Bylina\src\systems\RenderTextSystem.h(13,67): error C2955: 'std::unique_ptr': use of class template requires template argument list
+  (compiling source file 'src/main.cpp')
+      D:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\memory(3347,7):
+      see declaration of 'std::unique_ptr'
+  
+D:\source\repos\Bylina\Bylina\src\systems\RenderTextSystem.h(10,20): error C2065: 'TextLabelComponent': undeclared identifier
+  (compiling source file 'src/main.cpp')
+  
+D:\source\repos\Bylina\Bylina\src\systems\RenderTextSystem.h(10,3): error C3861: 'RequireComponent': identifier not found
+  (compiling source file 'src/main.cpp')
+  
+D:\source\repos\Bylina\Bylina\src\systems\RenderTextSystem.h(14,22): error C3861: 'GetSystemEntities': identifier not found
+  (compiling source file 'src/main.cpp')
+  
+D:\source\repos\Bylina\Bylina\src\systems\RenderTextSystem.h(14,13): error C3531: 'entity': a symbol whose type contains 'auto' must have an initializer
+  (compiling source file 'src/main.cpp')
+  
+D:\source\repos\Bylina\Bylina\src\systems\RenderTextSystem.h(14,20): error C2143: syntax error: missing ';' before ':'
+  (compiling source file 'src/main.cpp')
+  
+D:\source\repos\Bylina\Bylina\src\systems\RenderTextSystem.h(14,41): error C2143: syntax error: missing ';' before ')'
+  (compiling source file 'src/main.cpp')
+  
+D:\source\repos\Bylina\Bylina\src\systems\RenderTextSystem.h(15,47): error C2065: 'TextLabelComponent': undeclared identifier
+  (compiling source file 'src/main.cpp')
+  
+D:\source\repos\Bylina\Bylina\src\systems\RenderTextSystem.h(15,67): error C2059: syntax error: ')'
+  (compiling source file 'src/main.cpp')
+  
+D:\source\repos\Bylina\Bylina\src\systems\RenderTextSystem.h(18,5): error C2678: binary '->': no operator found which takes a left-hand operand of type 'std::unique_ptr' (or there is no acceptable conversion)
+  (compiling source file 'src/main.cpp')
+      D:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\memory(3452,37):
+      could be '_Get_deleter_pointer_type<_Ty,remove_reference<_Ty2>::type,void>::type std::unique_ptr<_Ty,_Dx>::operator ->(void) noexcept const'
+          D:\source\repos\Bylina\Bylina\src\systems\RenderTextSystem.h(18,5):
+          '_Get_deleter_pointer_type<_Ty,remove_reference<_Ty2>::type,void>::type std::unique_ptr<_Ty,_Dx>::operator ->(void) noexcept const': cannot convert 'this' pointer from 'std::unique_ptr' to 'const std::unique_ptr<_Ty,_Dx> &'
+              D:\source\repos\Bylina\Bylina\src\systems\RenderTextSystem.h(18,5):
+              Reason: cannot convert from 'std::unique_ptr' to 'const std::unique_ptr<_Ty,_Dx>'
+              D:\source\repos\Bylina\Bylina\src\systems\RenderTextSystem.h(18,5):
+              Conversion requires a second user-defined-conversion operator or constructor
+      D:\source\repos\Bylina\Bylina\src\systems\RenderTextSystem.h(18,5):
+      while trying to match the argument list '(std::unique_ptr)'
+  
+D:\source\repos\Bylina\Bylina\src\systems\RenderTextSystem.h(18,17): error C2039: 'GetFont': is not a member of 'std::unique_ptr'
+  (compiling source file 'src/main.cpp')
+      D:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\include\memory(3347,7):
+      see declaration of 'std::unique_ptr'
+  
+D:\source\repos\Bylina\Bylina\src\systems\RenderTextSystem.h(18,25): error C3536: 'textLabel': cannot be used before it is initialized
+  (compiling source file 'src/main.cpp')
+  
+D:\source\repos\Bylina\Bylina\src\systems\RenderTextSystem.h(17,27): error C3861: 'TTF_RenderText_Blended': identifier not found
+  (compiling source file 'src/main.cpp')
+  
+D:\source\repos\Bylina\Bylina\src\systems\ScriptSystem.h(9,46): error C2065: 'Entity': undeclared identifier
+  (compiling source file 'src/main.cpp')
+  
+D:\source\repos\Bylina\Bylina\src\systems\ScriptSystem.h(9,53): error C2146: syntax error: missing ')' before identifier 'entity'
+  (compiling source file 'src/main.cpp')
+  
+D:\source\repos\Bylina\Bylina\src\systems\ScriptSystem.h(9,61): error C2143: syntax error: missing ';' before '{'
+  (compiling source file 'src/main.cpp')
+  
+D:\source\repos\Bylina\Bylina\src\systems\ScriptSystem.h(9,61): error C2447: '{': missing function header (old-style formal list?)
+  (compiling source file 'src/main.cpp')
+  
+D:\source\repos\Bylina\Bylina\src\systems\ScriptSystem.h(20,46): error C2065: 'Entity': undeclared identifier
+  (compiling source file 'src/main.cpp')
+  
+D:\source\repos\Bylina\Bylina\src\systems\ScriptSystem.h(20,53): error C2146: syntax error: missing ')' before identifier 'entity'
+  (compiling source file 'src/main.cpp')
+  
+D:\source\repos\Bylina\Bylina\src\systems\ScriptSystem.h(20,61): error C2143: syntax error: missing ';' before '{'
+  (compiling source file 'src/main.cpp')
+  
+D:\source\repos\Bylina\Bylina\src\systems\ScriptSystem.h(20,61): error C2447: '{': missing function header (old-style formal list?)
+  (compiling source file 'src/main.cpp')
+  
+D:\source\repos\Bylina\Bylina\src\systems\ScriptSystem.h(31,6): error C2182: 'SetEntityPosition': this use of 'void' is not valid
+  (compiling source file 'src/main.cpp')
+  
+D:\source\repos\Bylina\Bylina\src\systems\ScriptSystem.h(31,24): error C2065: 'Entity': undeclared identifier
+  (compiling source file 'src/main.cpp')
+  
+D:\source\repos\Bylina\Bylina\src\systems\ScriptSystem.h(31,31): error C2146: syntax error: missing ')' before identifier 'entity'
+  (compiling source file 'src/main.cpp')
+  
+D:\source\repos\Bylina\Bylina\src\systems\ScriptSystem.h(31,59): error C2143: syntax error: missing ';' before '{'
+  (compiling source file 'src/main.cpp')
+  
+D:\source\repos\Bylina\Bylina\src\systems\ScriptSystem.h(31,59): error C2447: '{': missing function header (old-style formal list?)
+  (compiling source file 'src/main.cpp')
+  
+D:\source\repos\Bylina\Bylina\src\systems\ScriptSystem.h(42,6): error C2182: 'SetEntityVelocity': this use of 'void' is not valid
+  (compiling source file 'src/main.cpp')
+  
+D:\source\repos\Bylina\Bylina\src\systems\ScriptSystem.h(42,24): error C2065: 'Entity': undeclared identifier
+  (compiling source file 'src/main.cpp')
+  
+D:\source\repos\Bylina\Bylina\src\systems\ScriptSystem.h(42,31): error C2146: syntax error: missing ')' before identifier 'entity'
+  (compiling source file 'src/main.cpp')
+  
+D:\source\repos\Bylina\Bylina\src\systems\ScriptSystem.h(42,59): error C2143: syntax error: missing ';' before '{'
+  (compiling source file 'src/main.cpp')
+  
+D:\source\repos\Bylina\Bylina\src\systems\ScriptSystem.h(42,59): error C2447: '{': missing function header (old-style formal list?)
+  (compiling source file 'src/main.cpp')
+  
+D:\source\repos\Bylina\Bylina\src\systems\ScriptSystem.h(42,59): error C1003: error count exceeds 100; stopping compilation
+  (compiling source file 'src/main.cpp')
+  

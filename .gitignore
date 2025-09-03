@@ -16,3 +16,13 @@
 # OS
 .DS_Store
 Thumbs.db
+/src/systems/AnimationSystem.h
+/src/systems/CameraMovementSystem.h
+/src/systems/CollisionSystem.h
+/src/systems/KeyboardControlSystem.h
+/src/systems/MovementSystem.h
+/src/systems/RenderColliderSystem.h
+/src/systems/RenderGUISystem.h
+/src/systems/RenderSystem.h
+/src/systems/RenderTextSystem.h
+/src/systems/ScriptSystem.h

@@ -3,11 +3,23 @@
 #include <entt/entt.hpp>
 #include <algorithm>
 #include <spdlog/spdlog.h>
+#include "systems/AnimationSystem.h"
+#include "systems/CameraMovementSystem.h"
+#include "systems/CollisionSystem.h"
+#include "systems/KeyboardControlSystem.h"
+#include "systems/MovementSystem.h"
+#include "systems/RenderColliderSystem.h"
+#include "systems/RenderGUISystem.h"
+#include "systems/RenderSystem.h"
+#include "systems/RenderTextSystem.h"
+#include "systems/ScriptSystem.h"
 
 // NES-like logical resolution
 constexpr int LOGICAL_W = 256;
 constexpr int LOGICAL_H = 240;
 
+
+/*
 inline void input_system(entt::registry& reg, const Uint8* kb) {
     auto view = reg.view<Player, Velocity>();
     for (auto e : view) {
@@ -72,3 +84,4 @@ inline void render_system(entt::registry& reg, SDL_Renderer* r, const SDL_Rect& 
 
     SDL_RenderPresent(r);
 }
+*/
