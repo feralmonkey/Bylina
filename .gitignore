@@ -1,0 +1,18 @@
+# Build artifacts
+/build/
+/out/
+/bin/
+/obj/
+/Debug/
+/Release/
+
+# Visual Studio files
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# OS
+.DS_Store
+Thumbs.db
