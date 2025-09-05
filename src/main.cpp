@@ -26,7 +26,17 @@ static void sdl_check(bool ok, const char* msg) {
     if (!ok) { std::cerr << msg << ": " << SDL_GetError() << "\n"; std::exit(1); }
 }
 
-int main(int, char**) {
+int main(int argc, char* agrv[]) {
+    Game game;
+
+    game.Initialize();
+    game.Run();
+    game.Destroy();
+
+    return 0;
+}
+
+int old_main(int, char**) {
     
     entt::registry registry; // TODO RIGOLO - TEMP! JUST DOING THIS TO CLEAR ERRORS UNTIL I GET A WORKING GAME LOOP IMPLEMENTED
 

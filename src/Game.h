@@ -30,7 +30,7 @@ public:
 	void ProcessInput();
 	void Update();
 	void Render();
-	/*void Destroy();*/  // don't think I will be using this
+	void Destroy();
 
 	entt::registry registry; // on the fence about exposing this as public
 

@@ -1,4 +1,7 @@
 #include "Game.h"
+#include "components/TransformComponent.h"
+#include "components/SpriteComponent.h"
+#include "systems/RenderSystem.h"
 
 // initialize static member variables
 int Game::windowWidth;
@@ -32,23 +35,30 @@ void Game::Initialize() {
 	SDL_DisplayMode displayMode;
 	SDL_GetCurrentDisplayMode(0, &displayMode);
 
-	windowWidth = displayMode.w;
-	windowHeight = displayMode.h;
+	// todo rigolo - will need to tinker with this
+	windowWidth = 256;
+	windowHeight = 240;
+	//windowWidth = displayMode.w;
+	//windowHeight = displayMode.h;
 
 	window = SDL_CreateWindow(
-		NULL,
+		"Bylina",
 		SDL_WINDOWPOS_CENTERED,
 		SDL_WINDOWPOS_CENTERED,
 		windowWidth,
 		windowHeight,
-		0 //SDL_WINDOW_BORDERLESS
+		SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE
 	);
+
 	if (!window) {
 		// testing for null pointer
 		spdlog::error("Error creating SDL window");
 		return;
 	}
 
+	// allow for toggling of fullscreen
+	SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN_DESKTOP);
+	
 	// -1 index param means get default monitor
 	// flags seperated by pipe
 	// SDL_RENDERER_ACCELERATED - use GPU if available
@@ -74,6 +84,20 @@ void Game::Initialize() {
 }
 
 void Game::Setup() {
+	// LOAD LEVEL
+	// Adding assets to the asset store
+	assetStore->AddTexture(renderer, "tank-image", "./assets/images/tank-panther-right.png");
+
+	entt::entity tank = registry.create();
+	registry.emplace<TransformComponent>(tank, glm::vec2(10.0, 10.0), glm::vec2(1.0, 1.0), 0.0);
+	registry.emplace<SpriteComponent>(tank, "tank-image", 32, 32, 1);
+	//tank.Group("enemies");
+	//tank.AddComponent<TransformComponent>(glm::vec2(500.0, 500.0), glm::vec2(1.0, 1.0), 0.0);
+	//tank.AddComponent<RigidBodyComponent>(glm::vec2(20.0, 0.0));
+	//tank.AddComponent<SpriteComponent>("tank-image", 32, 32, 1);
+	//tank.AddComponent<BoxColliderComponent>(25, 18, glm::vec2(5, 7));
+	//tank.AddComponent<HealthComponent>(100);
+
 	// add the systems that need to be processed in our game
 	// todo rigolo - many of these aren't going to be needed
 	//registry.emplace<MovementSystem>();
@@ -105,7 +129,6 @@ void Game::Setup() {
 void Game::Run() {
 	Setup();
 	while (gameIsRunning) {
-
 		ProcessInput();
 		Update();
 		Render();
@@ -155,7 +178,7 @@ void Game::Update() {
 	// reset all event handlers for current frame
 	eventBus->Reset();
 
-	/* -- todo rigolo chnage update and subscription systems
+	/* -- todo rigolo change update and subscription systems
 	// perform the subscription of events of all systems
 	registry.GetSystem<MovementSystem>().SubscribeToEvents(eventBus);
 	registry.GetSystem<KeyboardControlSystem>().SubscribeToEvents(eventBus);
@@ -178,6 +201,7 @@ void Game::Render() {
 	SDL_RenderClear(renderer);
 
 	// Invoke all systems that need to render
+	RenderSystem(registry, renderer, camera, assetStore);
 	/* todo rigolo modify render update systems
 	registry.GetSystem<RenderSystem>().Update(renderer, assetStore, camera);
 	registry.GetSystem<RenderTextSystem>().Update(renderer, assetStore, camera);
@@ -185,7 +209,13 @@ void Game::Render() {
 	if (debugMode) {
 		registry.GetSystem<RenderColliderSystem>().Update(renderer, camera);
 	}
-	*/
+	*/ 
 
 	SDL_RenderPresent(renderer);
+}
+
+void Game::Destroy() {
+	SDL_DestroyRenderer(renderer);
+	SDL_DestroyWindow(window);
+	SDL_Quit();
 }

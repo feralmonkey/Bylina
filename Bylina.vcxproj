@@ -155,6 +155,18 @@
     <Object Include="x64\Debug\Main.obj" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\components\AnimationComponent.h" />
+    <ClInclude Include="src\components\BoxColliderComponent.h" />
+    <ClInclude Include="src\components\CameraFollowComponent.h" />
+    <ClInclude Include="src\components\HealthComponent.h" />
+    <ClInclude Include="src\components\KeyboardControlComponent.h" />
+    <ClInclude Include="src\components\ProjectileComponent.h" />
+    <ClInclude Include="src\components\ProjectileEmitterComponent.h" />
+    <ClInclude Include="src\components\RigidBodyComponent.h" />
+    <ClInclude Include="src\components\ScriptComponent.h" />
+    <ClInclude Include="src\components\SpriteComponent.h" />
+    <ClInclude Include="src\components\TextLabelComponent.h" />
+    <ClInclude Include="src\components\TransformComponent.h" />
     <ClInclude Include="src\Game.h" />
     <ClInclude Include="src\assetstore\AssetStore.h" />
     <ClInclude Include="src\components.hpp" />
