@@ -194,6 +194,7 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="assets\images\._tank-tiger-down.png" />
+    <Image Include="assets\images\heroes.png" />
     <Image Include="assets\images\tank-panther-down.png" />
     <Image Include="assets\images\tank-panther-killed.png" />
     <Image Include="assets\images\tank-panther-left.png" />

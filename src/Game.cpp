@@ -1,7 +1,9 @@
 #include "Game.h"
 #include "components/TransformComponent.h"
 #include "components/SpriteComponent.h"
+#include "components/AnimationComponent.h"
 #include "systems/RenderSystem.h"
+#include "systems/AnimationSystem.h"
 
 // initialize static member variables
 int Game::windowWidth;
@@ -86,34 +88,12 @@ void Game::Initialize() {
 void Game::Setup() {
 	// LOAD LEVEL
 	// Adding assets to the asset store
-	assetStore->AddTexture(renderer, "tank-image", "./assets/images/tank-panther-right.png");
+	assetStore->AddTexture(renderer, "hero", "./assets/images/heroes.png");
 
-	entt::entity tank = registry.create();
-	registry.emplace<TransformComponent>(tank, glm::vec2(10.0, 10.0), glm::vec2(1.0, 1.0), 0.0);
-	registry.emplace<SpriteComponent>(tank, "tank-image", 32, 32, 1);
-	//tank.Group("enemies");
-	//tank.AddComponent<TransformComponent>(glm::vec2(500.0, 500.0), glm::vec2(1.0, 1.0), 0.0);
-	//tank.AddComponent<RigidBodyComponent>(glm::vec2(20.0, 0.0));
-	//tank.AddComponent<SpriteComponent>("tank-image", 32, 32, 1);
-	//tank.AddComponent<BoxColliderComponent>(25, 18, glm::vec2(5, 7));
-	//tank.AddComponent<HealthComponent>(100);
-
-	// add the systems that need to be processed in our game
-	// todo rigolo - many of these aren't going to be needed
-	//registry.emplace<MovementSystem>();
-	//registry.emplace<RenderSystem>();
-	//registry.emplace//<AnimationSystem>();
-	//registry.emplace<CollisionSystem>();
-	//registry.emplace<RenderColliderSystem>();
-	//registry.emplace<ScriptSystem>();
-	//registry.emplace<KeyboardControlSystem>();
-	//registry.emplace<CameraMovementSystem>();
-	//registry.emplace<RenderTextSystem>();
-	//registry.emplace<DamageSystem>();
-	//registry.emplace<ProjectileEmitterSystem>();
-	//registry.emplace<ProjectileLifecycleSystem>();		
-	//registry.emplace<RenderHealthBarSystem>();
-	//registry.emplace<RenderGUISystem>();
+	entt::entity hero = registry.create();
+	registry.emplace<TransformComponent>(hero, glm::vec2(16.0, 16.0), glm::vec2(1.0, 1.0), 0.0);
+	registry.emplace<SpriteComponent>(hero, "hero", 16, 16, 1);
+	registry.emplace<AnimationComponent>(hero, 2, 4, true);
 
 	// create the bindings between c++ and lua
 	//registry.get<ScriptSystem>().CreateLuaBindings(lua); //GetSystem<ScriptSystem>().CreateLuaBindings(lua);
@@ -178,6 +158,7 @@ void Game::Update() {
 	// reset all event handlers for current frame
 	eventBus->Reset();
 
+	AnimationSystem(registry);
 	/* -- todo rigolo change update and subscription systems
 	// perform the subscription of events of all systems
 	registry.GetSystem<MovementSystem>().SubscribeToEvents(eventBus);
@@ -186,9 +167,9 @@ void Game::Update() {
 	// update the registry to process items waiting in creation / deletion queue
 	registry.Update();
 
+
 	// update systems
 	registry.GetSystem<MovementSystem>().Update(deltaTime);
-	registry.GetSystem<AnimationSystem>().Update();
 	registry.GetSystem<CollisionSystem>().Update(eventBus);
 	registry.GetSystem<CameraMovementSystem>().Update(camera);
 	registry.GetSystem<ScriptSystem>().Update(deltaTime, SDL_GetTicks());
@@ -203,7 +184,6 @@ void Game::Render() {
 	// Invoke all systems that need to render
 	RenderSystem(registry, renderer, camera, assetStore);
 	/* todo rigolo modify render update systems
-	registry.GetSystem<RenderSystem>().Update(renderer, assetStore, camera);
 	registry.GetSystem<RenderTextSystem>().Update(renderer, assetStore, camera);
 
 	if (debugMode) {
