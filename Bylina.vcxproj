@@ -155,6 +155,8 @@
     <Object Include="x64\Debug\Main.obj" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Game.h" />
+    <ClInclude Include="src\assetstore\AssetStore.h" />
     <ClInclude Include="src\components.hpp" />
     <ClInclude Include="src\events\CollisionEvent.h" />
     <ClInclude Include="src\events\Event.h" />
@@ -177,6 +179,8 @@
     <ClInclude Include="src\systems\ScriptSystem.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Game.cpp" />
+    <ClCompile Include="src\assetstore\AssetStore.cpp" />
     <ClCompile Include="src\main.cpp" />
   </ItemGroup>
   <ItemGroup>

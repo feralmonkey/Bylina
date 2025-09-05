@@ -1,24 +1,44 @@
 #include <entt.hpp>
 #include <SDL.h>
 #include <sol.hpp>
+#include "Game.h"
 #include <chrono>
 #include <thread>
 #include <iostream>
 #include <spdlog/spdlog.h>
+#include "assetstore/AssetStore.h"
 #include "components.hpp"
+#include "events/EventBus.h"
 #include "systems.hpp"
+#include "../src/systems/AnimationSystem.h"
+#include "../src/systems/CameraMovementSystem.h"
+#include "../src/systems/CollisionSystem.h"
+#include "../src/systems/KeyboardControlSystem.h"
+#include "../src/systems/MovementSystem.h"
+#include "../src/systems/RenderColliderSystem.h"
+#include "../src/systems/RenderSystem.h"
+#include "../src/systems/RenderTextSystem.h"
+#include "../src/systems/ScriptSystem.h"
+
+
 
 static void sdl_check(bool ok, const char* msg) {
     if (!ok) { std::cerr << msg << ": " << SDL_GetError() << "\n"; std::exit(1); }
 }
 
 int main(int, char**) {
+    
+    entt::registry registry; // TODO RIGOLO - TEMP! JUST DOING THIS TO CLEAR ERRORS UNTIL I GET A WORKING GAME LOOP IMPLEMENTED
+
+    Game game; // create a game object on the stack - as soon as we leave this function (go out of scope) the game object will be destroyed
+
     sdl_check(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS) == 0, "SDL_Init failed");
 
     // Create window at a nice scale (NES x3)
+    int windowScale = 3;
     SDL_Window* win = SDL_CreateWindow(
         "Bylina", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-        LOGICAL_W * 3, LOGICAL_H * 3, SDL_WINDOW_SHOWN);
+        LOGICAL_W * windowScale, LOGICAL_H * windowScale, SDL_WINDOW_SHOWN);
     sdl_check(win != nullptr, "SDL_CreateWindow failed");
 
     SDL_Renderer* ren = SDL_CreateRenderer(win, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
@@ -34,10 +54,6 @@ int main(int, char**) {
     lua.open_libraries(sol::lib::base, sol::lib::math, sol::lib::table, sol::lib::string);
     spdlog::info("lua state created");
 
-    // ECS
-    entt::registry reg;
-    spdlog::info("registry created");
-
     // Expose a tiny API to Lua
     lua.new_usertype<entt::registry>("Registry");
     lua.new_usertype<Position>("Position",
@@ -48,7 +64,7 @@ int main(int, char**) {
         "tileIndex", &Sprite::tileIndex, "w", &Sprite::w, "h", &Sprite::h);
 
     lua["spawn_player"] = [&](int x, int y) {
-        auto e = reg.create();
+        auto e = game.reg.create();
         reg.emplace<Position>(e, x, y);
         reg.emplace<RigidBodyComponent>(e);
         reg.emplace<Sprite>(e, 0, 16, 16);
@@ -107,3 +123,10 @@ int main(int, char**) {
     SDL_Quit(); 
     return 0;
 }
+
+
+
+
+
+
+

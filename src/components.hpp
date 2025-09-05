@@ -31,7 +31,6 @@ struct RigidBodyComponent {
 };
 
 // 16x16 NES-ish tile index (palette-free for now)
-// to replace
 struct Sprite {
     int tileIndex{ 0 };
     int w{ 16 };
