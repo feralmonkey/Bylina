@@ -7,11 +7,10 @@
 #include "../components/TransformComponent.h"
 
 // TODO RIGOLO - UPDATED System to match new paradigm
-
 inline void CameraMovementSystem(entt::registry& reg, SDL_Rect& camera) {
 		auto view = reg.view<CameraFollowComponent, TransformComponent>();
-		for (auto e : view) {
-			const auto& transform = view.get<TransformComponent>(e);
+		for (auto entity : view) {
+			const auto& transform = view.get<TransformComponent>(entity);
 
 			if (transform.position.x + (camera.w / 2) < Game::mapWidth) {
 				camera.x = transform.position.x - (Game::windowWidth / 2);

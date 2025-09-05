@@ -1,339 +1,78 @@
 ﻿  Game.cpp
-D:\source\repos\Bylina\Bylina\Game.h(9,12): error C2143: syntax error: missing ';' before '*'
-  (compiling source file 'Game.cpp')
-  
-D:\source\repos\Bylina\Bylina\Game.h(9,2): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
-  (compiling source file 'Game.cpp')
-  
-D:\source\repos\Bylina\Bylina\Game.h(9,20): error C2238: unexpected token(s) preceding ';'
-  (compiling source file 'Game.cpp')
-  
-D:\source\repos\Bylina\Bylina\Game.h(10,14): error C2143: syntax error: missing ';' before '*'
-  (compiling source file 'Game.cpp')
-  
-D:\source\repos\Bylina\Bylina\Game.h(10,2): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
-  (compiling source file 'Game.cpp')
-  
-D:\source\repos\Bylina\Bylina\Game.h(10,24): error C2238: unexpected token(s) preceding ';'
-  (compiling source file 'Game.cpp')
-  
-D:\source\repos\Bylina\Bylina\Game.h(11,11): error C3646: 'camera': unknown override specifier
-  (compiling source file 'Game.cpp')
-  
-D:\source\repos\Bylina\Bylina\Game.h(11,2): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
-  (compiling source file 'Game.cpp')
-  
-D:\source\repos\Bylina\Bylina\Game.h(12,2): error C2653: 'sol': is not a class or namespace name
-  (compiling source file 'Game.cpp')
-  
-D:\source\repos\Bylina\Bylina\Game.h(12,13): error C3646: 'lua': unknown override specifier
-  (compiling source file 'Game.cpp')
-  
-D:\source\repos\Bylina\Bylina\Game.h(12,7): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
-  (compiling source file 'Game.cpp')
-  
-D:\source\repos\Bylina\Bylina\Game.h(15,7): error C2039: 'unique_ptr': is not a member of 'std'
-  (compiling source file 'Game.cpp')
-      D:\source\repos\Bylina\Bylina\predefined C++ types (compiler internal)(357,11):
-      see declaration of 'std'
-  
-D:\source\repos\Bylina\Bylina\Game.h(15,18): error C2065: 'Registry': undeclared identifier
-  (compiling source file 'Game.cpp')
-  
-D:\source\repos\Bylina\Bylina\Game.h(15,7): error C7568: argument list missing after assumed function template 'unique_ptr'
-  (compiling source file 'Game.cpp')
-  
-D:\source\repos\Bylina\Bylina\Game.h(15,7): error C2062: type '<error type>' unexpected
-  (compiling source file 'Game.cpp')
-  
-D:\source\repos\Bylina\Bylina\Game.h(15,36): error C2238: unexpected token(s) preceding ';'
-  (compiling source file 'Game.cpp')
-  
-D:\source\repos\Bylina\Bylina\Game.h(16,7): error C2039: 'unique_ptr': is not a member of 'std'
-  (compiling source file 'Game.cpp')
-      D:\source\repos\Bylina\Bylina\predefined C++ types (compiler internal)(357,11):
-      see declaration of 'std'
-  
-D:\source\repos\Bylina\Bylina\Game.h(16,18): error C2065: 'AssetStore': undeclared identifier
-  (compiling source file 'Game.cpp')
-  
-D:\source\repos\Bylina\Bylina\Game.h(16,7): error C7568: argument list missing after assumed function template 'unique_ptr'
-  (compiling source file 'Game.cpp')
-  
-D:\source\repos\Bylina\Bylina\Game.h(16,7): error C2062: type '<error type>' unexpected
-  (compiling source file 'Game.cpp')
-  
-D:\source\repos\Bylina\Bylina\Game.h(16,40): error C2238: unexpected token(s) preceding ';'
-  (compiling source file 'Game.cpp')
-  
-D:\source\repos\Bylina\Bylina\Game.h(17,7): error C2039: 'unique_ptr': is not a member of 'std'
-  (compiling source file 'Game.cpp')
-      D:\source\repos\Bylina\Bylina\predefined C++ types (compiler internal)(357,11):
-      see declaration of 'std'
-  
-D:\source\repos\Bylina\Bylina\Game.h(17,18): error C2065: 'EventBus': undeclared identifier
-  (compiling source file 'Game.cpp')
-  
-D:\source\repos\Bylina\Bylina\Game.h(17,7): error C7568: argument list missing after assumed function template 'unique_ptr'
-  (compiling source file 'Game.cpp')
-  
-D:\source\repos\Bylina\Bylina\Game.h(17,7): error C2062: type '<error type>' unexpected
-  (compiling source file 'Game.cpp')
-  
-D:\source\repos\Bylina\Bylina\Game.h(17,36): error C2238: unexpected token(s) preceding ';'
-  (compiling source file 'Game.cpp')
-  
-D:\source\repos\Bylina\Bylina\Game.cpp(6,7): error C2011: 'Game': 'class' type redefinition
-      D:\source\repos\Bylina\Bylina\Game.h(5,7):
-      see declaration of 'Game'
-  
-  AssetStore.cpp
   main.cpp
-D:\source\repos\Bylina\Bylina\src\components\AnimationComponent.h(5,8): error C2011: 'AnimationComponent': 'struct' type redefinition
-  (compiling source file 'src/main.cpp')
-      D:\source\repos\Bylina\Bylina\src\components.hpp(82,8):
-      see declaration of 'AnimationComponent'
-  
-D:\source\repos\Bylina\Bylina\src\components\SpriteComponent.h(7,8): error C2011: 'SpriteComponent': 'struct' type redefinition
-  (compiling source file 'src/main.cpp')
-      D:\source\repos\Bylina\Bylina\src\components.hpp(41,8):
-      see declaration of 'SpriteComponent'
-  
-D:\source\repos\Bylina\Bylina\src\systems\AnimationSystem.h(8,32): error C2504: 'System': base class undefined
+D:\source\repos\Bylina\Bylina\src\systems\CameraMovementSystem.h(16,37): warning C4244: '=': conversion from 'T' to 'int', possible loss of data
+D:\source\repos\Bylina\Bylina\src\systems\CameraMovementSystem.h(16,37): warning C4244:         with
+D:\source\repos\Bylina\Bylina\src\systems\CameraMovementSystem.h(16,37): warning C4244:         [
+D:\source\repos\Bylina\Bylina\src\systems\CameraMovementSystem.h(16,37): warning C4244:             T=float
+D:\source\repos\Bylina\Bylina\src\systems\CameraMovementSystem.h(16,37): warning C4244:         ]
   (compiling source file 'src/main.cpp')
   
-D:\source\repos\Bylina\Bylina\libs\entt\entity\component.hpp(15,51): error C2139: 'AnimationComponent': an undefined class is not allowed as an argument to compiler intrinsic type trait '__is_constructible'
-  (compiling source file 'src/main.cpp')
-      D:\source\repos\Bylina\Bylina\src\components.hpp(82,8):
-      see declaration of 'AnimationComponent'
-      D:\source\repos\Bylina\Bylina\libs\entt\entity\component.hpp(15,51):
-      the template instantiation context (the oldest one first) is
-          D:\source\repos\Bylina\Bylina\libs\entt\entity\registry.hpp(455,5):
-          see reference to alias template instantiation 'entt::basic_registry<entt::entity,std::allocator<Entity>>::storage_for_type<AnimationComponent>' being compiled
-          with
-          [
-              Entity=entt::entity
-          ]
-          D:\source\repos\Bylina\Bylina\libs\entt\entity\registry.hpp(327,139):
-          see reference to class template instantiation 'entt::storage_for<AnimationComponent,Entity,std::allocator<AnimationComponent>>' being compiled
-          with
-          [
-              Entity=entt::entity
-          ]
-          D:\source\repos\Bylina\Bylina\libs\entt\entity\fwd.hpp(261,33):
-          see reference to alias template instantiation 'entt::storage_type_t<AnimationComponent,Entity,Allocator>' being compiled
-          with
-          [
-              Entity=entt::entity,
-              Allocator=std::allocator<AnimationComponent>
-          ]
-          D:\source\repos\Bylina\Bylina\libs\entt\entity\fwd.hpp(250,56):
-          see reference to class template instantiation 'entt::storage_type<AnimationComponent,Entity,Allocator,void>' being compiled
-          with
-          [
-              Entity=entt::entity,
-              Allocator=std::allocator<AnimationComponent>
-          ]
-          D:\source\repos\Bylina\Bylina\libs\entt\entity\fwd.hpp(228,18):
-          see reference to alias template instantiation 'entt::sigh_mixin<entt::basic_storage<Type,Entity,Allocator,void>>' being compiled
-          with
-          [
-              Type=AnimationComponent,
-              Entity=entt::entity,
-              Allocator=std::allocator<AnimationComponent>
-          ]
-          D:\source\repos\Bylina\Bylina\libs\entt\entity\fwd.hpp(85,73):
-          see reference to class template instantiation 'entt::component_traits<Type,Entity,void>' being compiled
-          with
-          [
-              Type=AnimationComponent,
-              Entity=entt::entity
-          ]
-          D:\source\repos\Bylina\Bylina\libs\entt\entity\component.hpp(52,78):
-          see reference to class template instantiation 'entt::internal::in_place_delete<Type,void>' being compiled
-          with
-          [
-              Type=AnimationComponent
-          ]
-          D:\source\repos\Bylina\Bylina\libs\entt\entity\component.hpp(15,51):
-          see reference to variable template 'const bool is_move_constructible_v<AnimationComponent>' being compiled
-  
-D:\source\repos\Bylina\Bylina\libs\entt\entity\component.hpp(15,89): error C2139: 'AnimationComponent': an undefined class is not allowed as an argument to compiler intrinsic type trait '__is_assignable'
-  (compiling source file 'src/main.cpp')
-      D:\source\repos\Bylina\Bylina\src\components.hpp(82,8):
-      see declaration of 'AnimationComponent'
-      D:\source\repos\Bylina\Bylina\libs\entt\entity\component.hpp(15,89):
-      the template instantiation context (the oldest one first) is
-          D:\source\repos\Bylina\Bylina\libs\entt\entity\component.hpp(15,89):
-          see reference to variable template 'const bool is_move_assignable_v<AnimationComponent>' being compiled
-  
-D:\source\repos\Bylina\Bylina\libs\entt\entity\component.hpp(25,61): error C2139: 'AnimationComponent': an undefined class is not allowed as an argument to compiler intrinsic type trait '__is_empty'
-  (compiling source file 'src/main.cpp')
-      D:\source\repos\Bylina\Bylina\src\components.hpp(82,8):
-      see declaration of 'AnimationComponent'
-      D:\source\repos\Bylina\Bylina\libs\entt\entity\component.hpp(25,61):
-      the template instantiation context (the oldest one first) is
-          D:\source\repos\Bylina\Bylina\libs\entt\entity\component.hpp(54,73):
-          see reference to class template instantiation 'entt::internal::page_size<Type,void>' being compiled
-          with
-          [
-              Type=AnimationComponent
-          ]
-          D:\source\repos\Bylina\Bylina\libs\entt\entity\component.hpp(25,61):
-          see reference to variable template 'const bool is_empty_v<AnimationComponent>' being compiled
-  
-D:\source\repos\Bylina\Bylina\libs\entt\entity\component.hpp(15,51): error C2139: 'SpriteComponent': an undefined class is not allowed as an argument to compiler intrinsic type trait '__is_constructible'
-  (compiling source file 'src/main.cpp')
-      D:\source\repos\Bylina\Bylina\src\components.hpp(41,8):
-      see declaration of 'SpriteComponent'
-      D:\source\repos\Bylina\Bylina\libs\entt\entity\component.hpp(15,51):
-      the template instantiation context (the oldest one first) is
-          D:\source\repos\Bylina\Bylina\libs\entt\entity\registry.hpp(1075,60):
-          see reference to alias template instantiation 'entt::basic_registry<entt::entity,std::allocator<Entity>>::storage_for_type<SpriteComponent>' being compiled
-          with
-          [
-              Entity=entt::entity
-          ]
-          D:\source\repos\Bylina\Bylina\libs\entt\entity\registry.hpp(327,139):
-          see reference to class template instantiation 'entt::storage_for<SpriteComponent,Entity,std::allocator<SpriteComponent>>' being compiled
-          with
-          [
-              Entity=entt::entity
-          ]
-          D:\source\repos\Bylina\Bylina\libs\entt\entity\fwd.hpp(261,33):
-          see reference to alias template instantiation 'entt::storage_type_t<SpriteComponent,Entity,Allocator>' being compiled
-          with
-          [
-              Entity=entt::entity,
-              Allocator=std::allocator<SpriteComponent>
-          ]
-          D:\source\repos\Bylina\Bylina\libs\entt\entity\fwd.hpp(250,56):
-          see reference to class template instantiation 'entt::storage_type<SpriteComponent,Entity,Allocator,void>' being compiled
-          with
-          [
-              Entity=entt::entity,
-              Allocator=std::allocator<SpriteComponent>
-          ]
-          D:\source\repos\Bylina\Bylina\libs\entt\entity\fwd.hpp(228,18):
-          see reference to alias template instantiation 'entt::sigh_mixin<entt::basic_storage<Type,Entity,Allocator,void>>' being compiled
-          with
-          [
-              Type=SpriteComponent,
-              Entity=entt::entity,
-              Allocator=std::allocator<SpriteComponent>
-          ]
-          D:\source\repos\Bylina\Bylina\libs\entt\entity\fwd.hpp(85,73):
-          see reference to class template instantiation 'entt::component_traits<Type,Entity,void>' being compiled
-          with
-          [
-              Type=SpriteComponent,
-              Entity=entt::entity
-          ]
-          D:\source\repos\Bylina\Bylina\libs\entt\entity\component.hpp(52,78):
-          see reference to class template instantiation 'entt::internal::in_place_delete<Type,void>' being compiled
-          with
-          [
-              Type=SpriteComponent
-          ]
-          D:\source\repos\Bylina\Bylina\libs\entt\entity\component.hpp(15,51):
-          see reference to variable template 'const bool is_move_constructible_v<SpriteComponent>' being compiled
-  
-D:\source\repos\Bylina\Bylina\libs\entt\entity\component.hpp(15,89): error C2139: 'SpriteComponent': an undefined class is not allowed as an argument to compiler intrinsic type trait '__is_assignable'
-  (compiling source file 'src/main.cpp')
-      D:\source\repos\Bylina\Bylina\src\components.hpp(41,8):
-      see declaration of 'SpriteComponent'
-      D:\source\repos\Bylina\Bylina\libs\entt\entity\component.hpp(15,89):
-      the template instantiation context (the oldest one first) is
-          D:\source\repos\Bylina\Bylina\libs\entt\entity\component.hpp(15,89):
-          see reference to variable template 'const bool is_move_assignable_v<SpriteComponent>' being compiled
-  
-D:\source\repos\Bylina\Bylina\libs\entt\entity\component.hpp(25,61): error C2139: 'SpriteComponent': an undefined class is not allowed as an argument to compiler intrinsic type trait '__is_empty'
-  (compiling source file 'src/main.cpp')
-      D:\source\repos\Bylina\Bylina\src\components.hpp(41,8):
-      see declaration of 'SpriteComponent'
-      D:\source\repos\Bylina\Bylina\libs\entt\entity\component.hpp(25,61):
-      the template instantiation context (the oldest one first) is
-          D:\source\repos\Bylina\Bylina\libs\entt\entity\component.hpp(54,73):
-          see reference to class template instantiation 'entt::internal::page_size<Type,void>' being compiled
-          with
-          [
-              Type=SpriteComponent
-          ]
-          D:\source\repos\Bylina\Bylina\libs\entt\entity\component.hpp(25,61):
-          see reference to variable template 'const bool is_empty_v<SpriteComponent>' being compiled
-  
-D:\source\repos\Bylina\Bylina\src\systems\AnimationSystem.h(28,20): error C2672: 'entt::basic_registry<entt::entity,std::allocator<Entity>>::view': no matching overloaded function found
-D:\source\repos\Bylina\Bylina\src\systems\AnimationSystem.h(28,20): error C2672:         with
-D:\source\repos\Bylina\Bylina\src\systems\AnimationSystem.h(28,20): error C2672:         [
-D:\source\repos\Bylina\Bylina\src\systems\AnimationSystem.h(28,20): error C2672:             Entity=entt::entity
-D:\source\repos\Bylina\Bylina\src\systems\AnimationSystem.h(28,20): error C2672:         ]
-  (compiling source file 'src/main.cpp')
-      D:\source\repos\Bylina\Bylina\libs\entt\entity\registry.hpp(1076,5):
-      could be 'entt::basic_view<entt::get_t<storage_for<Type,Entity,std::allocator<remove_const<Type>::type>>::type,storage_for<Other,Entity,std::allocator<remove_const<Other>::type>>::type...>,entt::exclude_t<storage_for<Exclude,Entity,std::allocator<remove_const<Exclude>::type>>::type...>,void> entt::basic_registry<Entity,std::allocator<Entity>>::view(entt::exclude_t<Exclude...>)'
-          with
-          [
-              Entity=entt::entity
-          ]
-          D:\source\repos\Bylina\Bylina\src\systems\AnimationSystem.h(28,20):
-          Failed to specialize function template 'entt::basic_view<entt::get_t<storage_for<Type,Entity,std::allocator<remove_const<Type>::type>>::type,storage_for<Other,Entity,std::allocator<remove_const<Other>::type>>::type...>,entt::exclude_t<storage_for<Exclude,Entity,std::allocator<remove_const<Exclude>::type>>::type...>,void> entt::basic_registry<Entity,std::allocator<Entity>>::view(entt::exclude_t<Exclude...>)'
-          with
-          [
-              Entity=entt::entity
-          ]
-              D:\source\repos\Bylina\Bylina\src\systems\AnimationSystem.h(28,20):
-              With the following template arguments:
-                  D:\source\repos\Bylina\Bylina\src\systems\AnimationSystem.h(28,20):
-                  'Type=AnimationComponent'
-                  D:\source\repos\Bylina\Bylina\src\systems\AnimationSystem.h(28,20):
-                  'Other={SpriteComponent}'
-                  D:\source\repos\Bylina\Bylina\src\systems\AnimationSystem.h(28,20):
-                  'Exclude={}'
-      D:\source\repos\Bylina\Bylina\libs\entt\entity\registry.hpp(1067,5):
-      or       'entt::basic_view<entt::get_t<storage_for<const Type,Entity,std::allocator<remove_const<const Type>::type>>::type,storage_for<const Other,Entity,std::allocator<remove_const<const Other>::type>>::type...>,entt::exclude_t<storage_for<const Exclude,Entity,std::allocator<remove_const<const Exclude>::type>>::type...>,void> entt::basic_registry<Entity,std::allocator<Entity>>::view(entt::exclude_t<Exclude...>) const'
-          with
-          [
-              Entity=entt::entity
-          ]
-          D:\source\repos\Bylina\Bylina\src\systems\AnimationSystem.h(28,20):
-          Failed to specialize function template 'entt::basic_view<entt::get_t<storage_for<const Type,Entity,std::allocator<remove_const<const Type>::type>>::type,storage_for<const Other,Entity,std::allocator<remove_const<const Other>::type>>::type...>,entt::exclude_t<storage_for<const Exclude,Entity,std::allocator<remove_const<const Exclude>::type>>::type...>,void> entt::basic_registry<Entity,std::allocator<Entity>>::view(entt::exclude_t<Exclude...>) const'
-          with
-          [
-              Entity=entt::entity
-          ]
-              D:\source\repos\Bylina\Bylina\src\systems\AnimationSystem.h(28,20):
-              With the following template arguments:
-                  D:\source\repos\Bylina\Bylina\src\systems\AnimationSystem.h(28,20):
-                  'Type=AnimationComponent'
-                  D:\source\repos\Bylina\Bylina\src\systems\AnimationSystem.h(28,20):
-                  'Other={SpriteComponent}'
-                  D:\source\repos\Bylina\Bylina\src\systems\AnimationSystem.h(28,20):
-                  'Exclude={}'
-  
-D:\source\repos\Bylina\Bylina\src\systems\AnimationSystem.h(29,14): error C3531: 'e': a symbol whose type contains 'auto' must have an initializer
+D:\source\repos\Bylina\Bylina\src\systems\CameraMovementSystem.h(20,37): warning C4244: '=': conversion from 'T' to 'int', possible loss of data
+D:\source\repos\Bylina\Bylina\src\systems\CameraMovementSystem.h(20,37): warning C4244:         with
+D:\source\repos\Bylina\Bylina\src\systems\CameraMovementSystem.h(20,37): warning C4244:         [
+D:\source\repos\Bylina\Bylina\src\systems\CameraMovementSystem.h(20,37): warning C4244:             T=float
+D:\source\repos\Bylina\Bylina\src\systems\CameraMovementSystem.h(20,37): warning C4244:         ]
   (compiling source file 'src/main.cpp')
   
-D:\source\repos\Bylina\Bylina\src\systems\AnimationSystem.h(29,16): error C2143: syntax error: missing ';' before ':'
+D:\source\repos\Bylina\Bylina\src\systems\CollisionSystem.h(13,9): warning C4101: 'hasCollided': unreferenced local variable
   (compiling source file 'src/main.cpp')
   
-D:\source\repos\Bylina\Bylina\src\systems\AnimationSystem.h(29,18): error C3536: 'view': cannot be used before it is initialized
+D:\source\repos\Bylina\Bylina\src\systems\RenderColliderSystem.h(18,45): warning C4838: conversion from 'T' to 'int' requires a narrowing conversion
+D:\source\repos\Bylina\Bylina\src\systems\RenderColliderSystem.h(18,45): warning C4838:         with
+D:\source\repos\Bylina\Bylina\src\systems\RenderColliderSystem.h(18,45): warning C4838:         [
+D:\source\repos\Bylina\Bylina\src\systems\RenderColliderSystem.h(18,45): warning C4838:             T=float
+D:\source\repos\Bylina\Bylina\src\systems\RenderColliderSystem.h(18,45): warning C4838:         ]
   (compiling source file 'src/main.cpp')
   
-D:\source\repos\Bylina\Bylina\src\systems\AnimationSystem.h(29,22): error C2143: syntax error: missing ';' before ')'
+D:\source\repos\Bylina\Bylina\src\systems\RenderColliderSystem.h(18,45): warning C4244: 'initializing': conversion from 'T' to 'int', possible loss of data
+D:\source\repos\Bylina\Bylina\src\systems\RenderColliderSystem.h(18,45): warning C4244:         with
+D:\source\repos\Bylina\Bylina\src\systems\RenderColliderSystem.h(18,45): warning C4244:         [
+D:\source\repos\Bylina\Bylina\src\systems\RenderColliderSystem.h(18,45): warning C4244:             T=float
+D:\source\repos\Bylina\Bylina\src\systems\RenderColliderSystem.h(18,45): warning C4244:         ]
   (compiling source file 'src/main.cpp')
   
-D:\source\repos\Bylina\Bylina\src\systems\AnimationSystem.h(30,58): error C2059: syntax error: ')'
+D:\source\repos\Bylina\Bylina\src\systems\RenderColliderSystem.h(19,45): warning C4838: conversion from 'T' to 'int' requires a narrowing conversion
+D:\source\repos\Bylina\Bylina\src\systems\RenderColliderSystem.h(19,45): warning C4838:         with
+D:\source\repos\Bylina\Bylina\src\systems\RenderColliderSystem.h(19,45): warning C4838:         [
+D:\source\repos\Bylina\Bylina\src\systems\RenderColliderSystem.h(19,45): warning C4838:             T=float
+D:\source\repos\Bylina\Bylina\src\systems\RenderColliderSystem.h(19,45): warning C4838:         ]
   (compiling source file 'src/main.cpp')
   
-D:\source\repos\Bylina\Bylina\src\systems\AnimationSystem.h(31,52): error C2059: syntax error: ')'
+D:\source\repos\Bylina\Bylina\src\systems\RenderColliderSystem.h(19,45): warning C4244: 'initializing': conversion from 'T' to 'int', possible loss of data
+D:\source\repos\Bylina\Bylina\src\systems\RenderColliderSystem.h(19,45): warning C4244:         with
+D:\source\repos\Bylina\Bylina\src\systems\RenderColliderSystem.h(19,45): warning C4244:         [
+D:\source\repos\Bylina\Bylina\src\systems\RenderColliderSystem.h(19,45): warning C4244:             T=float
+D:\source\repos\Bylina\Bylina\src\systems\RenderColliderSystem.h(19,45): warning C4244:         ]
   (compiling source file 'src/main.cpp')
   
-D:\source\repos\Bylina\Bylina\src\systems\AnimationSystem.h(33,5): error C3536: 'animation': cannot be used before it is initialized
+D:\source\repos\Bylina\Bylina\src\systems\RenderColliderSystem.h(20,19): warning C4838: conversion from 'T' to 'int' requires a narrowing conversion
+D:\source\repos\Bylina\Bylina\src\systems\RenderColliderSystem.h(20,19): warning C4838:         with
+D:\source\repos\Bylina\Bylina\src\systems\RenderColliderSystem.h(20,19): warning C4838:         [
+D:\source\repos\Bylina\Bylina\src\systems\RenderColliderSystem.h(20,19): warning C4838:             T=float
+D:\source\repos\Bylina\Bylina\src\systems\RenderColliderSystem.h(20,19): warning C4838:         ]
   (compiling source file 'src/main.cpp')
   
-D:\source\repos\Bylina\Bylina\src\systems\AnimationSystem.h(36,5): error C3536: 'sprite': cannot be used before it is initialized
+D:\source\repos\Bylina\Bylina\src\systems\RenderColliderSystem.h(20,19): warning C4244: 'initializing': conversion from 'T' to 'int', possible loss of data
+D:\source\repos\Bylina\Bylina\src\systems\RenderColliderSystem.h(20,19): warning C4244:         with
+D:\source\repos\Bylina\Bylina\src\systems\RenderColliderSystem.h(20,19): warning C4244:         [
+D:\source\repos\Bylina\Bylina\src\systems\RenderColliderSystem.h(20,19): warning C4244:             T=float
+D:\source\repos\Bylina\Bylina\src\systems\RenderColliderSystem.h(20,19): warning C4244:         ]
   (compiling source file 'src/main.cpp')
   
-D:\source\repos\Bylina\Bylina\src\systems\CameraMovementSystem.h(5,10): error C1083: Cannot open include file: '../ecs/ecs.h': No such file or directory
+D:\source\repos\Bylina\Bylina\src\systems\RenderColliderSystem.h(21,20): warning C4838: conversion from 'T' to 'int' requires a narrowing conversion
+D:\source\repos\Bylina\Bylina\src\systems\RenderColliderSystem.h(21,20): warning C4838:         with
+D:\source\repos\Bylina\Bylina\src\systems\RenderColliderSystem.h(21,20): warning C4838:         [
+D:\source\repos\Bylina\Bylina\src\systems\RenderColliderSystem.h(21,20): warning C4838:             T=float
+D:\source\repos\Bylina\Bylina\src\systems\RenderColliderSystem.h(21,20): warning C4838:         ]
+  (compiling source file 'src/main.cpp')
+  
+D:\source\repos\Bylina\Bylina\src\systems\RenderColliderSystem.h(21,20): warning C4244: 'initializing': conversion from 'T' to 'int', possible loss of data
+D:\source\repos\Bylina\Bylina\src\systems\RenderColliderSystem.h(21,20): warning C4244:         with
+D:\source\repos\Bylina\Bylina\src\systems\RenderColliderSystem.h(21,20): warning C4244:         [
+D:\source\repos\Bylina\Bylina\src\systems\RenderColliderSystem.h(21,20): warning C4244:             T=float
+D:\source\repos\Bylina\Bylina\src\systems\RenderColliderSystem.h(21,20): warning C4244:         ]
   (compiling source file 'src/main.cpp')
   
   Generating Code...
+x64\Debug\Main.obj : warning LNK4042: object specified more than once; extras ignored
+  Bylina.vcxproj -> D:\source\repos\Bylina\x64\Debug\Bylina.exe

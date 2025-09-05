@@ -1,5 +1,11 @@
 #include "Game.h"
 
+// initialize static member variables
+int Game::windowWidth;
+int Game::windowHeight;
+int Game::mapWidth;
+int Game::mapHeight;
+
 Game::Game() {
 	spdlog::info("Game constructor called!");
 	Game::gameIsRunning = false;

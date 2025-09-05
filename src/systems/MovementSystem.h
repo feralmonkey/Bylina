@@ -1,13 +1,18 @@
 #pragma once
 
-#include "../ecs/ecs.h"
 #include "../events/EventBus.h"
 #include "../events/CollisionEvent.h"
-#include "../components/TransformComponent.h"
-#include "../components/RigidBodyComponent.h"
+#include "../components/KeyboardControlComponent.h"
+#include "../components/SpriteComponent.h"
 #include <SDL.h>
 # include <spdlog/spdlog.h> 
 
+
+inline void MovementSystem(entt::registry& reg) {
+	auto view = reg.view<KeyboardControlComponent, SpriteComponent, RigidBodyComponent>();
+}
+
+/* TODO RIGOLO - This will not work without an event system in place
 class MovementSystem: public System {
 	public:
 		MovementSystem() {
@@ -100,4 +105,4 @@ class MovementSystem: public System {
 			}
 		}
 };
-
+*/

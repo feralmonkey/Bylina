@@ -155,7 +155,7 @@
     <Object Include="x64\Debug\Main.obj" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Game.h" />
+    <ClInclude Include="src\Game.h" />
     <ClInclude Include="src\assetstore\AssetStore.h" />
     <ClInclude Include="src\components.hpp" />
     <ClInclude Include="src\events\CollisionEvent.h" />
@@ -169,17 +169,14 @@
     <ClInclude Include="src\systems\DamageSystem.h" />
     <ClInclude Include="src\systems\KeyboardControlSystem.h" />
     <ClInclude Include="src\systems\MovementSystem.h" />
-    <ClInclude Include="src\systems\ProjectileEmitterSystem.h" />
-    <ClInclude Include="src\systems\ProjectileLifecycleSystem.h" />
     <ClInclude Include="src\systems\RenderColliderSystem.h" />
     <ClInclude Include="src\systems\RenderGUISystem.h" />
-    <ClInclude Include="src\systems\RenderHealthBarSystem.h" />
     <ClInclude Include="src\systems\RenderSystem.h" />
     <ClInclude Include="src\systems\RenderTextSystem.h" />
     <ClInclude Include="src\systems\ScriptSystem.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Game.cpp" />
+    <ClCompile Include="src\Game.cpp" />
     <ClCompile Include="src\assetstore\AssetStore.cpp" />
     <ClCompile Include="src\main.cpp" />
   </ItemGroup>

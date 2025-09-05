@@ -32,6 +32,9 @@ int main(int, char**) {
 
     Game game; // create a game object on the stack - as soon as we leave this function (go out of scope) the game object will be destroyed
 
+    game.Initialize();
+    //game.Run();
+
     sdl_check(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS) == 0, "SDL_Init failed");
 
     // Create window at a nice scale (NES x3)
@@ -64,13 +67,13 @@ int main(int, char**) {
         "tileIndex", &Sprite::tileIndex, "w", &Sprite::w, "h", &Sprite::h);
 
     lua["spawn_player"] = [&](int x, int y) {
-        auto e = game.reg.create();
-        reg.emplace<Position>(e, x, y);
-        reg.emplace<RigidBodyComponent>(e);
-        reg.emplace<Sprite>(e, 0, 16, 16);
-        reg.emplace<Player>(e);
-        reg.emplace<Collider>(e, true);
-        reg.emplace<CameraFollow>(e);
+        auto e = game.registry.create();
+        game.registry.emplace<Position>(e, x, y);
+        game.registry.emplace<RigidBodyComponent>(e);
+        game.registry.emplace<Sprite>(e, 0, 16, 16);
+        game.registry.emplace<Player>(e);
+        game.registry.emplace<Collider>(e, true);
+        game.registry.emplace<CameraFollow>(e);
         return static_cast<int>(e); 
         };
 
@@ -105,12 +108,12 @@ int main(int, char**) {
         const Uint8* kb = SDL_GetKeyboardState(nullptr);
 
         // Systems
-        input_system(reg, kb);
-        movement_system(reg);
-        camera_system(reg, cam);
+        input_system(game.registry, kb);
+        movement_system(game.registry);
+        camera_system(game.registry, cam);
 
         // Render
-        render_system(reg, ren, cam);
+        render_system(game.registry, ren, cam);
 
         // Frame cap
         auto dt = clock::now() - start;

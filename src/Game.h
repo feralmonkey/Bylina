@@ -18,8 +18,6 @@ private:
 	SDL_Rect camera;
 	sol::state lua;
 	
-
-	entt::registry registry;
 	std::unique_ptr<AssetStore> assetStore; // there may be an assetstore alternative in ett
 	std::unique_ptr<EventBus> eventBus; // there may be an event bus alternative in ett
 
@@ -32,7 +30,9 @@ public:
 	void ProcessInput();
 	void Update();
 	void Render();
-	void Destroy();
+	/*void Destroy();*/  // don't think I will be using this
+
+	entt::registry registry; // on the fence about exposing this as public
 
 	static int windowWidth;
 	static int windowHeight;
