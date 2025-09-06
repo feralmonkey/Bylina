@@ -16,3 +16,16 @@
 # OS
 .DS_Store
 Thumbs.db
+
+# MSVC build files
+*.ilk
+*.pdb
+*.obj
+*.exe
+*.dll
+*.lib
+*.exp
+*.idb
+*.ipdb
+*.iobj
+/x64/
