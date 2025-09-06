@@ -130,11 +130,23 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <None Include=".gitignore" />
+    <None Include="assets\tilemaps\._desert.map" />
+    <None Include="assets\tilemaps\._jungle.map" />
+    <None Include="assets\tilemaps\desert.map" />
+    <None Include="assets\tilemaps\jungle.map" />
+    <None Include="libfreetype-6.dll" />
+    <None Include="lua53.dll" />
     <None Include="scripts\init.lua" />
+    <None Include="SDL2.dll" />
+    <None Include="SDL2_image.dll" />
+    <None Include="SDL2_mixer.dll" />
+    <None Include="SDL2_ttf.dll" />
     <None Include="x64\Debug\Bylina.exe.recipe" />
     <None Include="x64\Debug\Bylina.ilk" />
     <None Include="x64\Debug\vc143.idb" />
     <None Include="x64\Debug\vc143.pdb" />
+    <None Include="zlib1.dll" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="x64\Debug\Bylina.log" />
@@ -143,14 +155,65 @@
     <Object Include="x64\Debug\Main.obj" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\components\AnimationComponent.h" />
+    <ClInclude Include="src\components\BoxColliderComponent.h" />
+    <ClInclude Include="src\components\CameraFollowComponent.h" />
+    <ClInclude Include="src\components\HealthComponent.h" />
+    <ClInclude Include="src\components\KeyboardControlComponent.h" />
+    <ClInclude Include="src\components\ProjectileComponent.h" />
+    <ClInclude Include="src\components\ProjectileEmitterComponent.h" />
+    <ClInclude Include="src\components\RigidBodyComponent.h" />
+    <ClInclude Include="src\components\ScriptComponent.h" />
+    <ClInclude Include="src\components\SpriteComponent.h" />
+    <ClInclude Include="src\components\TextLabelComponent.h" />
+    <ClInclude Include="src\components\TransformComponent.h" />
+    <ClInclude Include="src\Game.h" />
+    <ClInclude Include="src\assetstore\AssetStore.h" />
     <ClInclude Include="src\components.hpp" />
+    <ClInclude Include="src\events\CollisionEvent.h" />
+    <ClInclude Include="src\events\Event.h" />
+    <ClInclude Include="src\events\EventBus.h" />
+    <ClInclude Include="src\events\KeyPressedEvent.h" />
     <ClInclude Include="src\systems.hpp" />
+    <ClInclude Include="src\systems\AnimationSystem.h" />
+    <ClInclude Include="src\systems\CameraMovementSystem.h" />
+    <ClInclude Include="src\systems\CollisionSystem.h" />
+    <ClInclude Include="src\systems\DamageSystem.h" />
+    <ClInclude Include="src\systems\KeyboardControlSystem.h" />
+    <ClInclude Include="src\systems\MovementSystem.h" />
+    <ClInclude Include="src\systems\RenderColliderSystem.h" />
+    <ClInclude Include="src\systems\RenderGUISystem.h" />
+    <ClInclude Include="src\systems\RenderSystem.h" />
+    <ClInclude Include="src\systems\RenderTextSystem.h" />
+    <ClInclude Include="src\systems\ScriptSystem.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Game.cpp" />
+    <ClCompile Include="src\assetstore\AssetStore.cpp" />
     <ClCompile Include="src\main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="assets\images\._tank-tiger-down.png" />
+    <Image Include="assets\images\heroes.png" />
+    <Image Include="assets\images\tank-panther-down.png" />
+    <Image Include="assets\images\tank-panther-killed.png" />
+    <Image Include="assets\images\tank-panther-left.png" />
+    <Image Include="assets\images\tank-panther-right.png" />
+    <Image Include="assets\images\tank-panther-spritesheet.png" />
+    <Image Include="assets\images\tank-panther-up.png" />
+    <Image Include="assets\images\tree-1.png" />
+    <Image Include="assets\images\tree-2.png" />
+    <Image Include="assets\tilemaps\._desert.png" />
+    <Image Include="assets\tilemaps\._jungle.png" />
+    <Image Include="assets\tilemaps\desert.png" />
+    <Image Include="assets\tilemaps\jungle-night.png" />
+    <Image Include="assets\tilemaps\jungle.png" />
     <Image Include="assets\tiles\heroes.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Font Include="assets\fonts\arial.ttf" />
+    <Font Include="assets\fonts\charriot.ttf" />
+    <Font Include="assets\fonts\pico8.ttf" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
