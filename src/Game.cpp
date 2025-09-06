@@ -1,9 +1,14 @@
 #include "Game.h"
 #include "components/TransformComponent.h"
+#include "components/RigidBodyComponent.h"
 #include "components/SpriteComponent.h"
 #include "components/AnimationComponent.h"
+#include "components/PlayerComponent.h"
+#include "components/KeyboardControlComponent.h" // not sure that i need this
 #include "systems/RenderSystem.h"
 #include "systems/AnimationSystem.h"
+#include "systems/KeyboardControlSystem.h"
+#include "events/KeyPressedEvent.h"
 
 // initialize static member variables
 int Game::windowWidth;
@@ -92,8 +97,10 @@ void Game::Setup() {
 
 	entt::entity hero = registry.create();
 	registry.emplace<TransformComponent>(hero, glm::vec2(16.0, 16.0), glm::vec2(1.0, 1.0), 0.0);
+	registry.emplace<RigidBodyComponent>(hero); // keep defaults
 	registry.emplace<SpriteComponent>(hero, "hero", 16, 16, 1);
 	registry.emplace<AnimationComponent>(hero, 2, 4, true);
+	registry.emplace<PlayerComponent>(hero, true);
 
 	// create the bindings between c++ and lua
 	//registry.get<ScriptSystem>().CreateLuaBindings(lua); //GetSystem<ScriptSystem>().CreateLuaBindings(lua);
@@ -124,16 +131,20 @@ void Game::ProcessInput() {
 		case SDL_QUIT:  // if user tries to close the window using the x button
 			gameIsRunning = false;
 			break;
+		case SDL_KEYUP:
 		case SDL_KEYDOWN:
 			// exit the game if user presses escape key
 			if (sdlEvent.key.keysym.sym == SDLK_ESCAPE) {
 				gameIsRunning = false;
+				break;
 			}
 			// toggle debug mode if user presses tilde key
 			if (sdlEvent.key.keysym.sym == SDLK_BACKQUOTE) {
+				spdlog::info("debug mode engaged");
 				debugMode = !debugMode; // toggle
+				break;
 			}
-			//eventBus->EmitEvent<KeyPressedEvent>(sdlEvent.key.keysym.sym); -- todo rigolo replace with something else
+			KeyboardControlSystem(sdlEvent, registry);
 			break;
 		}
 	}
@@ -159,10 +170,11 @@ void Game::Update() {
 	eventBus->Reset();
 
 	AnimationSystem(registry);
+
 	/* -- todo rigolo change update and subscription systems
 	// perform the subscription of events of all systems
 	registry.GetSystem<MovementSystem>().SubscribeToEvents(eventBus);
-	registry.GetSystem<KeyboardControlSystem>().SubscribeToEvents(eventBus);
+	
 
 	// update the registry to process items waiting in creation / deletion queue
 	registry.Update();

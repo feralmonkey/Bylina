@@ -160,6 +160,7 @@
     <ClInclude Include="src\components\CameraFollowComponent.h" />
     <ClInclude Include="src\components\HealthComponent.h" />
     <ClInclude Include="src\components\KeyboardControlComponent.h" />
+    <ClInclude Include="src\components\PlayerComponent.h" />
     <ClInclude Include="src\components\ProjectileComponent.h" />
     <ClInclude Include="src\components\ProjectileEmitterComponent.h" />
     <ClInclude Include="src\components\RigidBodyComponent.h" />
