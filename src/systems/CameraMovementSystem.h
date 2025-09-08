@@ -13,11 +13,11 @@ inline void CameraMovementSystem(entt::registry& reg, SDL_Rect& camera) {
 			const auto& transform = view.get<TransformComponent>(entity);
 
 			if (transform.position.x + (camera.w / 2) < Game::mapWidth) {
-				camera.x = transform.position.x - (Game::windowWidth / 2);
+				camera.x = transform.position.x - (Game::logicalWidth / 2);
 			}
 
 			if (transform.position.y + (camera.h / 2) < Game::mapHeight) {
-				camera.y = transform.position.y - (Game::windowHeight / 2);
+				camera.y = transform.position.y - (Game::logicalHeight / 2);
 			}
 
 			// keep camera view inside screen limits

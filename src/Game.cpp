@@ -12,8 +12,9 @@
 #include <fstream>
 
 // initialize static member variables
-int Game::windowWidth;
-int Game::windowHeight;
+int Game::logicalWidth;
+int Game::logicalHeight;
+int Game::windowScale;
 int Game::mapWidth;
 int Game::mapHeight;
 
@@ -42,21 +43,15 @@ void Game::Initialize() {
 
 	SDL_DisplayMode displayMode;
 	SDL_GetCurrentDisplayMode(0, &displayMode);
+	
+	windowScale = 3;
+	logicalWidth = 256;
+	logicalHeight = 240;
 
-	// todo rigolo - will need to tinker with this
-	windowWidth = 256;
-	windowHeight = 240;
-	//windowWidth = displayMode.w;
-	//windowHeight = displayMode.h;
-
-	window = SDL_CreateWindow(
-		"Bylina",
-		SDL_WINDOWPOS_CENTERED,
-		SDL_WINDOWPOS_CENTERED,
-		windowWidth,
-		windowHeight,
-		SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE
-	);
+	// Create window
+	SDL_Window* window = SDL_CreateWindow(
+		"Bylina", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
+		logicalWidth * windowScale, logicalHeight * windowScale, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
 
 	if (!window) {
 		// testing for null pointer
@@ -71,7 +66,6 @@ void Game::Initialize() {
 	// flags seperated by pipe
 	// SDL_RENDERER_ACCELERATED - use GPU if available
 	// SDL_RENDERER_PRESENTVSYNC - Use VSync; match frame rate with monitor refresh for smoother experience and prevents screen tearing
-	//renderer = SDL_CreateRenderer(window, -1, 0);
 	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 	if (!renderer) {
 		// testing for a null pointer
@@ -79,14 +73,12 @@ void Game::Initialize() {
 		return;
 	}
 
-	// change video mode to "real" full screen	
 	// initialize the camera view with the whole screen area
 	camera.x = 0;
 	camera.y = 0;
-	camera.w = windowWidth;
-	camera.h = windowHeight;
+	camera.w = logicalWidth;  // might have to factor in the multiplier here TODO RIGOLO
+	camera.h = logicalHeight;
 
-	//SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN);
 	SDL_SetWindowFullscreen(window, 0);
 	gameIsRunning = true;
 }
@@ -231,7 +223,8 @@ void Game::Render() {
 		registry.GetSystem<RenderColliderSystem>().Update(renderer, camera);
 	}
 	*/ 
-
+	//// Set logical size so our drawing uses NES-ish resolution regardless of window size
+	SDL_RenderSetLogicalSize(renderer, logicalWidth, logicalHeight);
 	SDL_RenderPresent(renderer);
 }
 

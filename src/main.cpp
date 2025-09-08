@@ -36,8 +36,6 @@ int main(int argc, char* agrv[]) {
 
 int old_main(int, char**) {
 
-    //sdl_check(SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS) == 0, "SDL_Init failed");
-
     //// Create window at a nice scale (NES x3)
     //int windowScale = 3;
     //SDL_Window* win = SDL_CreateWindow(

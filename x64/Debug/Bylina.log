@@ -1,5 +1,4 @@
 ﻿  Game.cpp
-D:\source\repos\Bylina\Bylina\src\Game.cpp(128,35): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
-D:\source\repos\Bylina\Bylina\src\Game.cpp(129,36): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
-x64\Debug\Main.obj : warning LNK4042: object specified more than once; extras ignored
+D:\source\repos\Bylina\Bylina\src\Game.cpp(120,35): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+D:\source\repos\Bylina\Bylina\src\Game.cpp(121,36): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
   Bylina.vcxproj -> D:\source\repos\Bylina\x64\Debug\Bylina.exe

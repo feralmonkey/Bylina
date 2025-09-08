@@ -34,8 +34,9 @@ public:
 
 	entt::registry registry; // on the fence about exposing this as public
 
-	static int windowWidth;
-	static int windowHeight;
+	static int windowScale;
+	static int logicalWidth;
+	static int logicalHeight;
 	static int mapWidth;
 	static int mapHeight;
 };
