@@ -146,6 +146,7 @@
     <None Include="zlib1.dll" />
   </ItemGroup>
   <ItemGroup>
+    <Text Include="assets\tilemaps\outdoor-sample1.map" />
     <Text Include="x64\Debug\Bylina.log" />
   </ItemGroup>
   <ItemGroup>
@@ -165,7 +166,6 @@
     <ClInclude Include="src\components\TransformComponent.h" />
     <ClInclude Include="src\Game.h" />
     <ClInclude Include="src\assetstore\AssetStore.h" />
-    <ClInclude Include="src\components.hpp" />
     <ClInclude Include="src\events\CollisionEvent.h" />
     <ClInclude Include="src\events\Event.h" />
     <ClInclude Include="src\events\EventBus.h" />

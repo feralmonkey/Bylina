@@ -9,6 +9,7 @@
 #include "systems/AnimationSystem.h"
 #include "systems/KeyboardControlSystem.h"
 #include "events/KeyPressedEvent.h"
+#include <fstream>
 
 // initialize static member variables
 int Game::windowWidth;
@@ -94,6 +95,36 @@ void Game::Setup() {
 	// LOAD LEVEL
 	// Adding assets to the asset store
 	assetStore->AddTexture(renderer, "hero", "./assets/images/heroes.png");
+	assetStore->AddTexture(renderer, "tilemap-image", "./assets/images/outdoor_tiles.png");
+	assetStore->AddTexture(renderer, "hero", "./assets/images/heroes.png");
+
+	// load the tilemap
+	int tileSize = 8;
+	double tileScale = 1.0;
+	int mapNumCols = 25;
+	int mapNumRows = 20;
+
+	std::fstream mapFile;
+	mapFile.open("./assets/tilemaps/outdoor-sample1.map");
+
+	for (int y = 0; y < mapNumRows; y++) {
+		for (int x = 0; x < mapNumCols; x++) {
+			char ch;
+			mapFile.get(ch);
+			int srcRectY = std::atoi(&ch) * tileSize;
+			mapFile.get(ch);
+			int srcRectX = std::atoi(&ch) * tileSize;
+			mapFile.ignore();
+;
+			entt::entity tile = registry.create();
+			/*tile.Group("tiles");*/
+			registry.emplace<TransformComponent>(tile, glm::vec2(x * (tileScale * tileSize), y * (tileScale * tileSize)), glm::vec2(tileScale, tileScale), 0.0);
+			registry.emplace<SpriteComponent>(tile, "tilemap-image", tileSize, tileSize, 0, false, srcRectX, srcRectY);
+		}
+	}
+	mapFile.close();
+	mapWidth = mapNumCols * tileSize * tileScale;
+	mapHeight = mapNumRows * tileSize * tileScale;
 
 	entt::entity hero = registry.create();
 	registry.emplace<TransformComponent>(hero, glm::vec2(16.0, 16.0), glm::vec2(1.0, 1.0), 0.0);

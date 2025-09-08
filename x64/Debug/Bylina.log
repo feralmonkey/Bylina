@@ -1,4 +1,6 @@
 ﻿  Game.cpp
+D:\source\repos\Bylina\Bylina\src\Game.cpp(126,35): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+D:\source\repos\Bylina\Bylina\src\Game.cpp(127,36): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
   main.cpp
 D:\source\repos\Bylina\Bylina\src\systems\CameraMovementSystem.h(16,37): warning C4244: '=': conversion from 'T' to 'int', possible loss of data
 D:\source\repos\Bylina\Bylina\src\systems\CameraMovementSystem.h(16,37): warning C4244:         with
@@ -74,4 +76,5 @@ D:\source\repos\Bylina\Bylina\src\systems\RenderColliderSystem.h(21,20): warning
   (compiling source file 'src/main.cpp')
   
   Generating Code...
+x64\Debug\Main.obj : warning LNK4042: object specified more than once; extras ignored
   Bylina.vcxproj -> D:\source\repos\Bylina\x64\Debug\Bylina.exe
