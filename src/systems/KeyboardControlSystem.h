@@ -11,6 +11,7 @@
 
 inline void KeyboardControlSystem(const SDL_Event& e, entt::registry& reg) {
 	
+	// only one entity should have the player component so just grab the first one and get the required components
 	auto view = reg.view<PlayerComponent, RigidBodyComponent, SpriteComponent>();
 	entt::entity player = view.front();
 	

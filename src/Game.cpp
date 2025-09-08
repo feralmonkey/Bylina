@@ -174,11 +174,6 @@ void Game::Update() {
 	/* -- todo rigolo change update and subscription systems
 	// perform the subscription of events of all systems
 	registry.GetSystem<MovementSystem>().SubscribeToEvents(eventBus);
-	
-
-	// update the registry to process items waiting in creation / deletion queue
-	registry.Update();
-
 
 	// update systems
 	registry.GetSystem<MovementSystem>().Update(deltaTime);
@@ -198,6 +193,7 @@ void Game::Render() {
 	/* todo rigolo modify render update systems
 	registry.GetSystem<RenderTextSystem>().Update(renderer, assetStore, camera);
 
+	// debugging collision detection
 	if (debugMode) {
 		registry.GetSystem<RenderColliderSystem>().Update(renderer, camera);
 	}
