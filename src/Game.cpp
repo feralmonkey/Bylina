@@ -115,7 +115,9 @@ void Game::Setup() {
 			mapFile.get(ch);
 			int srcRectX = std::atoi(&ch) * tileSize;
 			mapFile.ignore();
-;
+;			
+			std::cout << "Char: " << ch << ", at x-" << srcRectX << " & y-" << srcRectY << std::endl;
+
 			entt::entity tile = registry.create();
 			/*tile.Group("tiles");*/
 			registry.emplace<TransformComponent>(tile, glm::vec2(x * (tileScale * tileSize), y * (tileScale * tileSize)), glm::vec2(tileScale, tileScale), 0.0);
