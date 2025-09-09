@@ -102,10 +102,14 @@ void Game::Setup() {
 	for (int y = 0; y < mapNumRows; y++) {
 		for (int x = 0; x < mapNumCols; x++) {
 			char ch;
+			// Convert hex char to int
 			mapFile.get(ch);
-			int srcRectY = std::atoi(&ch) * tileSize;
+			int valueY = std::stoi(std::string(1, ch), nullptr, 16);
+			int srcRectY = valueY * tileSize;
+
 			mapFile.get(ch);
-			int srcRectX = std::atoi(&ch) * tileSize;
+			int valueX = std::stoi(std::string(1, ch), nullptr, 16);
+			int srcRectX = valueX * tileSize;
 			mapFile.ignore();
 
 			entt::entity tile = registry.create();
@@ -120,7 +124,7 @@ void Game::Setup() {
 
 	entt::entity hero = registry.create();
 	registry.emplace<TransformComponent>(hero, glm::vec2(0.0, 0.0), glm::vec2(1.0, 1.0), 0.0);
-	registry.emplace<RigidBodyComponent>(hero); // keep defaults
+	registry.emplace<RigidBodyComponent>(hero);
 	registry.emplace<SpriteComponent>(hero, "hero", 16, 16, 1);
 	registry.emplace<AnimationComponent>(hero, 2, 4, true);
 	registry.emplace<PlayerComponent>(hero, true);
