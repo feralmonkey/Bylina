@@ -7,9 +7,9 @@
 #include "components/KeyboardControlComponent.h" // not sure that i need this
 #include "systems/RenderSystem.h"
 #include "systems/AnimationSystem.h"
-#include "systems/KeyboardControlSystem.h"
 #include "events/KeyPressedEvent.h"
-#include <fstream>
+#include "systems/KeyboardControlSystem.h"
+#include "systems/MovementSystem.h"
 
 // initialize static member variables
 int Game::logicalWidth;
@@ -107,8 +107,6 @@ void Game::Setup() {
 			mapFile.get(ch);
 			int srcRectX = std::atoi(&ch) * tileSize;
 			mapFile.ignore();
-;			
-			std::cout << "Char: " << ch << ", at x-" << srcRectX << " & y-" << srcRectY << std::endl;
 
 			entt::entity tile = registry.create();
 			/*tile.Group("tiles");*/
@@ -195,6 +193,7 @@ void Game::Update() {
 	eventBus->Reset();
 
 	AnimationSystem(registry);
+	MovementSystem(registry, deltaTime);
 
 	/* -- todo rigolo change update and subscription systems
 	// perform the subscription of events of all systems

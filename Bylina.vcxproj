@@ -131,7 +131,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <None Include=".gitignore" />
-    <None Include="assets\tilemaps\jungle.map" />
     <None Include="libfreetype-6.dll" />
     <None Include="lua53.dll" />
     <None Include="scripts\init.lua" />
@@ -192,10 +191,6 @@
     <Image Include="assets\images\._tank-tiger-down.png" />
     <Image Include="assets\images\heroes.png" />
     <Image Include="assets\images\outdoor_tiles.png" />
-    <Image Include="assets\images\tree-1.png" />
-    <Image Include="assets\images\tree-2.png" />
-    <Image Include="assets\tilemaps\jungle-night.png" />
-    <Image Include="assets\tilemaps\jungle.png" />
   </ItemGroup>
   <ItemGroup>
     <Font Include="assets\fonts\arial.ttf" />
