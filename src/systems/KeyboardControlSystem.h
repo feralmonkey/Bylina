@@ -6,17 +6,19 @@
 #include "../components/SpriteComponent.h"
 #include "../components/RigidBodyComponent.h"
 #include "../components/PlayerComponent.h"
+#include "../components/TransformComponent.h"
 #include "../events/KeyPressedEvent.h"
 
 
 inline void KeyboardControlSystem(const SDL_Event& e, entt::registry& reg) {
 	
 	// only one entity should have the player component so just grab the first one and get the required components
-	auto view = reg.view<PlayerComponent, RigidBodyComponent, SpriteComponent>();
+	auto view = reg.view<PlayerComponent, RigidBodyComponent, SpriteComponent, TransformComponent>();
 	entt::entity player = view.front();
 	
 	RigidBodyComponent& rigidBody = view.get<RigidBodyComponent>(player);
 	SpriteComponent& sprite = view.get<SpriteComponent>(player);
+	const TransformComponent transform = view.get<TransformComponent>(player);
 
 	static SDL_Scancode activeKey = SDL_SCANCODE_UNKNOWN;
 
@@ -52,7 +54,8 @@ inline void KeyboardControlSystem(const SDL_Event& e, entt::registry& reg) {
 		default: break;
 		}
 	}
-	else if (e.type == SDL_KEYUP) {
+	/*else if (e.type == SDL_KEYUP) {*/
+	else {
 		activeKey = SDL_SCANCODE_UNKNOWN;
 		rigidBody.velocity.x = 0;
 		rigidBody.velocity.y = 0;
@@ -73,4 +76,5 @@ inline void KeyboardControlSystem(const SDL_Event& e, entt::registry& reg) {
 		//default: break;
 		//}
 	}
+	spdlog::info("Sprite Source Rect: " + std::to_string(sprite.srcRect.x) + " , " + std::to_string(sprite.srcRect.y));
 }
