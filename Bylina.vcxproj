@@ -189,8 +189,10 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="assets\images\._tank-tiger-down.png" />
+    <Image Include="assets\images\character_tiles.png" />
     <Image Include="assets\images\heroes.png" />
     <Image Include="assets\images\outdoor_tiles.png" />
+    <Image Include="assets\images\town_tiles.png" />
   </ItemGroup>
   <ItemGroup>
     <Font Include="assets\fonts\arial.ttf" />

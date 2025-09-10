@@ -4,7 +4,7 @@
 #include "components/SpriteComponent.h"
 #include "components/AnimationComponent.h"
 #include "components/PlayerComponent.h"
-#include "components/KeyboardControlComponent.h" // not sure that i need this
+#include "components/KeyboardControlComponent.h" // TODO RIGOLO - not sure that i need this
 #include "systems/RenderSystem.h"
 #include "systems/AnimationSystem.h"
 #include "events/KeyPressedEvent.h"
@@ -87,8 +87,9 @@ void Game::Setup() {
 	// LOAD LEVEL
 	// Adding assets to the asset store
 	assetStore->AddTexture(renderer, "hero", "./assets/images/heroes.png");
-	assetStore->AddTexture(renderer, "tilemap-image", "./assets/images/outdoor_tiles.png");
-	assetStore->AddTexture(renderer, "hero", "./assets/images/heroes.png");
+	assetStore->AddTexture(renderer, "character-tiles", "./assets/images/character_tiles.png");
+	assetStore->AddTexture(renderer, "outdoor-tiles", "./assets/images/outdoor_tiles.png");
+	assetStore->AddTexture(renderer, "town-tiles", "./assets/images/town_tiles.png");	assetStore->AddTexture(renderer, "tilemap-image", "./assets/images/outdoor_tiles.png");
 
 	// load the tilemap
 	int tileSize = 8;
@@ -102,20 +103,24 @@ void Game::Setup() {
 	for (int y = 0; y < mapNumRows; y++) {
 		for (int x = 0; x < mapNumCols; x++) {
 			char ch;
-			// Convert hex char to int
+			
+			// get the first character and convert hex character to integer
 			mapFile.get(ch);
 			int valueY = std::stoi(std::string(1, ch), nullptr, 16);
 			int srcRectY = valueY * tileSize;
 
+			// get second character and convert
 			mapFile.get(ch);
 			int valueX = std::stoi(std::string(1, ch), nullptr, 16);
 			int srcRectX = valueX * tileSize;
+
+			// ignore commas
 			mapFile.ignore();
 
 			entt::entity tile = registry.create();
 			/*tile.Group("tiles");*/
 			registry.emplace<TransformComponent>(tile, glm::vec2(x * (tileScale * tileSize), y * (tileScale * tileSize)), glm::vec2(tileScale, tileScale), 0.0);
-			registry.emplace<SpriteComponent>(tile, "tilemap-image", tileSize, tileSize, 0, false, srcRectX, srcRectY);
+			registry.emplace<SpriteComponent>(tile, "outdoor-tiles", tileSize, tileSize, 0, false, srcRectX, srcRectY);
 		}
 	}
 	mapFile.close();

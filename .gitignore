@@ -5,6 +5,7 @@
 /obj/
 /Debug/
 /Release/
+x64/
 
 # Visual Studio files
 .vs/
@@ -28,4 +29,7 @@ Thumbs.db
 *.idb
 *.ipdb
 *.iobj
+*.log
+*.tlog/
 /x64/
+x64/
