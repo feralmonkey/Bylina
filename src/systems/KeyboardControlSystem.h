@@ -76,5 +76,5 @@ inline void KeyboardControlSystem(const SDL_Event& e, entt::registry& reg) {
 		//default: break;
 		//}
 	}
-	spdlog::info("Sprite Transform: " + std::to_string(transform.position.x) + " , " + std::to_string(transform.position.y));
+	//spdlog::info("Sprite Transform: " + std::to_string(transform.position.x) + " , " + std::to_string(transform.position.y));
 }

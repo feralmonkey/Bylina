@@ -13,7 +13,7 @@ struct TextComponent {
 	std::string text;
 	bool hasSelector;
 
-	TextComponent(glm::vec2 position = glm::vec2(0), std::string text = "", bool hasSelector = false) {
+	TextComponent(std::string text = "", glm::vec2 position = glm::vec2(0), bool hasSelector = false) {
 		this->position = position;
 		this->text = text;
 		this->hasSelector = hasSelector;

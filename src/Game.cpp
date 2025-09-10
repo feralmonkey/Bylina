@@ -5,11 +5,13 @@
 #include "components/AnimationComponent.h"
 #include "components/PlayerComponent.h"
 #include "components/KeyboardControlComponent.h" // TODO RIGOLO - not sure that i need this
+#include "components/TextComponent.h"
 #include "systems/RenderSystem.h"
 #include "systems/AnimationSystem.h"
 #include "events/KeyPressedEvent.h"
 #include "systems/KeyboardControlSystem.h"
 #include "systems/MovementSystem.h"
+#include "systems/RenderTextSystem.h"
 
 // initialize static member variables
 int Game::logicalWidth;
@@ -134,6 +136,9 @@ void Game::Setup() {
 	registry.emplace<AnimationComponent>(hero, 2, 4, true);
 	registry.emplace<PlayerComponent>(hero, true);
 
+	entt::entity textBox = registry.create();
+	registry.emplace<TextComponent>(textBox,"Hello World!", glm::vec2(4,4)); // use default parameters for now
+
 	// create the bindings between c++ and lua
 	//registry.get<ScriptSystem>().CreateLuaBindings(lua); //GetSystem<ScriptSystem>().CreateLuaBindings(lua);
 
@@ -203,6 +208,7 @@ void Game::Update() {
 
 	AnimationSystem(registry);
 	MovementSystem(registry, deltaTime);
+	RenderTextSystem(registry, renderer, camera, assetStore);
 
 	/* -- todo rigolo change update and subscription systems
 	// perform the subscription of events of all systems

@@ -131,6 +131,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <None Include=".gitignore" />
+    <None Include="assets\tilemaps\charmap.json" />
     <None Include="libfreetype-6.dll" />
     <None Include="lua53.dll" />
     <None Include="scripts\init.lua" />
@@ -152,6 +153,7 @@
     <Object Include="x64\Debug\Main.obj" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="libs\nlohmann\json.hpp" />
     <ClInclude Include="src\components\AnimationComponent.h" />
     <ClInclude Include="src\components\BoxColliderComponent.h" />
     <ClInclude Include="src\components\CameraFollowComponent.h" />
@@ -161,7 +163,7 @@
     <ClInclude Include="src\components\RigidBodyComponent.h" />
     <ClInclude Include="src\components\ScriptComponent.h" />
     <ClInclude Include="src\components\SpriteComponent.h" />
-    <ClInclude Include="src\components\TextLabelComponent.h" />
+    <ClInclude Include="src\components\TextComponent.h" />
     <ClInclude Include="src\components\TransformComponent.h" />
     <ClInclude Include="src\Game.h" />
     <ClInclude Include="src\assetstore\AssetStore.h" />
