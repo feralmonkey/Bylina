@@ -65,14 +65,20 @@ inline void RenderTextBox(entt::registry& registry, SDL_Renderer* renderer, SDL_
 		int textCounter = 0;
 		for (int i = 1; i < textLabel.height - 1; i++) {
 			// left border
-			DrawChar(registry, 48, 0, x, y);
-			x++;
+			DrawChar(registry, 48, 0, x++, y);
 			
 			// draw characters
 			for (int j = 1; j < textLabel.width; j++) {
-
-				if (textCounter < textLabel.text.size()) {
+				bool pauseLine = false;
+				if (textCounter < textLabel.text.size()) {  // TODO RIGOLO - This might be causing some (minor) problems with multi line display - debug later
 					char character = textLabel.text[textCounter++];
+
+					if (character == '/' || pauseLine) {
+						pauseLine = true;
+						DrawChar(registry, 88, 24, x++, y);
+						continue;
+					}
+
 					std::string charValue = unorderedMap[std::string(1, character)];
 
 					int valueY = std::stoi(std::string(1, charValue[0]), nullptr, 16);
@@ -83,20 +89,18 @@ inline void RenderTextBox(entt::registry& registry, SDL_Renderer* renderer, SDL_
 					int valueX = std::stoi(std::string(1, charValue[1]), nullptr, 16);
 					int srcRectX = valueX * 8;  // 8 is tileSize - if I classify this, make it a private class member
 
-					DrawChar(registry, srcRectX, srcRectY, x, y);
+					DrawChar(registry, srcRectX, srcRectY, x++, y);
 				}
 				else {
-					DrawChar(registry, 88, 24, x, y);
-				}
-				x++;
+					DrawChar(registry, 88, 24, x++, y);
+				} 
 			}
 
 			// right border
-			DrawChar(registry, 56, 0, x, y);
+			DrawChar(registry, 56, 0, x, y++);
 
 			// reset values for next line
 			x = textLabel.position.x;
-			y++;
 		}
 
 		// draw bottom left corner
