@@ -130,7 +130,7 @@ void Game::Setup() {
 	mapHeight = mapNumRows * tileSize * tileScale;
 
 	entt::entity hero = registry.create();
-	registry.emplace<TransformComponent>(hero, glm::vec2(0.0, 0.0), glm::vec2(1.0, 1.0), 0.0);
+	registry.emplace<TransformComponent>(hero, glm::vec2(32.0, 32.0), glm::vec2(1.0, 1.0), 0.0);
 	registry.emplace<RigidBodyComponent>(hero);
 	registry.emplace<SpriteComponent>(hero, "hero", 16, 16, 1);
 	registry.emplace<AnimationComponent>(hero, 2, 4, true);
