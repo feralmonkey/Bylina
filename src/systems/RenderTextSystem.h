@@ -73,8 +73,19 @@ inline void RenderTextBox(entt::registry& registry, SDL_Renderer* renderer, SDL_
 			
 			// draw characters
 			for (int j = 1; j < textLabel.width; j++) {
-				// TODO RIGOLO - NEED TO PARSE TEXT HERE
-				DrawChar(registry, 88, 24, x, y);
+				char character = textLabel.text[i];
+				std::string charValue = unorderedMap[std::string(1, character)];
+
+				int valueY = std::stoi(std::string(1, charValue[0]), nullptr, 16);
+				int srcRectY = valueY * 8;  // 8 is tileSize - if I classify this, make it a private class member
+
+				// get second character and convert
+
+				int valueX = std::stoi(std::string(1, charValue[1]), nullptr, 16);
+				int srcRectX = valueX * 8;  // 8 is tileSize - if I classify this, make it a private class member
+
+				DrawChar(registry, srcRectX, srcRectY, x, y);
+				//DrawChar(registry, 32, 0, x, y);
 				x++;
 			}
 

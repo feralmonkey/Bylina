@@ -137,7 +137,7 @@ void Game::Setup() {
 	registry.emplace<PlayerComponent>(hero, true);
 
 	entt::entity textBox = registry.create();
-	registry.emplace<TextComponent>(textBox,"Hello World!", glm::vec2(8,8), 8, 6, false); // use default parameters for now
+	registry.emplace<TextComponent>(textBox,"Hello World!", glm::vec2(8,8), 12, 8, false); // use default parameters for now
 
 	// create the bindings between c++ and lua
 	//registry.get<ScriptSystem>().CreateLuaBindings(lua); //GetSystem<ScriptSystem>().CreateLuaBindings(lua);
