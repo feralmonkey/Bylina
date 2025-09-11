@@ -137,7 +137,7 @@ void Game::Setup() {
 	registry.emplace<PlayerComponent>(hero, true);
 
 	entt::entity textBox = registry.create();
-	registry.emplace<TextComponent>(textBox,"Hello World!", glm::vec2(4,4)); // use default parameters for now
+	registry.emplace<TextComponent>(textBox,"Hello World!", glm::vec2(8,8), 8, 6, false); // use default parameters for now
 
 	// create the bindings between c++ and lua
 	//registry.get<ScriptSystem>().CreateLuaBindings(lua); //GetSystem<ScriptSystem>().CreateLuaBindings(lua);
@@ -181,6 +181,14 @@ void Game::ProcessInput() {
 				debugMode = !debugMode; // toggle
 				break;
 			}
+			if (sdlEvent.key.keysym.sym == SDLK_x) {
+				spdlog::info("action button pressed");
+				RenderTextBox(registry, renderer, camera, assetStore);
+			}
+			if (sdlEvent.key.keysym.sym == SDLK_z) {
+				spdlog::info("cancel button pressed");
+				ClearTextBox(registry);
+			}
 			KeyboardControlSystem(sdlEvent, registry);
 			break;
 		}
@@ -208,7 +216,6 @@ void Game::Update() {
 
 	AnimationSystem(registry);
 	MovementSystem(registry, deltaTime);
-	RenderTextSystem(registry, renderer, camera, assetStore);
 
 	/* -- todo rigolo change update and subscription systems
 	// perform the subscription of events of all systems
