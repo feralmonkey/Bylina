@@ -39,10 +39,6 @@ inline void RenderTextBox(entt::registry& registry, SDL_Renderer* renderer, SDL_
 			unorderedMap[it.key()] = it.value();
 		}
 
-		// testing
-		//std::cout << "Value for 'A': " << unorderedMap["A"] << std::endl;
-		//std::cout << "Value for 'b': " << unorderedMap["b"] << std::endl;
-
 		// get the first character and convert hex character to integer
 		int x = textLabel.position.x;
 		int y = textLabel.position.y;
@@ -65,7 +61,8 @@ inline void RenderTextBox(entt::registry& registry, SDL_Renderer* renderer, SDL_
 		y++;
 
 
-		// draw lines
+		// draw text rows
+		int textCounter = 0;
 		for (int i = 1; i < textLabel.height - 1; i++) {
 			// left border
 			DrawChar(registry, 48, 0, x, y);
@@ -73,19 +70,24 @@ inline void RenderTextBox(entt::registry& registry, SDL_Renderer* renderer, SDL_
 			
 			// draw characters
 			for (int j = 1; j < textLabel.width; j++) {
-				char character = textLabel.text[i];
-				std::string charValue = unorderedMap[std::string(1, character)];
 
-				int valueY = std::stoi(std::string(1, charValue[0]), nullptr, 16);
-				int srcRectY = valueY * 8;  // 8 is tileSize - if I classify this, make it a private class member
+				if (textCounter < textLabel.text.size()) {
+					char character = textLabel.text[textCounter++];
+					std::string charValue = unorderedMap[std::string(1, character)];
 
-				// get second character and convert
+					int valueY = std::stoi(std::string(1, charValue[0]), nullptr, 16);
+					int srcRectY = valueY * 8;  // 8 is tileSize - if I classify this, make it a private class member
 
-				int valueX = std::stoi(std::string(1, charValue[1]), nullptr, 16);
-				int srcRectX = valueX * 8;  // 8 is tileSize - if I classify this, make it a private class member
+					// get second character and convert
 
-				DrawChar(registry, srcRectX, srcRectY, x, y);
-				//DrawChar(registry, 32, 0, x, y);
+					int valueX = std::stoi(std::string(1, charValue[1]), nullptr, 16);
+					int srcRectX = valueX * 8;  // 8 is tileSize - if I classify this, make it a private class member
+
+					DrawChar(registry, srcRectX, srcRectY, x, y);
+				}
+				else {
+					DrawChar(registry, 88, 24, x, y);
+				}
 				x++;
 			}
 
@@ -121,5 +123,4 @@ inline void ClearTextBox(entt::registry& registry) {
 			registry.destroy(entity);
 		}
 	}
-
 }
