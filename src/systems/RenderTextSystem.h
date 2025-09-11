@@ -63,22 +63,38 @@ inline void RenderTextBox(entt::registry& registry, SDL_Renderer* renderer, SDL_
 
 		// draw text rows
 		int textCounter = 0;
+		bool pauseLine;
 		for (int i = 1; i < textLabel.height - 1; i++) {
 			// left border
 			DrawChar(registry, 48, 0, x++, y);
-			
+			pauseLine = false;
+
 			// draw characters
 			for (int j = 1; j < textLabel.width; j++) {
-				bool pauseLine = false;
-				if (textCounter < textLabel.text.size()) {  // TODO RIGOLO - This might be causing some (minor) problems with multi line display - debug later
-					char character = textLabel.text[textCounter++];
+				
+				// if we still have additional characters in the text label then print the next character
+				// otherwise just print a black square
+				if (textCounter < textLabel.text.size()) {
+					char character = textLabel.text[textCounter];
 
-					if (character == '/' || pauseLine) {
-						pauseLine = true;
+					if (character == '/'){ //} || pauseLine) {
+						if (j > 1) {
+							pauseLine = true;
+							DrawChar(registry, 88, 24, x++, y);
+							textCounter++;
+							continue;
+						}
+						else {
+							continue;
+						}
+					}
+					if (pauseLine) {
 						DrawChar(registry, 88, 24, x++, y);
 						continue;
 					}
-
+					
+					textCounter++;
+					std::cout << "x, y, txtctr, char:" << x << "," << y << "," << textCounter << "," << character << std::endl;
 					std::string charValue = unorderedMap[std::string(1, character)];
 
 					int valueY = std::stoi(std::string(1, charValue[0]), nullptr, 16);
@@ -101,6 +117,7 @@ inline void RenderTextBox(entt::registry& registry, SDL_Renderer* renderer, SDL_
 
 			// reset values for next line
 			x = textLabel.position.x;
+			pauseLine = false;
 		}
 
 		// draw bottom left corner
