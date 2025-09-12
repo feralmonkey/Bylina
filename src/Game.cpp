@@ -1,13 +1,24 @@
 #include "Game.h"
 #include "components/TransformComponent.h"
+#include "components/RigidBodyComponent.h"
 #include "components/SpriteComponent.h"
 #include "components/AnimationComponent.h"
+#include "components/PlayerComponent.h"
+#include "components/KeyboardControlComponent.h" // TODO RIGOLO - not sure that i need this
+#include "components/TextComponent.h"
+#include "components/CameraFollowComponent.h"
 #include "systems/RenderSystem.h"
 #include "systems/AnimationSystem.h"
+#include "events/KeyPressedEvent.h"
+#include "systems/KeyboardControlSystem.h"
+#include "systems/MovementSystem.h"
+#include "systems/RenderTextSystem.h"
+#include "systems/CameraMovementSystem.h"
 
 // initialize static member variables
-int Game::windowWidth;
-int Game::windowHeight;
+int Game::logicalWidth;
+int Game::logicalHeight;
+int Game::windowScale;
 int Game::mapWidth;
 int Game::mapHeight;
 
@@ -36,21 +47,15 @@ void Game::Initialize() {
 
 	SDL_DisplayMode displayMode;
 	SDL_GetCurrentDisplayMode(0, &displayMode);
+	
+	windowScale = 3;
+	logicalWidth = 256;
+	logicalHeight = 240;
 
-	// todo rigolo - will need to tinker with this
-	windowWidth = 256;
-	windowHeight = 240;
-	//windowWidth = displayMode.w;
-	//windowHeight = displayMode.h;
-
-	window = SDL_CreateWindow(
-		"Bylina",
-		SDL_WINDOWPOS_CENTERED,
-		SDL_WINDOWPOS_CENTERED,
-		windowWidth,
-		windowHeight,
-		SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE
-	);
+	// Create window
+	SDL_Window* window = SDL_CreateWindow(
+		"Bylina", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
+		logicalWidth * windowScale, logicalHeight * windowScale, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
 
 	if (!window) {
 		// testing for null pointer
@@ -65,7 +70,6 @@ void Game::Initialize() {
 	// flags seperated by pipe
 	// SDL_RENDERER_ACCELERATED - use GPU if available
 	// SDL_RENDERER_PRESENTVSYNC - Use VSync; match frame rate with monitor refresh for smoother experience and prevents screen tearing
-	//renderer = SDL_CreateRenderer(window, -1, 0);
 	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 	if (!renderer) {
 		// testing for a null pointer
@@ -73,14 +77,12 @@ void Game::Initialize() {
 		return;
 	}
 
-	// change video mode to "real" full screen	
 	// initialize the camera view with the whole screen area
 	camera.x = 0;
 	camera.y = 0;
-	camera.w = windowWidth;
-	camera.h = windowHeight;
+	camera.w = logicalWidth;  // might have to factor in the multiplier here TODO RIGOLO
+	camera.h = logicalHeight;
 
-	//SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN);
 	SDL_SetWindowFullscreen(window, 0);
 	gameIsRunning = true;
 }
@@ -89,11 +91,56 @@ void Game::Setup() {
 	// LOAD LEVEL
 	// Adding assets to the asset store
 	assetStore->AddTexture(renderer, "hero", "./assets/images/heroes.png");
+	assetStore->AddTexture(renderer, "character-tiles", "./assets/images/character_tiles.png");
+	assetStore->AddTexture(renderer, "outdoor-tiles", "./assets/images/outdoor_tiles.png");
+	assetStore->AddTexture(renderer, "town-tiles", "./assets/images/town_tiles.png");	assetStore->AddTexture(renderer, "tilemap-image", "./assets/images/outdoor_tiles.png");
+
+	// load the tilemap
+	int tileSize = 8;
+	double tileScale = 1.0;
+	int mapNumCols = 50;
+	int mapNumRows = 40;
+
+	std::fstream mapFile;
+	mapFile.open("./assets/tilemaps/outdoor-sample-large.map");
+
+	for (int y = 0; y < mapNumRows; y++) {
+		for (int x = 0; x < mapNumCols; x++) {
+			char ch;
+			
+			// get the first character and convert hex character to integer
+			mapFile.get(ch);
+			int valueY = std::stoi(std::string(1, ch), nullptr, 16);
+			int srcRectY = valueY * tileSize;
+
+			// get second character and convert
+			mapFile.get(ch);
+			int valueX = std::stoi(std::string(1, ch), nullptr, 16);
+			int srcRectX = valueX * tileSize;
+
+			// ignore commas
+			mapFile.ignore();
+
+			entt::entity tile = registry.create();
+			/*tile.Group("tiles");*/
+			registry.emplace<TransformComponent>(tile, glm::vec2(x * (tileScale * tileSize), y * (tileScale * tileSize)), glm::vec2(tileScale, tileScale), 0.0);
+			registry.emplace<SpriteComponent>(tile, "outdoor-tiles", tileSize, tileSize, 0, false, srcRectX, srcRectY);
+		}
+	}
+	mapFile.close();
+	mapWidth = mapNumCols * tileSize * tileScale;
+	mapHeight = mapNumRows * tileSize * tileScale;
 
 	entt::entity hero = registry.create();
-	registry.emplace<TransformComponent>(hero, glm::vec2(16.0, 16.0), glm::vec2(1.0, 1.0), 0.0);
+	registry.emplace<TransformComponent>(hero, glm::vec2(32.0, 32.0), glm::vec2(1.0, 1.0), 0.0);
+	registry.emplace<RigidBodyComponent>(hero);
 	registry.emplace<SpriteComponent>(hero, "hero", 16, 16, 1);
 	registry.emplace<AnimationComponent>(hero, 2, 4, true);
+	registry.emplace<CameraFollowComponent>(hero);
+	registry.emplace<PlayerComponent>(hero, true);
+
+	entt::entity textBox = registry.create();
+	registry.emplace<TextComponent>(textBox,"Hey Everybody!/What's Up?", glm::vec2(3,11), 18, 8, false); // use default parameters for now
 
 	// create the bindings between c++ and lua
 	//registry.get<ScriptSystem>().CreateLuaBindings(lua); //GetSystem<ScriptSystem>().CreateLuaBindings(lua);
@@ -124,16 +171,28 @@ void Game::ProcessInput() {
 		case SDL_QUIT:  // if user tries to close the window using the x button
 			gameIsRunning = false;
 			break;
+		case SDL_KEYUP:
 		case SDL_KEYDOWN:
 			// exit the game if user presses escape key
 			if (sdlEvent.key.keysym.sym == SDLK_ESCAPE) {
 				gameIsRunning = false;
+				break;
 			}
 			// toggle debug mode if user presses tilde key
 			if (sdlEvent.key.keysym.sym == SDLK_BACKQUOTE) {
+				spdlog::info("debug mode engaged");
 				debugMode = !debugMode; // toggle
+				break;
 			}
-			//eventBus->EmitEvent<KeyPressedEvent>(sdlEvent.key.keysym.sym); -- todo rigolo replace with something else
+			if (sdlEvent.key.keysym.sym == SDLK_x) {
+				spdlog::info("action button pressed");
+				RenderTextBox(registry, renderer, camera, assetStore);
+			}
+			if (sdlEvent.key.keysym.sym == SDLK_z) {
+				spdlog::info("cancel button pressed");
+				ClearTextBox(registry);
+			}
+			KeyboardControlSystem(sdlEvent, registry);
 			break;
 		}
 	}
@@ -159,14 +218,12 @@ void Game::Update() {
 	eventBus->Reset();
 
 	AnimationSystem(registry);
+	MovementSystem(registry, deltaTime);
+	CameraMovementSystem(registry, camera); // TODO RIGOLO - SHOULD THIS BE HERE OR IN THE RENDERING SECTION?
+
 	/* -- todo rigolo change update and subscription systems
 	// perform the subscription of events of all systems
 	registry.GetSystem<MovementSystem>().SubscribeToEvents(eventBus);
-	registry.GetSystem<KeyboardControlSystem>().SubscribeToEvents(eventBus);
-
-	// update the registry to process items waiting in creation / deletion queue
-	registry.Update();
-
 
 	// update systems
 	registry.GetSystem<MovementSystem>().Update(deltaTime);
@@ -186,11 +243,14 @@ void Game::Render() {
 	/* todo rigolo modify render update systems
 	registry.GetSystem<RenderTextSystem>().Update(renderer, assetStore, camera);
 
+	// debugging collision detection
 	if (debugMode) {
 		registry.GetSystem<RenderColliderSystem>().Update(renderer, camera);
 	}
 	*/ 
-
+ 
+	//// Set logical size so our drawing uses NES-ish resolution regardless of window size
+	SDL_RenderSetLogicalSize(renderer, logicalWidth, logicalHeight);
 	SDL_RenderPresent(renderer);
 }
 

@@ -4,6 +4,7 @@
 #include <SDL.h>
 #include <sol/sol.hpp>
 #include <entt.hpp>
+#include <fstream>
 
 const int FPS = 60;
 const int MILLISECS_PER_FRAME = 1000 / FPS;
@@ -34,8 +35,9 @@ public:
 
 	entt::registry registry; // on the fence about exposing this as public
 
-	static int windowWidth;
-	static int windowHeight;
+	static int windowScale;
+	static int logicalWidth;
+	static int logicalHeight;
 	static int mapWidth;
 	static int mapHeight;
 };

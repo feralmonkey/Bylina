@@ -131,10 +131,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <None Include=".gitignore" />
-    <None Include="assets\tilemaps\._desert.map" />
-    <None Include="assets\tilemaps\._jungle.map" />
-    <None Include="assets\tilemaps\desert.map" />
-    <None Include="assets\tilemaps\jungle.map" />
+    <None Include="assets\tilemaps\outdoor-sample-large.map" />
+    <None Include="assets\tilemaps\charmap.json" />
     <None Include="libfreetype-6.dll" />
     <None Include="lua53.dll" />
     <None Include="scripts\init.lua" />
@@ -149,27 +147,27 @@
     <None Include="zlib1.dll" />
   </ItemGroup>
   <ItemGroup>
+    <Text Include="assets\tilemaps\outdoor-sample1.map" />
     <Text Include="x64\Debug\Bylina.log" />
   </ItemGroup>
   <ItemGroup>
     <Object Include="x64\Debug\Main.obj" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="libs\nlohmann\json.hpp" />
     <ClInclude Include="src\components\AnimationComponent.h" />
     <ClInclude Include="src\components\BoxColliderComponent.h" />
     <ClInclude Include="src\components\CameraFollowComponent.h" />
     <ClInclude Include="src\components\HealthComponent.h" />
     <ClInclude Include="src\components\KeyboardControlComponent.h" />
-    <ClInclude Include="src\components\ProjectileComponent.h" />
-    <ClInclude Include="src\components\ProjectileEmitterComponent.h" />
+    <ClInclude Include="src\components\PlayerComponent.h" />
     <ClInclude Include="src\components\RigidBodyComponent.h" />
     <ClInclude Include="src\components\ScriptComponent.h" />
     <ClInclude Include="src\components\SpriteComponent.h" />
-    <ClInclude Include="src\components\TextLabelComponent.h" />
+    <ClInclude Include="src\components\TextComponent.h" />
     <ClInclude Include="src\components\TransformComponent.h" />
     <ClInclude Include="src\Game.h" />
     <ClInclude Include="src\assetstore\AssetStore.h" />
-    <ClInclude Include="src\components.hpp" />
     <ClInclude Include="src\events\CollisionEvent.h" />
     <ClInclude Include="src\events\Event.h" />
     <ClInclude Include="src\events\EventBus.h" />
@@ -194,21 +192,10 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="assets\images\._tank-tiger-down.png" />
+    <Image Include="assets\images\character_tiles.png" />
     <Image Include="assets\images\heroes.png" />
-    <Image Include="assets\images\tank-panther-down.png" />
-    <Image Include="assets\images\tank-panther-killed.png" />
-    <Image Include="assets\images\tank-panther-left.png" />
-    <Image Include="assets\images\tank-panther-right.png" />
-    <Image Include="assets\images\tank-panther-spritesheet.png" />
-    <Image Include="assets\images\tank-panther-up.png" />
-    <Image Include="assets\images\tree-1.png" />
-    <Image Include="assets\images\tree-2.png" />
-    <Image Include="assets\tilemaps\._desert.png" />
-    <Image Include="assets\tilemaps\._jungle.png" />
-    <Image Include="assets\tilemaps\desert.png" />
-    <Image Include="assets\tilemaps\jungle-night.png" />
-    <Image Include="assets\tilemaps\jungle.png" />
-    <Image Include="assets\tiles\heroes.png" />
+    <Image Include="assets\images\outdoor_tiles.png" />
+    <Image Include="assets\images\town_tiles.png" />
   </ItemGroup>
   <ItemGroup>
     <Font Include="assets\fonts\arial.ttf" />

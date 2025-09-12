@@ -2,7 +2,6 @@
 
 #include <spdlog/spdlog.h>
 #include "Event.h"
-#include "Event.h"
 #include <map>
 #include <typeindex> // I don't know this one
 
