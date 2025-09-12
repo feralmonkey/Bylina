@@ -6,12 +6,14 @@
 #include "components/PlayerComponent.h"
 #include "components/KeyboardControlComponent.h" // TODO RIGOLO - not sure that i need this
 #include "components/TextComponent.h"
+#include "components/CameraFollowComponent.h"
 #include "systems/RenderSystem.h"
 #include "systems/AnimationSystem.h"
 #include "events/KeyPressedEvent.h"
 #include "systems/KeyboardControlSystem.h"
 #include "systems/MovementSystem.h"
 #include "systems/RenderTextSystem.h"
+#include "systems/CameraMovementSystem.h"
 
 // initialize static member variables
 int Game::logicalWidth;
@@ -96,11 +98,11 @@ void Game::Setup() {
 	// load the tilemap
 	int tileSize = 8;
 	double tileScale = 1.0;
-	int mapNumCols = 25;
-	int mapNumRows = 20;
+	int mapNumCols = 50;
+	int mapNumRows = 40;
 
 	std::fstream mapFile;
-	mapFile.open("./assets/tilemaps/outdoor-sample1.map");
+	mapFile.open("./assets/tilemaps/outdoor-sample-large.map");
 
 	for (int y = 0; y < mapNumRows; y++) {
 		for (int x = 0; x < mapNumCols; x++) {
@@ -134,6 +136,7 @@ void Game::Setup() {
 	registry.emplace<RigidBodyComponent>(hero);
 	registry.emplace<SpriteComponent>(hero, "hero", 16, 16, 1);
 	registry.emplace<AnimationComponent>(hero, 2, 4, true);
+	registry.emplace<CameraFollowComponent>(hero);
 	registry.emplace<PlayerComponent>(hero, true);
 
 	entt::entity textBox = registry.create();
@@ -216,6 +219,7 @@ void Game::Update() {
 
 	AnimationSystem(registry);
 	MovementSystem(registry, deltaTime);
+	CameraMovementSystem(registry, camera); // TODO RIGOLO - SHOULD THIS BE HERE OR IN THE RENDERING SECTION?
 
 	/* -- todo rigolo change update and subscription systems
 	// perform the subscription of events of all systems

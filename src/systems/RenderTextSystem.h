@@ -77,7 +77,7 @@ inline void RenderTextBox(entt::registry& registry, SDL_Renderer* renderer, SDL_
 				if (textCounter < textLabel.text.size()) {
 					char character = textLabel.text[textCounter];
 
-					if (character == '/'){ //} || pauseLine) {
+					if (character == '/'){
 						if (j > 1) {
 							pauseLine = true;
 							DrawChar(registry, 88, 24, x++, y);
