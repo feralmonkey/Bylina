@@ -248,6 +248,7 @@ void Game::Render() {
 		registry.GetSystem<RenderColliderSystem>().Update(renderer, camera);
 	}
 	*/ 
+ 
 	//// Set logical size so our drawing uses NES-ish resolution regardless of window size
 	SDL_RenderSetLogicalSize(renderer, logicalWidth, logicalHeight);
 	SDL_RenderPresent(renderer);
