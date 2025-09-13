@@ -11,14 +11,14 @@
 
 
 inline void KeyboardControlSystem(const SDL_Event& e, entt::registry& reg) {
-	
+
 	// only one entity should have the player component so just grab the first one and get the required components
-	auto view = reg.view<PlayerComponent, RigidBodyComponent, SpriteComponent, TransformComponent>();
+	auto view = reg.view<RigidBodyComponent, SpriteComponent, TransformComponent>();  // removed player component - will need to replace with a tag
 	entt::entity player = view.front();
-	
+
+	const TransformComponent transform = view.get<TransformComponent>(player);
 	RigidBodyComponent& rigidBody = view.get<RigidBodyComponent>(player);
 	SpriteComponent& sprite = view.get<SpriteComponent>(player);
-	const TransformComponent transform = view.get<TransformComponent>(player);
 
 	static SDL_Scancode activeKey = SDL_SCANCODE_UNKNOWN;
 

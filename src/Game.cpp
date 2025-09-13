@@ -96,7 +96,7 @@ void Game::Initialize() {
 
 void Game::Setup() {
 	// create the bindings between c++ and lua
-	scriptSystem->CreateLuaBindings(lua); //.CreateLuaBindings(lua);
+	scriptSystem->CreateLuaBindings(lua);
 
 	// load first level
 	MapLoader loader;
@@ -104,60 +104,8 @@ void Game::Setup() {
 	std::string mapName = "init";
 	loader.LoadMap(lua, registry, assetStore, renderer, mapName);
 
-	// LOAD LEVEL
-	// Adding assets to the asset store
-	assetStore->AddTexture(renderer, "hero", "./assets/images/heroes.png");
-	assetStore->AddTexture(renderer, "character-tiles", "./assets/images/character_tiles.png");
-	assetStore->AddTexture(renderer, "outdoor-tiles", "./assets/images/outdoor_tiles.png");
-	assetStore->AddTexture(renderer, "town-tiles", "./assets/images/town_tiles.png");	assetStore->AddTexture(renderer, "tilemap-image", "./assets/images/outdoor_tiles.png");
-
-	// load the tilemap
-	int tileSize = 8;
-	int tileScale = 1;
-	int mapNumCols = 50;
-	int mapNumRows = 40;
-
-	std::fstream mapFile;
-	mapFile.open("./assets/tilemaps/outdoor-sample-large.map");
-
-	for (int y = 0; y < mapNumRows; y++) {
-		for (int x = 0; x < mapNumCols; x++) {
-			char ch;
-			
-			// get the first character and convert hex character to integer
-			mapFile.get(ch);
-			int valueY = std::stoi(std::string(1, ch), nullptr, 16);
-			int srcRectY = valueY * tileSize;
-
-			// get second character and convert
-			mapFile.get(ch);
-			int valueX = std::stoi(std::string(1, ch), nullptr, 16);
-			int srcRectX = valueX * tileSize;
-
-			// ignore commas
-			mapFile.ignore();
-
-			entt::entity tile = registry.create();
-			/*tile.Group("tiles");*/
-			registry.emplace<TransformComponent>(tile, glm::vec2(x * (tileScale * tileSize), y * (tileScale * tileSize)), glm::vec2(tileScale, tileScale), 0.0);
-			registry.emplace<SpriteComponent>(tile, "outdoor-tiles", tileSize, tileSize, 0, false, srcRectX, srcRectY);
-		}
-	}
-	mapFile.close();
-	mapWidth = mapNumCols * tileSize * tileScale;
-	mapHeight = mapNumRows * tileSize * tileScale;
-
-	entt::entity hero = registry.create();
-	registry.emplace<TransformComponent>(hero, glm::vec2(32.0, 32.0), glm::vec2(1.0, 1.0), 0.0);
-	registry.emplace<RigidBodyComponent>(hero);
-	registry.emplace<SpriteComponent>(hero, "hero", 16, 16, 1);
-	registry.emplace<AnimationComponent>(hero, 2, 4, true);
-	registry.emplace<CameraFollowComponent>(hero);
-	registry.emplace<PlayerComponent>(hero, true);
-
 	entt::entity textBox = registry.create();
 	registry.emplace<TextComponent>(textBox,"Hey Everybody!/What's Up?", glm::vec2(3,11), 18, 8, false); // use default parameters for now
-
 }
 
 void Game::Run() {

@@ -30,16 +30,15 @@ void MapLoader::LoadMap(sol::state& lua, entt::registry& registry, const std::un
 		spdlog::error("This script is horse shit! Fix it! : " + errorMessage);
 		return;
 	}
-	// TODO RIGOLO Testing Block | works
-	spdlog::info("so far so good - i.e. a valid script");
-	return; 
 
 	// executes the script using the lua state
 	lua.script_file("./assets/scripts/" + mapName + ".lua");
 	spdlog::info("We just opened map " + mapName + ".lua");
 
+
 	// read the big table that has data for current map
 	sol::table map = lua["Map"];
+
 
 
 	////////////////////////////////////////////////////////////////
@@ -93,10 +92,18 @@ void MapLoader::LoadMap(sol::state& lua, entt::registry& registry, const std::un
 	for (int y = 0; y < numMapRows; y++) {
 		for (int x = 0; x < numMapCols; x++) {
 			char ch;
+					
+			// get the first character and convert hex character to integer
 			mapFile.get(ch);
-			int srcRectY = std::atoi(&ch) * tileSize;
+			int valueY = std::stoi(std::string(1, ch), nullptr, 16);
+			int srcRectY = valueY * tileSize;
+
+			// get second character and convert
 			mapFile.get(ch);
-			int srcRectX = std::atoi(&ch) * tileSize;
+			int valueX = std::stoi(std::string(1, ch), nullptr, 16);
+			int srcRectX = valueX * tileSize;
+
+			// ignore commas
 			mapFile.ignore();
 
 			entt::entity tile = registry.create();
@@ -172,16 +179,18 @@ void MapLoader::LoadMap(sol::state& lua, entt::registry& registry, const std::un
 
 			// Sprite
 			sol::optional<sol::table> sprite = entity["components"]["sprite"];
-			if (sprite != sol::nullopt) {
-				newEntity,
+			if (sprite) {
+				sol::table s = *sprite;
+
 				registry.emplace<SpriteComponent>(
-					entity["components"]["sprite"]["texture_asset_id"],
-					entity["components"]["sprite"]["width"],
-					entity["components"]["sprite"]["height"],
-					entity["components"]["sprite"]["z_index"].get_or(1),
-					entity["components"]["sprite"]["fixed"].get_or(false),
-					entity["components"]["sprite"]["src_rect_x"].get_or(0),
-					entity["components"]["sprite"]["src_rect_y"].get_or(0)
+					newEntity,
+					s["texture_asset_id"],
+					s["width"],
+					s["height"],
+					s["z_index"].get_or(1),
+					s["fixed"].get_or(false),
+					s["src_rect_x"].get_or(0),
+					s["src_rect_y"].get_or(0)
 				);
 			}
 
@@ -219,8 +228,8 @@ void MapLoader::LoadMap(sol::state& lua, entt::registry& registry, const std::un
 			}
 
 			// CAMERA FOLLOW
-			sol::optional<sol::table> cameraFollow = entity["components"]["camera_follow"];
-			if (cameraFollow != sol::nullopt) {
+			sol::optional<sol::table> camera_follow = entity["components"]["camera_follow"];
+			if (camera_follow != sol::nullopt) {
 				registry.emplace<CameraFollowComponent>(
 					newEntity,
 					static_cast<int>(entity["components"]["camera_follow"]["follow"].get_or(false))
@@ -229,25 +238,20 @@ void MapLoader::LoadMap(sol::state& lua, entt::registry& registry, const std::un
 
 			// Keyboard Controller
 			sol::optional<sol::table> keyboard = entity["components"]["keyboard_controller"];
-			if (keyboard != sol::nullopt) {
+			if (keyboard) {
+				sol::table k = *keyboard;
+
+				auto up = k["up_velocity"];
+				auto right = k["right_velocity"];
+				auto down = k["down_velocity"];
+				auto left = k["left_velocity"];
+
 				registry.emplace<KeyboardControlComponent>(
 					newEntity,
-					glm::vec2(
-						entity["components"]["keyboard_controller"]["up_velocity"]["x"],
-						entity["components"]["keyboard_controller"]["up_velocity"]["y"]
-					),
-					glm::vec2(
-						entity["components"]["keyboard_controller"]["right_velocity"]["x"],
-						entity["components"]["keyboard_controller"]["right_velocity"]["y"]
-					),
-					glm::vec2(
-						entity["components"]["keyboard_controller"]["down_velocity"]["x"],
-						entity["components"]["keyboard_controller"]["down_velocity"]["y"]
-					),
-					glm::vec2(
-						entity["components"]["keyboard_controller"]["left_velocity"]["x"],
-						entity["components"]["keyboard_controller"]["left_velocity"]["y"]
-					)
+					glm::vec2(up["x"].get_or(0.0f), up["y"].get_or(0.0f)),
+					glm::vec2(right["x"].get_or(0.0f), right["y"].get_or(0.0f)),
+					glm::vec2(down["x"].get_or(0.0f), down["y"].get_or(0.0f)),
+					glm::vec2(left["x"].get_or(0.0f), left["y"].get_or(0.0f))
 				);
 			}
 

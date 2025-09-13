@@ -131,6 +131,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <None Include=".gitignore" />
+    <None Include="assets\scripts\testmap.lua" />
     <None Include="assets\tilemaps\outdoor-sample-large.map" />
     <None Include="assets\tilemaps\charmap.json" />
     <None Include="libfreetype-6.dll" />
