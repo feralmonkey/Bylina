@@ -94,7 +94,7 @@ inline void RenderTextBox(entt::registry& registry, SDL_Renderer* renderer, SDL_
 					}
 					
 					textCounter++;
-					std::cout << "x, y, txtctr, char:" << x << "," << y << "," << textCounter << "," << character << std::endl;
+					/*std::cout << "x, y, txtctr, char:" << x << "," << y << "," << textCounter << "," << character << std::endl;*/
 					std::string charValue = unorderedMap[std::string(1, character)];
 
 					int valueY = std::stoi(std::string(1, charValue[0]), nullptr, 16);

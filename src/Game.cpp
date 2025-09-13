@@ -84,6 +84,11 @@ void Game::Initialize() {
 	camera.h = logicalHeight;
 
 	SDL_SetWindowFullscreen(window, 0);
+
+	// configure lua
+	lua.open_libraries(sol::lib::base, sol::lib::math, sol::lib::table, sol::lib::string);
+	spdlog::info("lua state created");
+
 	gameIsRunning = true;
 }
 
