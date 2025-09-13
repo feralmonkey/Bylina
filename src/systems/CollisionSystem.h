@@ -6,11 +6,12 @@
 #include "../components/BoxColliderComponent.h"
 #include "../components/TransformComponent.h"
 
-inline void AnimationSystem(entt::registry& reg, std::unique_ptr<EventBus>& eventBus) {
-	auto view = reg.view<BoxColliderComponent, TransformComponent>();
-	for (auto entity : view) {
-
-			bool hasCollided;
+inline void BlankSystem(){}
+//inline void AnimationSystem(entt::registry& reg) {
+//	auto view = reg.view<BoxColliderComponent, TransformComponent>();
+//	for (auto entity : view) {
+//
+//			bool hasCollided;
 			// TODO RIGOLO - NEED A SECOND VECTOR OF ENTITIES AND A BLANK VECTOR
 			//std::vector<Entity> entities = GetSystemEntities();
 			//std::vector<Entity> processedEntities;
@@ -44,5 +45,5 @@ inline void AnimationSystem(entt::registry& reg, std::unique_ptr<EventBus>& even
 			//		}
 			//	}
 			//}
-		}
-}
+//		}
+//}

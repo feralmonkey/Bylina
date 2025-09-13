@@ -33,3 +33,6 @@ Thumbs.db
 *.tlog/
 /x64/
 x64/
+
+# DEE
+*.snuts

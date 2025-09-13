@@ -1,11 +1,10 @@
 #pragma once
 #include "../src/assetstore/AssetStore.h"
-#include "../src/events/EventBus.h"
 #include "systems/ScriptSystem.h"
+#include "systems/KeyboardControlSystem.h"
 #include <SDL.h>
 #include <sol/sol.hpp>
 #include <entt.hpp>
-#include <fstream>
 
 const int FPS = 60;
 const int MILLISECS_PER_FRAME = 1000 / FPS;
@@ -21,7 +20,6 @@ private:
 	sol::state lua;
 	
 	std::unique_ptr<AssetStore> assetStore;
-	std::unique_ptr<EventBus> eventBus;
 	std::unique_ptr<ScriptSystem> scriptSystem;
 
 public:
@@ -35,7 +33,9 @@ public:
 	void Render();
 	void Destroy();
 
-	entt::registry registry; // on the fence about exposing this as public
+	entt::registry registry; // on the fence about exposing these as public
+	entt::dispatcher dispatcher;
+	KeyboardControlSystem keyboardSystem;
 
 	static int windowScale;
 	static int logicalWidth;

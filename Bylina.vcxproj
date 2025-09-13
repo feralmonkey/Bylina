@@ -147,6 +147,7 @@
     <None Include="zlib1.dll" />
   </ItemGroup>
   <ItemGroup>
+    <Text Include="documentation.txt" />
     <Text Include="x64\Debug\Bylina.log" />
   </ItemGroup>
   <ItemGroup>
@@ -170,8 +171,6 @@
     <ClInclude Include="src\Game.h" />
     <ClInclude Include="src\assetstore\AssetStore.h" />
     <ClInclude Include="src\events\CollisionEvent.h" />
-    <ClInclude Include="src\events\Event.h" />
-    <ClInclude Include="src\events\EventBus.h" />
     <ClInclude Include="src\events\KeyPressedEvent.h" />
     <ClInclude Include="src\systems\AnimationSystem.h" />
     <ClInclude Include="src\systems\CameraMovementSystem.h" />

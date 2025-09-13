@@ -7,6 +7,7 @@
 #include "components/PlayerComponent.h"
 #include "components/TextComponent.h"
 #include "components/CameraFollowComponent.h"
+#include "events/KeyPressedEvent.h"
 #include "systems/RenderSystem.h"
 #include "systems/AnimationSystem.h"
 #include "events/KeyPressedEvent.h"
@@ -23,13 +24,13 @@ int Game::windowScale;
 int Game::mapWidth;
 int Game::mapHeight;
 
-Game::Game() {
+Game::Game() : keyboardSystem(registry, dispatcher)
+{
 	spdlog::info("Game constructor called!");
 	Game::gameIsRunning = false;
 	debugMode = false;
 
 	assetStore = std::make_unique<AssetStore>();
-	eventBus = std::make_unique<EventBus>();
 	scriptSystem = std::make_unique<ScriptSystem>();
 }
 
@@ -82,7 +83,7 @@ void Game::Initialize() {
 	// initialize the camera view with the whole screen area
 	camera.x = 0;
 	camera.y = 0;
-	camera.w = logicalWidth;  // might have to factor in the multiplier here TODO RIGOLO
+	camera.w = logicalWidth;
 	camera.h = logicalHeight;
 
 	SDL_SetWindowFullscreen(window, 0);
@@ -143,11 +144,7 @@ void Game::ProcessInput() {
 				spdlog::info("action button pressed");
 				RenderTextBox(registry, renderer, camera, assetStore);
 			}
-			if (sdlEvent.key.keysym.sym == SDLK_z) {
-				spdlog::info("cancel button pressed");
-				ClearTextBox(registry);
-			}
-			KeyboardControlSystem(sdlEvent, registry);
+			dispatcher.enqueue<KeyPressedEvent>({ sdlEvent });
 			break;
 		}
 	}
@@ -169,23 +166,10 @@ void Game::Update() {
 	// store the current frame time
 	millisecondsPreviousFrame = SDL_GetTicks();
 
-	// reset all event handlers for current frame
-	eventBus->Reset();
-
+	dispatcher.update(); // TODO RIGOLO - Not sure if this is the best spot to call the dispatchers update method : keep an eye on this
 	AnimationSystem(registry);
 	MovementSystem(registry, deltaTime);
 	CameraMovementSystem(registry, camera); // TODO RIGOLO - SHOULD THIS BE HERE OR IN THE RENDERING SECTION?
-
-	/* -- todo rigolo change update and subscription systems
-	// perform the subscription of events of all systems
-	registry.GetSystem<MovementSystem>().SubscribeToEvents(eventBus);
-
-	// update systems
-	registry.GetSystem<MovementSystem>().Update(deltaTime);
-	registry.GetSystem<CollisionSystem>().Update(eventBus);
-	registry.GetSystem<CameraMovementSystem>().Update(camera);
-	registry.GetSystem<ScriptSystem>().Update(deltaTime, SDL_GetTicks());
-	*/
 }
 
 void Game::Render() {

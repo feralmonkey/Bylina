@@ -1,0 +1,19 @@
+Documentation
+
+
+Tagging
+=======
+1. Create an empty struct in TagComponents.h
+	e.g
+		struct PlayerTag {};
+2. Add emplacement logic in MapLoader.cpp
+			// Player Tag
+			sol::optional<sol::table> player_tag = entity["components"]["player_tag"];
+			if (player_tag) {
+				registry.emplace<PlayerTag>(newEntity);
+			}
+3. To tag an entity in lua:
+            components = {
+                player_tag = {},
+				other_component {
+					...

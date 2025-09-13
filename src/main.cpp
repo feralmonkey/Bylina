@@ -7,7 +7,6 @@
 #include <iostream>
 #include <spdlog/spdlog.h>
 #include "assetstore/AssetStore.h"
-#include "events/EventBus.h"
 #include "../src/systems/AnimationSystem.h"
 #include "../src/systems/CameraMovementSystem.h"
 #include "../src/systems/CollisionSystem.h"

@@ -1,6 +1,5 @@
 #pragma once
 
-#include "../events/EventBus.h"
 #include "../events/CollisionEvent.h"
 #include "../components/KeyboardControlComponent.h"
 #include "../components/SpriteComponent.h"
