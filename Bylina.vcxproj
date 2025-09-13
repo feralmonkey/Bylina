@@ -135,7 +135,7 @@
     <None Include="assets\tilemaps\charmap.json" />
     <None Include="libfreetype-6.dll" />
     <None Include="lua53.dll" />
-    <None Include="scripts\init.lua" />
+    <None Include="assets\scripts\init.lua" />
     <None Include="SDL2.dll" />
     <None Include="SDL2_image.dll" />
     <None Include="SDL2_mixer.dll" />
@@ -154,6 +154,7 @@
     <Object Include="x64\Debug\Main.obj" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\MapLoader.h" />
     <ClInclude Include="libs\nlohmann\json.hpp" />
     <ClInclude Include="src\components\AnimationComponent.h" />
     <ClInclude Include="src\components\BoxColliderComponent.h" />
@@ -172,7 +173,6 @@
     <ClInclude Include="src\events\Event.h" />
     <ClInclude Include="src\events\EventBus.h" />
     <ClInclude Include="src\events\KeyPressedEvent.h" />
-    <ClInclude Include="src\systems.hpp" />
     <ClInclude Include="src\systems\AnimationSystem.h" />
     <ClInclude Include="src\systems\CameraMovementSystem.h" />
     <ClInclude Include="src\systems\CollisionSystem.h" />
@@ -186,6 +186,7 @@
     <ClInclude Include="src\systems\ScriptSystem.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\MapLoader.cpp" />
     <ClCompile Include="src\Game.cpp" />
     <ClCompile Include="src\assetstore\AssetStore.cpp" />
     <ClCompile Include="src\main.cpp" />

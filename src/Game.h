@@ -1,6 +1,7 @@
 #pragma once
 #include "../src/assetstore/AssetStore.h"
 #include "../src/events/EventBus.h"
+#include "systems/ScriptSystem.h"
 #include <SDL.h>
 #include <sol/sol.hpp>
 #include <entt.hpp>
@@ -19,8 +20,9 @@ private:
 	SDL_Rect camera;
 	sol::state lua;
 	
-	std::unique_ptr<AssetStore> assetStore; // there may be an assetstore alternative in ett
-	std::unique_ptr<EventBus> eventBus; // there may be an event bus alternative in ett
+	std::unique_ptr<AssetStore> assetStore;
+	std::unique_ptr<EventBus> eventBus;
+	std::unique_ptr<ScriptSystem> scriptSystem;
 
 public:
 	Game();

@@ -1,10 +1,10 @@
 #include "Game.h"
+#include "MapLoader.h"
 #include "components/TransformComponent.h"
 #include "components/RigidBodyComponent.h"
 #include "components/SpriteComponent.h"
 #include "components/AnimationComponent.h"
 #include "components/PlayerComponent.h"
-#include "components/KeyboardControlComponent.h" // TODO RIGOLO - not sure that i need this
 #include "components/TextComponent.h"
 #include "components/CameraFollowComponent.h"
 #include "systems/RenderSystem.h"
@@ -14,6 +14,7 @@
 #include "systems/MovementSystem.h"
 #include "systems/RenderTextSystem.h"
 #include "systems/CameraMovementSystem.h"
+
 
 // initialize static member variables
 int Game::logicalWidth;
@@ -29,6 +30,7 @@ Game::Game() {
 
 	assetStore = std::make_unique<AssetStore>();
 	eventBus = std::make_unique<EventBus>();
+	scriptSystem = std::make_unique<ScriptSystem>();
 }
 
 Game::~Game() {
@@ -93,6 +95,15 @@ void Game::Initialize() {
 }
 
 void Game::Setup() {
+	// create the bindings between c++ and lua
+	scriptSystem->CreateLuaBindings(lua); //.CreateLuaBindings(lua);
+
+	// load first level
+	MapLoader loader;
+	lua.open_libraries(sol::lib::base, sol::lib::math, sol::lib::os);
+	std::string mapName = "init";
+	loader.LoadMap(lua, registry, assetStore, renderer, mapName);
+
 	// LOAD LEVEL
 	// Adding assets to the asset store
 	assetStore->AddTexture(renderer, "hero", "./assets/images/heroes.png");
@@ -102,7 +113,7 @@ void Game::Setup() {
 
 	// load the tilemap
 	int tileSize = 8;
-	double tileScale = 1.0;
+	int tileScale = 1;
 	int mapNumCols = 50;
 	int mapNumRows = 40;
 
@@ -147,15 +158,6 @@ void Game::Setup() {
 	entt::entity textBox = registry.create();
 	registry.emplace<TextComponent>(textBox,"Hey Everybody!/What's Up?", glm::vec2(3,11), 18, 8, false); // use default parameters for now
 
-	// create the bindings between c++ and lua
-	//registry.get<ScriptSystem>().CreateLuaBindings(lua); //GetSystem<ScriptSystem>().CreateLuaBindings(lua);
-
-	// load first level
-	/* todo rigolo change to entt logic
-	LevelLoader loader;
-	lua.open_libraries(sol::lib::base, sol::lib::math, sol::lib::os);
-	loader.LoadLevel(lua, registry, assetStore, renderer, 2);
-	*/ 
 }
 
 void Game::Run() {
@@ -245,14 +247,11 @@ void Game::Render() {
 
 	// Invoke all systems that need to render
 	RenderSystem(registry, renderer, camera, assetStore);
-	/* todo rigolo modify render update systems
-	registry.GetSystem<RenderTextSystem>().Update(renderer, assetStore, camera);
-
+	
 	// debugging collision detection
 	if (debugMode) {
-		registry.GetSystem<RenderColliderSystem>().Update(renderer, camera);
+	/*	registry.GetSystem<RenderColliderSystem>().Update(renderer, camera);*/
 	}
-	*/ 
  
 	//// Set logical size so our drawing uses NES-ish resolution regardless of window size
 	SDL_RenderSetLogicalSize(renderer, logicalWidth, logicalHeight);
