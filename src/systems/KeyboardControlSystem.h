@@ -7,13 +7,14 @@
 #include "../components/RigidBodyComponent.h"
 #include "../components/PlayerComponent.h"
 #include "../components/TransformComponent.h"
+#include "../components/TagComponents.h"
 #include "../events/KeyPressedEvent.h"
 
 
 inline void KeyboardControlSystem(const SDL_Event& e, entt::registry& reg) {
 
 	// only one entity should have the player component so just grab the first one and get the required components
-	auto view = reg.view<RigidBodyComponent, SpriteComponent, TransformComponent>();  // removed player component - will need to replace with a tag
+	auto view = reg.view<PlayerTag, RigidBodyComponent, SpriteComponent, TransformComponent>(); 
 	entt::entity player = view.front();
 
 	const TransformComponent transform = view.get<TransformComponent>(player);

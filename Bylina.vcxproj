@@ -131,7 +131,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <None Include=".gitignore" />
-    <None Include="assets\scripts\testmap.lua" />
     <None Include="assets\tilemaps\outdoor-sample-large.map" />
     <None Include="assets\tilemaps\charmap.json" />
     <None Include="libfreetype-6.dll" />
@@ -148,13 +147,13 @@
     <None Include="zlib1.dll" />
   </ItemGroup>
   <ItemGroup>
-    <Text Include="assets\tilemaps\outdoor-sample1.map" />
     <Text Include="x64\Debug\Bylina.log" />
   </ItemGroup>
   <ItemGroup>
     <Object Include="x64\Debug\Main.obj" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\components\TagComponents.h" />
     <ClInclude Include="src\MapLoader.h" />
     <ClInclude Include="libs\nlohmann\json.hpp" />
     <ClInclude Include="src\components\AnimationComponent.h" />
@@ -201,8 +200,6 @@
   </ItemGroup>
   <ItemGroup>
     <Font Include="assets\fonts\arial.ttf" />
-    <Font Include="assets\fonts\charriot.ttf" />
-    <Font Include="assets\fonts\pico8.ttf" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -12,6 +12,7 @@
 #include "../src/components/CameraFollowComponent.h"
 #include "../src/components/HealthComponent.h"
 #include "../src/components/ScriptComponent.h"
+#include "../src/components/TagComponents.h"
 
 MapLoader::MapLoader() {
 	spdlog::info("MapLoader constructer called");
@@ -261,6 +262,15 @@ void MapLoader::LoadMap(sol::state& lua, entt::registry& registry, const std::un
 				sol::function func = entity["components"]["on_update_script"][0];
 				registry.emplace<ScriptComponent>(newEntity, func);
 			}
+
+#pragma region Tags
+			// Player Tag
+			sol::optional<sol::table> player_tag = entity["components"]["player_tag"];
+			if (player_tag) {
+				registry.emplace<PlayerTag>(newEntity);
+			}
+#pragma endregion
+
 		}
 		i++;
 	}

@@ -33,6 +33,7 @@ Map = {
             -- Player
             tag = "hero",
             components = {
+                player_tag = {},
                 transform = {
                     position = { x = 32, y = 32 },
                     scale = { x = 1.0, y = 1.0 },
