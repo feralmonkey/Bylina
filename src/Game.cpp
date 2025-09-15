@@ -15,6 +15,7 @@
 #include "systems/MovementSystem.h"
 #include "systems/RenderTextSystem.h"
 #include "systems/CameraMovementSystem.h"
+#include <tinytmx.hpp>
 
 
 // initialize static member variables
