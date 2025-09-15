@@ -71,7 +71,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>libs\tinytmx\lib\include;libs;libs\spdlog;libs\entt;libs\sol;libs\lua;libs\sdl2\include;$(IncludePath)</IncludePath>
+    <IncludePath>libs;libs\spdlog;libs\entt;libs\sol;libs\lua;libs\sdl2\include;$(IncludePath)</IncludePath>
     <LibraryPath>libs\sdl2\lib\x64;libs\lua;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -108,12 +108,12 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
-      <AdditionalIncludeDirectories>D:\source\repos\vcpkg\installed\x64-windows\include;D:\source\repos\Bylina\Bylina\libs\tinytmx\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\source\repos\vcpkg\installed\x64-windows\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_ttf.lib;SDL2_mixer.lib;liblua53.a;tinyxml2.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_ttf.lib;SDL2_mixer.lib;liblua53.a;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>D:\source\repos\vcpkg\installed\x64-windows\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
@@ -135,6 +135,9 @@
     <None Include=".gitignore" />
     <None Include="assets\tilemaps\outdoor-sample-large.map" />
     <None Include="assets\tilemaps\charmap.json" />
+    <None Include="assets\tilemaps\village.map" />
+    <None Include="assets\tilemaps\village1.tmx" />
+    <None Include="external\tiled\tiled_to_map_converter.ps1" />
     <None Include="libfreetype-6.dll" />
     <None Include="lua53.dll" />
     <None Include="assets\scripts\init.lua" />

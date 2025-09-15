@@ -1,0 +1,90 @@
+{
+    "Map/SizeTest": {
+        "height": 4300,
+        "width": 2
+    },
+    "activeFile": "village1.json",
+    "expandedProjectPaths": [
+        "Bylina/assets/tilemaps",
+        "Bylina",
+        "tiled",
+        ".",
+        "Bylina/assets"
+    ],
+    "file.lastUsedOpenFilter": "All Files (*)",
+    "fileStates": {
+        "D:/source/repos/Bylina/tileset1.tsx": {
+            "scaleInDock": 1
+        },
+        "D:/source/repos/tileset1.tsx": {
+            "scaleInDock": 3,
+            "scaleInEditor": 1
+        },
+        "tiled/town_set.tsx": {
+            "scaleInDock": 2,
+            "scaleInEditor": 1
+        },
+        "tiled/village1.tmx": {
+            "scale": 1.669921875,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 255.70058479532167,
+                "y": 284.44444444444446
+            }
+        },
+        "town1.tmx": {
+            "scale": 1.669921875,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 188.03274853801173,
+                "y": 255.70058479532167
+            }
+        },
+        "town_set.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "village1.json": {
+            "scale": 1.669921875,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 255.70058479532167,
+                "y": 176.65497076023394
+            }
+        },
+        "village1.tmx": {
+            "scale": 1.669921875,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 255.70058479532167,
+                "y": 255.70058479532165
+            }
+        }
+    },
+    "last.exportedFilePath": "D:/source/repos/Bylina/tiled",
+    "last.imagePath": "D:/source/repos/Bylina/Bylina/assets/images",
+    "map.height": 64,
+    "map.lastUsedExportFilter": "CSV files (*.csv)",
+    "map.lastUsedFormat": "json",
+    "map.tileHeight": 8,
+    "map.tileWidth": 8,
+    "map.width": 64,
+    "openFiles": [
+        "town_set.tsx",
+        "village1.json"
+    ],
+    "project": "bylina-map.tiled-project",
+    "recentFiles": [
+        "town_set.tsx",
+        "village1.json",
+        "town1.tmx",
+        "tiled/village1.tmx",
+        "tiled/town_set.tsx",
+        "D:/source/repos/tileset1.tsx"
+    ],
+    "tileset.lastUsedFormat": "tsx",
+    "tileset.tileSize": {
+        "height": 8,
+        "width": 8
+    }
+}

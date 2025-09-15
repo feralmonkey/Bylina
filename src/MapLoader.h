@@ -1,5 +1,4 @@
 #pragma once
-
 #include <entt.hpp>
 #include "../src/assetstore/AssetStore.h"
 #include <SDL.h>

@@ -10,12 +10,10 @@
 #include "events/KeyPressedEvent.h"
 #include "systems/RenderSystem.h"
 #include "systems/AnimationSystem.h"
-#include "events/KeyPressedEvent.h"
 #include "systems/KeyboardControlSystem.h"
 #include "systems/MovementSystem.h"
 #include "systems/RenderTextSystem.h"
 #include "systems/CameraMovementSystem.h"
-#include <tinytmx.hpp>
 
 
 // initialize static member variables

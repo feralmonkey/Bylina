@@ -7,7 +7,7 @@ Map = {
     ----------------------------------------------------
     assets = {
         [0] =
-        { type = "texture", id = "outdoor-tiles",               file = "./assets/images/outdoor_tiles.png" },
+        { type = "texture", id = "outdoor-tiles",               file = "./assets/images/town_tiles.png" },
         { type = "texture", id = "hero-tiles",                  file = "./assets/images/heroes.png" },  
         { type = "texture", id = "character-tiles",             file = "./assets/images/character_tiles.png" }
     },
@@ -15,11 +15,11 @@ Map = {
     ----------------------------------------------------
     -- table to define the map config variables
     ----------------------------------------------------
-    tilemap = {  -- TODO RIGOLO - Something is breaking here
-        map_file = "./assets/tilemaps/outdoor-sample-large.map",
+    tilemap = {
+        map_file = "./assets/tilemaps/village.map",
         texture_asset_id = map_texture_asset_id,
-        num_rows = 40,
-        num_cols = 50,
+        num_rows = 64,
+        num_cols = 64,
         tile_size = 8,
         scale = 1.0
     },
@@ -78,21 +78,6 @@ Map = {
 --map_width = Level.tilemap.num_cols * Level.tilemap.tile_size * Level.tilemap.scale
 --map_height = Level.tilemap.num_rows * Level.tilemap.tile_size * Level.tilemap.scale
 
-
-
-
--- rigolo - cut everything below here...
--- this is a lua table that contain initializeion values for the game engine
---
---config = {
---	title = "Test Game Engine",
---	fullscreen = false,
---	resolution = {
-		--width = 800,
-		--height = 600
-	--}
---}
-
 -- this is a lua function that calculates the factorial of a given number
 function factorial(n)
 	if n == 1 then
@@ -100,5 +85,3 @@ function factorial(n)
 	end
 	return n * factorial(n - 1)
 end
-
-print("Hi guys");
