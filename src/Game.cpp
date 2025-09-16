@@ -105,7 +105,7 @@ void Game::Setup() {
 	loader.LoadMap(lua, registry, assetStore, renderer, mapName);
 
 	entt::entity textBox = registry.create();
-	registry.emplace<TextComponent>(textBox,"Hey Everybody!/What's Up?", glm::vec2(3,11), 18, 8, false); // use default parameters for now
+	registry.emplace<TextComponent>(textBox,"Hey Everybody!/What's Up?", 18, 8, 32, 128, true);
 }
 
 void Game::Run() {

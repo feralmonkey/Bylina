@@ -9,20 +9,26 @@
 #include "../components/TextComponent.h"
 
 inline void DrawChar(entt::registry& registry, int srcx, int srcy, int dstx, int dsty) {
-	int tileScale = 1;
-	int tileSize = 8;
+	const int tileScale = 1;
+	const int tileSize = 8;
+
+	std::cout << "dstx, dsty: " << dstx << " , " << dsty << std::endl;
 
 	entt::entity textWindow = registry.create();
-	registry.emplace<TransformComponent>(textWindow, glm::vec2(dstx * (tileScale * tileSize), dsty * (tileScale * tileSize)), glm::vec2(tileScale, tileScale), 0.0);
-	registry.emplace<SpriteComponent>(textWindow, "character-tiles", tileSize, tileSize, 10, false, srcx, srcy); 
+	registry.emplace<SpriteComponent>(textWindow, "character-tiles", tileSize, tileSize, 10, false, srcx, srcy);
+	registry.emplace<TransformComponent>(textWindow, glm::vec2(dstx * (tileScale), dsty * (tileScale)), glm::vec2(tileScale, tileScale), 0.0);
 }
 
 inline void RenderTextBox(entt::registry& registry, SDL_Renderer* renderer, SDL_Rect camera, std::unique_ptr<AssetStore>& assetStore) {
+	constexpr int tileSize = 8;
+
 	auto view = registry.view<TextComponent>();
 
 	// TODO RIGOLO - may not actually need a loop here if there will only be one entity at a time with a TextComponent. 
 	for (auto entity : view) {
-		const auto& textLabel = view.get<TextComponent>(entity);
+		const auto textLabel = view.get<TextComponent>(entity);
+		
+		std::cout << "camera x,y: " << camera.x << "," << camera.y << std::endl;
 
 		std::ifstream charMap("./assets/tilemaps/charMap.json");
 		if (!charMap.is_open()) {
@@ -40,25 +46,25 @@ inline void RenderTextBox(entt::registry& registry, SDL_Renderer* renderer, SDL_
 		}
 
 		// get the first character and convert hex character to integer
-		int x = textLabel.position.x;
-		int y = textLabel.position.y;
+		int x = camera.x + textLabel.xOffset;
+		int y = camera.y + textLabel.yOffset;
 
 		// draw top left corner
 		DrawChar(registry, 0, 0, x, y);
-		x++;
+		x += tileSize;
 
 		// draw top border
 		for (int i = 1; i < textLabel.width; i++) {
 			DrawChar(registry, 32, 0, x, y);
-			x++;
+			x += tileSize;
 		}
 
 		// draw top right corner
 		DrawChar(registry, 8, 0, x, y);
 		
 		// reset values for next line
-		x = textLabel.position.x;
-		y++;
+		x = camera.x + textLabel.xOffset;
+		y += tileSize;
 
 
 		// draw text rows
@@ -66,7 +72,8 @@ inline void RenderTextBox(entt::registry& registry, SDL_Renderer* renderer, SDL_
 		bool pauseLine;
 		for (int i = 1; i < textLabel.height - 1; i++) {
 			// left border
-			DrawChar(registry, 48, 0, x++, y);
+			DrawChar(registry, 48, 0, x, y);
+			x += tileSize;
 			pauseLine = false;
 
 			// draw characters
@@ -80,7 +87,8 @@ inline void RenderTextBox(entt::registry& registry, SDL_Renderer* renderer, SDL_
 					if (character == '/'){
 						if (j > 1) {
 							pauseLine = true;
-							DrawChar(registry, 88, 24, x++, y);
+							DrawChar(registry, 88, 24, x, y);
+							x += tileSize;
 							textCounter++;
 							continue;
 						}
@@ -89,45 +97,47 @@ inline void RenderTextBox(entt::registry& registry, SDL_Renderer* renderer, SDL_
 						}
 					}
 					if (pauseLine) {
-						DrawChar(registry, 88, 24, x++, y);
+						DrawChar(registry, 88, 24, x, y);
+						x += tileSize;
 						continue;
 					}
 					
 					textCounter++;
-					/*std::cout << "x, y, txtctr, char:" << x << "," << y << "," << textCounter << "," << character << std::endl;*/
 					std::string charValue = unorderedMap[std::string(1, character)];
 
 					int valueY = std::stoi(std::string(1, charValue[0]), nullptr, 16);
-					int srcRectY = valueY * 8;  // 8 is tileSize - if I classify this, make it a private class member
+					int srcRectY = valueY * tileSize;
 
 					// get second character and convert
-
 					int valueX = std::stoi(std::string(1, charValue[1]), nullptr, 16);
-					int srcRectX = valueX * 8;  // 8 is tileSize - if I classify this, make it a private class member
+					int srcRectX = valueX * tileSize;
 
-					DrawChar(registry, srcRectX, srcRectY, x++, y);
+					DrawChar(registry, srcRectX, srcRectY, x, y);
+					x += tileSize;
 				}
 				else {
-					DrawChar(registry, 88, 24, x++, y);
+					DrawChar(registry, 88, 24, x, y);
+					x += tileSize;
 				} 
 			}
 
 			// right border
-			DrawChar(registry, 56, 0, x, y++);
+			DrawChar(registry, 56, 0, x, y);
+			y += tileSize;
 
 			// reset values for next line
-			x = textLabel.position.x;
+			x = camera.x + textLabel.xOffset;
 			pauseLine = false;
 		}
 
 		// draw bottom left corner
 		DrawChar(registry, 16, 0, x, y);
-		x++;
+		x += tileSize;
 
 		// draw bottom border
 		for (int i = 1; i < textLabel.width; i++) {
 			DrawChar(registry, 40, 0, x, y);
-			x++;
+			x += tileSize;
 		}
 
 		//// draw bottom right corner

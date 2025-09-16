@@ -3,12 +3,11 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "village1.json",
+    "activeFile": "village1.tmx",
     "expandedProjectPaths": [
-        "Bylina/assets/tilemaps",
         "Bylina",
+        "Bylina/assets/tilemaps",
         "tiled",
-        ".",
         "Bylina/assets"
     ],
     "file.lastUsedOpenFilter": "All Files (*)",
@@ -49,7 +48,7 @@
             "selectedLayer": 0,
             "viewCenter": {
                 "x": 255.70058479532167,
-                "y": 176.65497076023394
+                "y": 176.6549707602339
             }
         },
         "village1.tmx": {
@@ -57,7 +56,7 @@
             "selectedLayer": 0,
             "viewCenter": {
                 "x": 255.70058479532167,
-                "y": 255.70058479532165
+                "y": 255.70058479532167
             }
         }
     },
@@ -71,12 +70,14 @@
     "map.width": 64,
     "openFiles": [
         "town_set.tsx",
-        "village1.json"
+        "village1.json",
+        "village1.tmx"
     ],
     "project": "bylina-map.tiled-project",
     "recentFiles": [
         "town_set.tsx",
         "village1.json",
+        "village1.tmx",
         "town1.tmx",
         "tiled/village1.tmx",
         "tiled/town_set.tsx",
