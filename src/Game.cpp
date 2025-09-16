@@ -105,7 +105,7 @@ void Game::Setup() {
 	loader.LoadMap(lua, registry, assetStore, renderer, mapName);
 
 	entt::entity textBox = registry.create();
-	registry.emplace<TextComponent>(textBox,"Hey Everybody!/What's Up?", 18, 8, 32, 128, true);
+	registry.emplace<TextComponent>(textBox,"Hello World!/Love You!", 18, 8, 32, 160, true);
 }
 
 void Game::Run() {
@@ -141,7 +141,7 @@ void Game::ProcessInput() {
 			}
 			if (sdlEvent.key.keysym.sym == SDLK_x) {
 				spdlog::info("action button pressed");
-				RenderTextBox(registry, renderer, camera, assetStore);
+				textSystem.RenderTextBox(registry, renderer, camera, assetStore);
 			}
 			dispatcher.enqueue<KeyPressedEvent>({ sdlEvent });
 			break;

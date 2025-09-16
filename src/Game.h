@@ -2,6 +2,7 @@
 #include "../src/assetstore/AssetStore.h"
 #include "systems/ScriptSystem.h"
 #include "systems/KeyboardControlSystem.h"
+#include "systems/RenderTextSystem.h"
 #include <SDL.h>
 #include <sol/sol.hpp>
 #include <entt.hpp>
@@ -36,6 +37,7 @@ public:
 	entt::registry registry; // on the fence about exposing these as public
 	entt::dispatcher dispatcher;
 	KeyboardControlSystem keyboardSystem;
+	RenderTextSystem textSystem;
 
 	static int windowScale;
 	static int logicalWidth;
