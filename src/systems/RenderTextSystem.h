@@ -10,28 +10,26 @@
 
 class RenderTextSystem {
 
-private:
 	int tileScale = 1;
 	int tileSize = 8;
 
+public:
 	void DrawChar(entt::registry& registry, int srcx, int srcy, int dstx, int dsty) {
 		//std::cout << "dstx, dsty: " << dstx << " , " << dsty << std::endl;
 		entt::entity textWindow = registry.create();
 		registry.emplace<SpriteComponent>(textWindow, "character-tiles", tileSize, tileSize, 10, false, srcx, srcy);
 		registry.emplace<TransformComponent>(textWindow, glm::vec2(dstx * (tileScale), dsty * (tileScale)), glm::vec2(tileScale, tileScale), 0.0);
+		registry.emplace<SpriteTag>(textWindow);
 	}
 
 	// TODO RIGOLO - THIS ISN'T EVEN CLOSE TO WORKING YET
 	inline void ClearTextBox(entt::registry& registry) {
-		auto view = registry.view<TextComponent>();
+		auto view = registry.view<SpriteTag>();
 		for (auto entity : view) {
-			if (auto* textBox = registry.try_get<TextComponent>(entity)) {
-				registry.destroy(entity);
-			}
+			registry.destroy(entity);
 		}
 	}
 
-public:
 	RenderTextSystem(int tileScale = 1, int tileSize = 8) {
 		this->tileScale = tileScale;
 		this->tileSize = tileSize;
@@ -43,7 +41,7 @@ public:
 		// TODO RIGOLO - may not actually need a loop here if there will only be one entity at a time with a TextComponent. 
 		for (auto entity : view) {
 			const auto textLabel = view.get<TextComponent>(entity);
-
+			
 			//std::cout << "camera x,y: " << camera.x << "," << camera.y << std::endl;
 
 			std::ifstream charMap("./assets/tilemaps/charMap.json");

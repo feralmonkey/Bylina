@@ -143,6 +143,10 @@ void Game::ProcessInput() {
 				spdlog::info("action button pressed");
 				textSystem.RenderTextBox(registry, renderer, camera, assetStore);
 			}
+			if (sdlEvent.key.keysym.sym == SDLK_z) {
+				spdlog::info("cancel button pressed");
+				textSystem.ClearTextBox(registry);
+			}
 			dispatcher.enqueue<KeyPressedEvent>({ sdlEvent });
 			break;
 		}

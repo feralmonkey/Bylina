@@ -3,3 +3,4 @@
 #include <SDL.h>
 
 struct PlayerTag {};
+struct SpriteTag {};
