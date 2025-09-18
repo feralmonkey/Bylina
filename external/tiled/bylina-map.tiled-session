@@ -60,10 +60,10 @@
             }
         }
     },
-    "last.exportedFilePath": "D:/source/repos/Bylina/tiled",
+    "last.exportedFilePath": "D:/source/repos/Bylina/Bylina/external/tiled",
     "last.imagePath": "D:/source/repos/Bylina/Bylina/assets/images",
     "map.height": 64,
-    "map.lastUsedExportFilter": "CSV files (*.csv)",
+    "map.lastUsedExportFilter": "Tiled map files (*.tmx *.xml)",
     "map.lastUsedFormat": "json",
     "map.tileHeight": 8,
     "map.tileWidth": 8,

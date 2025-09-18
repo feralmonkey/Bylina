@@ -17,8 +17,8 @@ inline void RenderColliderSystem(entt::registry& reg, SDL_Renderer* renderer, SD
 		SDL_Rect collisionRect = {
 			transform.position.x + collider.offset.x - camera.x,
 			transform.position.y + collider.offset.y - camera.y,
-			collider.width * transform.scale.x,
-			collider.height * transform.scale.y };
+			collider.size.x * transform.scale.x,
+			collider.size.y * transform.scale.y };
 		SDL_RenderDrawRect(renderer, &collisionRect);
 	}
 }

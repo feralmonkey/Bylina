@@ -3,10 +3,10 @@ Documentation
 
 Tagging
 =======
-1. Create an empty struct in TagComponents.h
+1. Create an empty struct in TagComponents.h:
 	e.g
 		struct PlayerTag {};
-2. Add emplacement logic in MapLoader.cpp
+2. Add emplacement logic in MapLoader.cpp:
 			// Player Tag
 			sol::optional<sol::table> player_tag = entity["components"]["player_tag"];
 			if (player_tag) {
@@ -17,3 +17,20 @@ Tagging
                 player_tag = {},
 				other_component {
 					...
+
+Events
+======
+1. Create an event struct in the correct folder:
+	e.g. 
+		struct CollisionEvent { int entity_a; int entity_b; };
+2. When something happens in the system, dispatch an event:
+	e.g.
+		void MovementSystem(ent::registry& reg, entt::dispatcher& dispatcher) {
+			... // do stuff
+			dispatcher.trigger<MovementEvent>(x, y);
+3. Listen for the event:
+	e.g.
+			void setupEventListeners(entt::dispatcher& dispatcher) {
+			dispatcher.sink<PlayerMovedEvent>().connect<&onPlayerMoved>();
+		}
+

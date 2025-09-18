@@ -137,6 +137,7 @@
     <None Include="assets\tilemaps\charmap.json" />
     <None Include="assets\tilemaps\village.map" />
     <None Include="assets\tilemaps\village1.tmx" />
+    <None Include="assets\tilemaps\villagec.map" />
     <None Include="external\tiled\tiled_to_map_converter.ps1" />
     <None Include="libfreetype-6.dll" />
     <None Include="lua53.dll" />

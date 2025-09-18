@@ -1,8 +1,10 @@
 #pragma once
 #include "../src/assetstore/AssetStore.h"
 #include "systems/ScriptSystem.h"
+#include "systems/CollisionSystem.h"
 #include "systems/KeyboardControlSystem.h"
 #include "systems/RenderTextSystem.h"
+#include "systems/MovementSystem.h"
 #include <SDL.h>
 #include <sol/sol.hpp>
 #include <entt.hpp>
@@ -38,6 +40,8 @@ public:
 	entt::dispatcher dispatcher;
 	KeyboardControlSystem keyboardSystem;
 	RenderTextSystem textSystem;
+	MovementSystem movementSystem;
+	CollisionSystem collisionSystem;
 
 	static int windowScale;
 	static int logicalWidth;

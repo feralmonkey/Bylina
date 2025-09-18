@@ -16,7 +16,7 @@ Map = {
     -- table to define the map config variables
     ----------------------------------------------------
     tilemap = {
-        map_file = "./assets/tilemaps/village.map",
+        map_file = "./assets/tilemaps/villagec.map",
         texture_asset_id = map_texture_asset_id,
         num_rows = 64,
         num_cols = 64,
@@ -35,7 +35,7 @@ Map = {
             components = {
                 player_tag = {},
                 transform = {
-                    position = { x = 32, y = 32 },
+                    position = { x = 48, y = 48 },
                     scale = { x = 1.0, y = 1.0 },
                     rotation = 0.0, -- degrees
                 },
@@ -55,11 +55,11 @@ Map = {
                     num_frames = 2,
                     speed_rate = 4 -- fps
                 },
-                --boxcollider = {
-                    --width = 32,
-                    --height = 25,
-                    --offset = { x = 0, y = 5 }
-                --},
+                boxcollider = {
+                    width = 16,
+                    height = 16,
+                    offset = { x = 0, y = 0 }
+                },
                 --keyboard_controller = {
                     --up_velocity = { x = 0, y = -50 },
                     --right_velocity = { x = 50, y = 0 },

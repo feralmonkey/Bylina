@@ -1,49 +1,121 @@
 #pragma once
 
-#include <SDL.h>
-#include "entt.hpp"
+#include <entt.hpp>
 #include <spdlog/spdlog.h>
 #include "../components/BoxColliderComponent.h"
 #include "../components/TransformComponent.h"
+#include "../components/RigidBodyComponent.h"
+#include "../events/CollisionEvent.h"
 
-inline void BlankSystem(){}
-//inline void AnimationSystem(entt::registry& reg) {
-//	auto view = reg.view<BoxColliderComponent, TransformComponent>();
-//	for (auto entity : view) {
-//
-//			bool hasCollided;
-			// TODO RIGOLO - NEED A SECOND VECTOR OF ENTITIES AND A BLANK VECTOR
-			//std::vector<Entity> entities = GetSystemEntities();
-			//std::vector<Entity> processedEntities;
+class CollisionSystem {
+private:
+	entt::registry& registry;
+	entt::dispatcher& dispatcher;
+	int tileSize;
 
-			//for (int i = 0; i < entities.size(); i++) {
-			//	for (int j = i + 1; j < entities.size(); j++) {
+public:
+	CollisionSystem(entt::registry& reg, entt::dispatcher& dis, int tileSize) 
+		: registry(reg), dispatcher(dis), tileSize(tileSize)   {}
+	
+	void Update(int mapWidth, int mapHeight) {
+		int mapCols = mapWidth / tileSize;
+		int mapRows = mapHeight / tileSize;
 
-			//		auto offset1 = entities[i].GetComponent<BoxColliderComponent>().offset;
-			//		auto offset2 = entities[j].GetComponent<BoxColliderComponent>().offset;
-			//		
-			//		int left1 = entities[i].GetComponent<TransformComponent>().position.x + offset1.x;
-			//		int right1 = entities[i].GetComponent<TransformComponent>().position.x + offset1.x + entities[i].GetComponent<BoxColliderComponent>().width;
-			//		int top1 = entities[i].GetComponent<TransformComponent>().position.y + offset1.y;
-			//		int bottom1 = entities[i].GetComponent<TransformComponent>().position.y + offset1.y + entities[i].GetComponent<BoxColliderComponent>().height;
 
-			//		int left2 = entities[j].GetComponent<TransformComponent>().position.x + offset2.x;
-			//		int right2 = entities[j].GetComponent<TransformComponent>().position.x + offset2.x +  entities[j].GetComponent<BoxColliderComponent>().width;
-			//		int top2 = entities[j].GetComponent<TransformComponent>().position.y + offset2.y;
-			//		int bottom2 = entities[j].GetComponent<TransformComponent>().position.y + offset2.y + entities[j].GetComponent<BoxColliderComponent>().height;
+		// Grid (each cell contains entities)
+		std::vector<std::vector<std::vector<entt::entity>>> grid(
+			mapRows, std::vector<std::vector<entt::entity>>(mapCols)
+		);
 
-			//		// check to see if a collision has occured
-			//		if (right1 >= left2 && left1 <= right2 && bottom1 >= top2 && top1 <= bottom2) {
-			//			
-			//			// for logging - causes a lot of noise otherwise
-			//			//spdlog::info("Entity " + std::to_string(entities[i].GetId()) + " is colliding with " + std::to_string(entities[j].GetId()));
+		auto view = registry.view<BoxColliderComponent, TransformComponent>();
 
-			//			processedEntities.emplace_back(entities[i]);
-			//			processedEntities.emplace_back(entities[j]);
-			//			
-			//			eventBus->EmitEvent<CollisionEvent>(entities[i], entities[j]);
-			//		}
-			//	}
-			//}
-//		}
-//}
+
+		// Insert entities into the grid
+		for (auto entity : view) {
+			const auto& transform = view.get<TransformComponent>(entity);
+			const auto& collider = view.get<BoxColliderComponent>(entity);
+
+			glm::vec2 pos = transform.position + collider.offset;
+			glm::vec2 size = collider.size;
+
+			int startCol = static_cast<int>(pos.x) / tileSize;
+			int startRow = static_cast<int>(pos.y) / tileSize;
+			int endCol = static_cast<int>(pos.x + size.x) / tileSize;
+			int endRow = static_cast<int>(pos.y + size.y) / tileSize;
+
+			startCol = std::max(0, startCol);
+			startRow = std::max(0, startRow);
+			endCol = std::min(mapCols - 1, endCol);
+			endRow = std::min(mapRows - 1, endRow);
+
+			for (int r = startRow; r <= endRow; ++r) {
+				for (int c = startCol; c <= endCol; ++c) {
+					grid[r][c].push_back(entity);
+				}
+			}
+		}
+
+		// Check collisions inside each tile
+		for (int r = 0; r < mapRows; ++r) {
+			for (int c = 0; c < mapCols; ++c) {
+				auto& cellEntities = grid[r][c];
+
+				for (size_t i = 0; i < cellEntities.size(); ++i) {
+					auto entityA = cellEntities[i];
+					const auto& transformA = view.get<TransformComponent>(entityA);
+					const auto& colliderA = view.get<BoxColliderComponent>(entityA);
+					glm::vec2 posA = transformA.position + colliderA.offset;
+					glm::vec2 sizeA = colliderA.size;
+
+					for (size_t j = i + 1; j < cellEntities.size(); ++j) {
+						auto entityB = cellEntities[j];
+						const auto& transformB = view.get<TransformComponent>(entityB);
+						const auto& colliderB = view.get<BoxColliderComponent>(entityB);
+						glm::vec2 posB = transformB.position + colliderB.offset;
+						glm::vec2 sizeB = colliderB.size;
+
+						bool collided =
+							posA.x < posB.x + sizeB.x &&
+							posA.x + sizeA.x > posB.x &&
+							posA.y < posB.y + sizeB.y &&
+							posA.y + sizeA.y > posB.y;
+
+						if (collided) {
+							// --- Resolve overlap ---
+							glm::vec2 overlap(
+								std::min(posA.x + sizeA.x, posB.x + sizeB.x) - std::max(posA.x, posB.x),
+								std::min(posA.y + sizeA.y, posB.y + sizeB.y) - std::max(posA.y, posB.y)
+							);
+
+							if (overlap.x < overlap.y) {
+								// Push along X axis
+								if (posA.x < posB.x) {
+									registry.get<TransformComponent>(entityA).position.x -= overlap.x;
+								}
+								else {
+									registry.get<TransformComponent>(entityA).position.x += overlap.x;
+								}
+							}
+							else {
+								// Push along Y axis
+								if (posA.y < posB.y) {
+									registry.get<TransformComponent>(entityA).position.y -= overlap.y;
+								}
+								else {
+									registry.get<TransformComponent>(entityA).position.y += overlap.y;
+								}
+							}
+
+							// Stop velocity if entity has one
+							if (registry.any_of<RigidBodyComponent>(entityA)) {
+								registry.get<RigidBodyComponent>(entityA).velocity = { 0, 0 };
+							}
+
+							dispatcher.enqueue<CollisionEvent>({ entityA, entityB });
+						}
+					}
+				}
+			}
+		}
+	}
+};

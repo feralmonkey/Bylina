@@ -93,7 +93,8 @@ void MapLoader::LoadMap(sol::state& lua, entt::registry& registry, const std::un
 	for (int y = 0; y < numMapRows; y++) {
 		for (int x = 0; x < numMapCols; x++) {
 			char ch;
-					
+			bool collider = false;
+
 			// get the first character and convert hex character to integer
 			mapFile.get(ch);
 			int valueY = std::stoi(std::string(1, ch), nullptr, 16);
@@ -104,13 +105,22 @@ void MapLoader::LoadMap(sol::state& lua, entt::registry& registry, const std::un
 			int valueX = std::stoi(std::string(1, ch), nullptr, 16);
 			int srcRectX = valueX * tileSize;
 
+			// get collision boolean
+			mapFile.get(ch);
+			if (std::string(1, ch) == "1") {
+				collider = true;
+			}
+
 			// ignore commas
-			mapFile.ignore();
+			mapFile.ignore(); 
 
 			entt::entity tile = registry.create();
 			// tile.Group("tiles");  // todo rigolo - add group and tagging support
 			registry.emplace<TransformComponent>(tile, glm::vec2(x * (tileSize * tileScale), y * (tileSize * tileScale)), glm::vec2(tileScale, tileScale), 0.0);
 			registry.emplace<SpriteComponent>(tile, asset_id, tileSize, tileSize, 0, false, srcRectX, srcRectY);
+			if (collider) {
+				registry.emplace<BoxColliderComponent>(tile);
+			}
 		}
 	}
 	mapFile.close();

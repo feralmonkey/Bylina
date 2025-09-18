@@ -8,12 +8,11 @@
 #include "components/TextComponent.h"
 #include "components/CameraFollowComponent.h"
 #include "events/KeyPressedEvent.h"
+#include "events/CollisionEvent.h"
 #include "systems/RenderSystem.h"
 #include "systems/AnimationSystem.h"
-#include "systems/KeyboardControlSystem.h"
-#include "systems/MovementSystem.h"
-#include "systems/RenderTextSystem.h"
 #include "systems/CameraMovementSystem.h"
+#include "systems/RenderColliderSystem.h"
 
 
 // initialize static member variables
@@ -23,11 +22,19 @@ int Game::windowScale;
 int Game::mapWidth;
 int Game::mapHeight;
 
-Game::Game() : keyboardSystem(registry, dispatcher)
-{
+Game::Game() : 
+	registry(),
+	dispatcher(),
+	textSystem(),
+	keyboardSystem(registry, dispatcher),
+	movementSystem(registry),
+	collisionSystem(registry, dispatcher, 8) // 8 == tileSize
+{	
 	spdlog::info("Game constructor called!");
 	Game::gameIsRunning = false;
 	debugMode = false;
+
+	dispatcher.sink<CollisionEvent>().connect<&MovementSystem::OnCollision>(movementSystem);
 
 	assetStore = std::make_unique<AssetStore>();
 	scriptSystem = std::make_unique<ScriptSystem>();
@@ -95,6 +102,8 @@ void Game::Initialize() {
 }
 
 void Game::Setup() {
+	//dispatcher.sink<CollisionEvent>().connect<&MovementSystem::OnCollision>(*this);
+
 	// create the bindings between c++ and lua
 	scriptSystem->CreateLuaBindings(lua);
 
@@ -105,7 +114,7 @@ void Game::Setup() {
 	loader.LoadMap(lua, registry, assetStore, renderer, mapName);
 
 	entt::entity textBox = registry.create();
-	registry.emplace<TextComponent>(textBox,"Hello World!/Love You!", 18, 8, 32, 160, true);
+	registry.emplace<TextComponent>(textBox,"Hello World!/Bylina In Production!", 18, 8, 40, 176, true);
 }
 
 void Game::Run() {
@@ -124,9 +133,8 @@ void Game::ProcessInput() {
 		// handle core sdl events
 		switch (sdlEvent.type) {
 		case SDL_QUIT:  // if user tries to close the window using the x button
-			gameIsRunning = false;
+			gameIsRunning = false; 
 			break;
-		case SDL_KEYUP:
 		case SDL_KEYDOWN:
 			// exit the game if user presses escape key
 			if (sdlEvent.key.keysym.sym == SDLK_ESCAPE) {
@@ -147,6 +155,7 @@ void Game::ProcessInput() {
 				spdlog::info("cancel button pressed");
 				textSystem.ClearTextBox(registry);
 			}
+		case SDL_KEYUP:
 			dispatcher.enqueue<KeyPressedEvent>({ sdlEvent });
 			break;
 		}
@@ -169,9 +178,10 @@ void Game::Update() {
 	// store the current frame time
 	millisecondsPreviousFrame = SDL_GetTicks();
 
+	collisionSystem.Update(mapWidth, mapHeight);
 	dispatcher.update(); // TODO RIGOLO - Not sure if this is the best spot to call the dispatchers update method : keep an eye on this
 	AnimationSystem(registry);
-	MovementSystem(registry, deltaTime);
+	movementSystem.Update(deltaTime);
 	CameraMovementSystem(registry, camera); // TODO RIGOLO - SHOULD THIS BE HERE OR IN THE RENDERING SECTION?
 }
 
@@ -185,7 +195,7 @@ void Game::Render() {
 	
 	// debugging collision detection
 	if (debugMode) {
-	/*	registry.GetSystem<RenderColliderSystem>().Update(renderer, camera);*/
+		RenderColliderSystem(registry, renderer, camera);
 	}
  
 	//// Set logical size so our drawing uses NES-ish resolution regardless of window size

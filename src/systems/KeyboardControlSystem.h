@@ -66,7 +66,7 @@ public:
 			default: break;
 			}
 		}
-		/*else if (e.type == SDL_KEYUP) {*/
+		/*else if (e.event.type == SDL_KEYUP) {*/
 		else {
 			activeKey = SDL_SCANCODE_UNKNOWN;
 			rigidBody.velocity.x = 0;
