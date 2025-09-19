@@ -5,15 +5,43 @@
 #include <spdlog/spdlog.h>
 #include <fstream>
 #include <unordered_map>
+#include <vector>
 #include "../libs/nlohmann/json.hpp"
 #include "../components/TextComponent.h"
 
 class RenderTextSystem {
 
+private:
 	int tileScale = 1;
 	int tileSize = 8;
+	entt::registry& registry;
+	SDL_Renderer* renderer;
+	SDL_Rect& camera;
+	std::unique_ptr<AssetStore>& assetStore;
+
+	// menu pointer variables
+	int index = 0;
+	std::vector<std::string> menuSelectTracker = {
+		" ",
+		" ",
+		" ",
+		" ",
+		" ",
+		" ",
+		" "
+	};
 
 public:
+	RenderTextSystem(entt::registry& registry, SDL_Renderer* renderer, SDL_Rect& camera, std::unique_ptr<AssetStore>& assetStore, int tileScale = 1, int tileSize = 8) :
+	registry(registry),
+	renderer(renderer),
+	camera(camera),
+	assetStore(assetStore)
+	{
+		this->tileScale = tileScale;
+		this->tileSize = tileSize;
+	}
+
 	void DrawChar(entt::registry& registry, int srcx, int srcy, int dstx, int dsty) {
 		//std::cout << "dstx, dsty: " << dstx << " , " << dsty << std::endl;
 		entt::entity textWindow = registry.create();
@@ -22,20 +50,14 @@ public:
 		registry.emplace<SpriteTag>(textWindow);
 	}
 
-	// TODO RIGOLO - THIS ISN'T EVEN CLOSE TO WORKING YET
-	inline void ClearTextBox(entt::registry& registry) {
+	inline void ClearTextBox() {
 		auto view = registry.view<SpriteTag>();
 		for (auto entity : view) {
 			registry.destroy(entity);
 		}
 	}
 
-	RenderTextSystem(int tileScale = 1, int tileSize = 8) {
-		this->tileScale = tileScale;
-		this->tileSize = tileSize;
-	}
-
-	void RenderTextBox(entt::registry& registry, SDL_Renderer* renderer, SDL_Rect camera, std::unique_ptr<AssetStore>& assetStore) {
+	void RenderTextBox() {
 		auto view = registry.view<TextComponent>();
 
 		// TODO RIGOLO - may not actually need a loop here if there will only be one entity at a time with a TextComponent. 
@@ -158,5 +180,26 @@ public:
 
 			charMap.close();
 		}
+	}
+
+	void TownMenu() {
+		entt::entity textBox = registry.create();
+		menuSelectTracker[index] = ">";
+		std::string menuText = std::string(" /") + 
+			menuSelectTracker[0] + "Talk / /" + 
+			menuSelectTracker[1] + "Cast/ /" + 
+			menuSelectTracker[2] + "Use/ /" + 
+			menuSelectTracker[3] + "Search/ /" +
+			menuSelectTracker[4] + "Status/ /" +
+			menuSelectTracker[5] + "Equip/ /" +
+			menuSelectTracker[6] + "Order";
+		registry.emplace<TextComponent>(textBox, menuText, 9, 16, 8, 16, true);
+		RenderTextBox();
+	}
+
+	void TextBox(std::string message) {
+		entt::entity textBox = registry.create();
+		registry.emplace<TextComponent>(textBox, message, 18, 8, 40, 176, true);
+		RenderTextBox();
 	}
 };

@@ -25,7 +25,7 @@ int Game::mapHeight;
 Game::Game() : 
 	registry(),
 	dispatcher(),
-	textSystem(),
+	textSystem(registry, renderer, camera, assetStore),
 	keyboardSystem(registry, dispatcher),
 	movementSystem(registry, dispatcher),
 	collisionSystem(registry, dispatcher, 8) // 8 == tileSize
@@ -33,7 +33,6 @@ Game::Game() :
 	spdlog::info("Game constructor called!");
 	Game::gameIsRunning = false;
 	debugMode = false;
-
 	
 	dispatcher.sink<CollisionEvent>().connect<&MovementSystem::OnCollision>(movementSystem);
 
@@ -114,8 +113,8 @@ void Game::Setup() {
 	std::string mapName = "init";
 	loader.LoadMap(lua, registry, assetStore, renderer, mapName);
 
-	entt::entity textBox = registry.create();
-	registry.emplace<TextComponent>(textBox,"Hello World!/Bylina In Production!", 18, 8, 40, 176, true);
+	//entt::entity textBox = registry.create();
+	//registry.emplace<TextComponent>(textBox,"Hello World!/Bylina In Production!", 18, 8, 40, 176, true);
 }
 
 void Game::Run() {
@@ -150,11 +149,11 @@ void Game::ProcessInput() {
 			}
 			if (sdlEvent.key.keysym.sym == SDLK_x) {
 				spdlog::info("action button pressed");
-				textSystem.RenderTextBox(registry, renderer, camera, assetStore);
+				textSystem.TownMenu();
 			}
 			if (sdlEvent.key.keysym.sym == SDLK_z) {
 				spdlog::info("cancel button pressed");
-				textSystem.ClearTextBox(registry);
+				textSystem.ClearTextBox();
 			}
 		case SDL_KEYUP:
 			dispatcher.enqueue<KeyPressedEvent>({ sdlEvent });

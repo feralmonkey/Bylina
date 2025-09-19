@@ -5,6 +5,7 @@
 #include "systems/KeyboardControlSystem.h"
 #include "systems/RenderTextSystem.h"
 #include "systems/MovementSystem.h"
+#include "enums/InputState.h"
 #include <SDL.h>
 #include <sol/sol.hpp>
 #include <entt.hpp>
@@ -17,13 +18,24 @@ private:
 	bool gameIsRunning;
 	bool debugMode;
 	int millisecondsPreviousFrame;
+
 	SDL_Window* window;
 	SDL_Renderer* renderer;
 	SDL_Rect camera;
 	sol::state lua;
-	
+	entt::dispatcher dispatcher;
+	entt::registry registry;
+
+	std::vector<InputState> inputStack;
+
+	KeyboardControlSystem keyboardSystem;
+	RenderTextSystem textSystem;
+	MovementSystem movementSystem;
+	CollisionSystem collisionSystem;
+
 	std::unique_ptr<AssetStore> assetStore;
 	std::unique_ptr<ScriptSystem> scriptSystem;
+
 
 public:
 	Game();
@@ -35,13 +47,6 @@ public:
 	void Update();
 	void Render();
 	void Destroy();
-
-	entt::registry registry; // on the fence about exposing these as public
-	entt::dispatcher dispatcher;
-	KeyboardControlSystem keyboardSystem;
-	RenderTextSystem textSystem;
-	MovementSystem movementSystem;
-	CollisionSystem collisionSystem;
 
 	static int windowScale;
 	static int logicalWidth;

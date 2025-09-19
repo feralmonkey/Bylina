@@ -161,6 +161,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\components\TagComponents.h" />
+    <ClInclude Include="src\enums\InputState.h" />
     <ClInclude Include="src\MapLoader.h" />
     <ClInclude Include="libs\nlohmann\json.hpp" />
     <ClInclude Include="src\components\AnimationComponent.h" />
