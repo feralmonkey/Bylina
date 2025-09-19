@@ -27,13 +27,14 @@ Game::Game() :
 	dispatcher(),
 	textSystem(),
 	keyboardSystem(registry, dispatcher),
-	movementSystem(registry),
+	movementSystem(registry, dispatcher),
 	collisionSystem(registry, dispatcher, 8) // 8 == tileSize
 {	
 	spdlog::info("Game constructor called!");
 	Game::gameIsRunning = false;
 	debugMode = false;
 
+	
 	dispatcher.sink<CollisionEvent>().connect<&MovementSystem::OnCollision>(movementSystem);
 
 	assetStore = std::make_unique<AssetStore>();
@@ -178,11 +179,12 @@ void Game::Update() {
 	// store the current frame time
 	millisecondsPreviousFrame = SDL_GetTicks();
 
-	collisionSystem.Update(mapWidth, mapHeight);
+	
 	dispatcher.update(); // TODO RIGOLO - Not sure if this is the best spot to call the dispatchers update method : keep an eye on this
 	AnimationSystem(registry);
 	movementSystem.Update(deltaTime);
-	CameraMovementSystem(registry, camera); // TODO RIGOLO - SHOULD THIS BE HERE OR IN THE RENDERING SECTION?
+	collisionSystem.Update(mapWidth, mapHeight);
+	CameraMovementSystem(registry, camera);
 }
 
 void Game::Render() {

@@ -13,9 +13,13 @@ private:
 	entt::registry& registry;
 
 public:
-	MovementSystem(entt::registry& reg) : registry(reg) {}
+	MovementSystem(entt::registry& reg, entt::dispatcher& dispatcher) : registry(reg) {}
 
-	void Update(double deltaTime) {
+	void Configure(entt::dispatcher& dispatcher) {
+		dispatcher.sink<CollisionEvent>().connect<&MovementSystem::OnCollision>(*this);
+	}
+
+	void Update(double deltaTime, bool predictive = false) {
 		// loop all enteties that the system is interested in
 		auto view = registry.view<SpriteComponent, RigidBodyComponent, TransformComponent>();
 		for (auto entity : view) {
@@ -23,6 +27,8 @@ public:
 			TransformComponent& transform = view.get<TransformComponent>(entity);
 			RigidBodyComponent rigidBody = view.get<RigidBodyComponent>(entity);
 			SpriteComponent sprite = view.get<SpriteComponent>(entity);
+
+			// todo rigolo - can I somehow do a "pre-check" here?
 
 			transform.position.x += rigidBody.velocity.x;// * deltaTime;
 			transform.position.y += rigidBody.velocity.y;// * deltaTime;
@@ -33,8 +39,7 @@ public:
 	}
 
 	void OnCollision(const CollisionEvent& event) {
-		std::cout << "COLLISION" << std::endl;
-		//entt::entity a = event.a;
-		//entt::entity b = event.b;
+		entt::entity a = event.a;
+		entt::entity b = event.b;
 	}
 };

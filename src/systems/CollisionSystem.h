@@ -21,11 +21,8 @@ public:
 		int mapCols = mapWidth / tileSize;
 		int mapRows = mapHeight / tileSize;
 
-
-		// Grid (each cell contains entities)
-		std::vector<std::vector<std::vector<entt::entity>>> grid(
-			mapRows, std::vector<std::vector<entt::entity>>(mapCols)
-		);
+		// 1D grid (each cell stores entities inside it)
+		std::vector<std::vector<entt::entity>> grid(mapRows * mapCols);
 
 		auto view = registry.view<BoxColliderComponent, TransformComponent>();
 
@@ -50,7 +47,8 @@ public:
 
 			for (int r = startRow; r <= endRow; ++r) {
 				for (int c = startCol; c <= endCol; ++c) {
-					grid[r][c].push_back(entity);
+					int index = r * mapCols + c;
+					grid[index].push_back(entity);
 				}
 			}
 		}
@@ -58,7 +56,8 @@ public:
 		// Check collisions inside each tile
 		for (int r = 0; r < mapRows; ++r) {
 			for (int c = 0; c < mapCols; ++c) {
-				auto& cellEntities = grid[r][c];
+				int index = r * mapCols + c;
+				auto& cellEntities = grid[index];
 
 				for (size_t i = 0; i < cellEntities.size(); ++i) {
 					auto entityA = cellEntities[i];
