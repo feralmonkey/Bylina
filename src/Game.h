@@ -1,14 +1,20 @@
 #pragma once
-#include "../src/assetstore/AssetStore.h"
-#include "systems/ScriptSystem.h"
-#include "systems/CollisionSystem.h"
-#include "systems/KeyboardControlSystem.h"
-#include "systems/RenderTextSystem.h"
-#include "systems/MovementSystem.h"
-#include "enums/InputState.h"
+
 #include <SDL.h>
 #include <sol/sol.hpp>
 #include <entt.hpp>
+#include <memory>
+#include <vector>
+#include "enums/InputState.h"
+
+// Forward declarations
+class AssetStore;
+class RenderTextSystem;
+class KeyboardControlSystem;
+class MovementSystem;
+class CollisionSystem;
+class MenuSystem;
+class ScriptSystem;
 
 const int FPS = 60;
 const int MILLISECS_PER_FRAME = 1000 / FPS;
@@ -22,19 +28,22 @@ private:
 	SDL_Window* window;
 	SDL_Renderer* renderer;
 	SDL_Rect camera;
+
 	sol::state lua;
 	entt::dispatcher dispatcher;
 	entt::registry registry;
 
 	std::vector<InputState> inputStack;
-
-	KeyboardControlSystem keyboardSystem;
-	RenderTextSystem textSystem;
-	MovementSystem movementSystem;
-	CollisionSystem collisionSystem;
-
 	std::unique_ptr<AssetStore> assetStore;
+
+	// Use smart pointers for systems
+	std::unique_ptr<RenderTextSystem> textSystem;
+	std::unique_ptr<KeyboardControlSystem> keyboardSystem;
+	std::unique_ptr<MovementSystem> movementSystem;
+	std::unique_ptr<CollisionSystem> collisionSystem;
+	std::unique_ptr<MenuSystem> menuSystem;
 	std::unique_ptr<ScriptSystem> scriptSystem;
+	
 
 
 public:

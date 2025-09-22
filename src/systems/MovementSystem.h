@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../events/CollisionEvent.h"
+#include "../systems/ISystem.h"
 #include "../components/KeyboardControlComponent.h"
 #include "../components/SpriteComponent.h"
 #include <SDL.h>
@@ -8,6 +9,7 @@
 #include <entt.hpp>
 
 
+// TODO RIGOLO - Change name to reflect Character Movement System
 class MovementSystem {
 private:
 	entt::registry& registry;
@@ -28,7 +30,6 @@ public:
 			RigidBodyComponent rigidBody = view.get<RigidBodyComponent>(entity);
 			SpriteComponent sprite = view.get<SpriteComponent>(entity);
 
-			// todo rigolo - can I somehow do a "pre-check" here?
 
 			transform.position.x += rigidBody.velocity.x;// * deltaTime;
 			transform.position.y += rigidBody.velocity.y;// * deltaTime;

@@ -3,5 +3,6 @@
 
 enum class InputState {
     PlayerControl,
-    MenuControl
+    MenuControl,
+    TextBox
 };

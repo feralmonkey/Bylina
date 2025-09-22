@@ -1,7 +1,11 @@
 #pragma once
+#include <iostream>
 #include <SDL.h>
 #include "entt.hpp"
 #include <spdlog/spdlog.h>
+#include "../systems/ISystem.h"
+#include "../systems/RenderTextSystem.h"
+#include "../components/MenuComponent.h"
 #include "../components/KeyboardControlComponent.h"
 #include "../components/SpriteComponent.h"
 #include "../components/RigidBodyComponent.h"
@@ -9,21 +13,18 @@
 #include "../components/TransformComponent.h"
 #include "../components/TagComponents.h"
 #include "../events/KeyPressedEvent.h"
+#include "../enums/InputState.h"
 
 
-class KeyboardControlSystem {
+class KeyboardControlSystem : public ISystem {
 
 private:
 	entt::registry& reg;
+	std::vector<InputState>& inputStack;
+	RenderTextSystem& textSystem;
+	InputState currentInput;
 
-public:
-	KeyboardControlSystem(entt::registry& reg, entt::dispatcher& dispatcher)
-		: reg(reg) {
-		dispatcher.sink<KeyPressedEvent>()
-			.connect<&KeyboardControlSystem::onKeyPress>(*this);
-	}
-
-	void onKeyPress(const KeyPressedEvent& e) {
+	void PlayerControl(const KeyPressedEvent& e) {
 		// only one entity should have the player component so just grab the first one and get the required components
 		auto view = reg.view<PlayerTag, RigidBodyComponent, SpriteComponent, TransformComponent>();
 		entt::entity player = view.front();
@@ -63,6 +64,26 @@ public:
 				sprite.srcRect.y = sprite.height * 2;
 				break;
 			}
+			case SDL_SCANCODE_X: {
+				spdlog::info("action button pressed - opening menu");
+				inputStack.push_back(InputState::MenuControl);
+				
+				// Create a menu entity
+				entt::entity menu = reg.create();
+
+				reg.emplace<MenuComponent>(menu,
+					std::vector<std::string>{"Talk", "Cast", "Use", "Search", "Status", "Equip", "Order"},
+					0,
+					true
+				);
+
+				break;
+			}
+			case SDL_SCANCODE_Z: {
+				spdlog::info("cancel button pressed");
+				textSystem.ClearTextBox();
+				break;
+			}
 			default: break;
 			}
 		}
@@ -72,5 +93,61 @@ public:
 			rigidBody.velocity.x = 0;
 			rigidBody.velocity.y = 0;
 		}
+	}
+
+	void MenuControl(const KeyPressedEvent& e) {
+		auto view = reg.view<MenuComponent>();
+		for (auto entity : view) {
+			auto& menu = view.get<MenuComponent>(entity);
+
+			if (!menu.isActive) return;
+
+			if (e.event.type == SDL_KEYDOWN) {
+				switch (e.event.key.keysym.scancode) {
+				case SDL_SCANCODE_UP:
+					menu.currentIndex = (menu.currentIndex - 1 + menu.options.size()) % menu.options.size();
+					break;
+				case SDL_SCANCODE_DOWN:
+					menu.currentIndex = (menu.currentIndex + 1) % menu.options.size();
+					break;
+				case SDL_SCANCODE_X: // confirm
+					spdlog::info("Selected: {}", menu.options[menu.currentIndex]);
+					// TODO: trigger action depending on option
+					break;
+				case SDL_SCANCODE_Z: // cancel
+					menu.isActive = false;
+					textSystem.ClearTextBox();
+					break;
+				}
+			}
+		}
+	}
+
+public:
+	KeyboardControlSystem(entt::registry& reg, entt::dispatcher& dispatcher, std::vector<InputState>& inputStack, RenderTextSystem& textSystem)
+		: reg(reg), inputStack(inputStack), textSystem(textSystem) {
+
+		// set player control on the stack during construction
+		inputStack.push_back(InputState::PlayerControl);
+		currentInput = InputState::PlayerControl;
+
+		dispatcher.sink<KeyPressedEvent>()
+			.connect<&KeyboardControlSystem::onKeyPress>(*this);
+	}
+
+	void onKeyPress(const KeyPressedEvent& e) {
+		// get the current input state
+		currentInput = inputStack.back();
+		if (currentInput == InputState::PlayerControl) {
+			std::cout << "PlayerControl" << std::endl;
+			PlayerControl(e);
+			return;
+		}
+		if (currentInput == InputState::MenuControl) {
+			std::cout << "MenuControl" << std::endl;
+			MenuControl(e);
+			return;
+		}
+		std::cout << "NoControl" << std::endl;
 	}
 };

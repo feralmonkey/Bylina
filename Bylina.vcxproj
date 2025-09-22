@@ -160,6 +160,7 @@
     <Object Include="x64\Debug\Main.obj" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\components\MenuComponent.h" />
     <ClInclude Include="src\components\TagComponents.h" />
     <ClInclude Include="src\enums\InputState.h" />
     <ClInclude Include="src\MapLoader.h" />
@@ -182,8 +183,9 @@
     <ClInclude Include="src\systems\AnimationSystem.h" />
     <ClInclude Include="src\systems\CameraMovementSystem.h" />
     <ClInclude Include="src\systems\CollisionSystem.h" />
-    <ClInclude Include="src\systems\DamageSystem.h" />
+    <ClInclude Include="src\systems\ISystem.h" />
     <ClInclude Include="src\systems\KeyboardControlSystem.h" />
+    <ClInclude Include="src\systems\MenuSystem.h" />
     <ClInclude Include="src\systems\MovementSystem.h" />
     <ClInclude Include="src\systems\RenderColliderSystem.h" />
     <ClInclude Include="src\systems\RenderGUISystem.h" />

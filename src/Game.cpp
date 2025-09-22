@@ -9,10 +9,16 @@
 #include "components/CameraFollowComponent.h"
 #include "events/KeyPressedEvent.h"
 #include "events/CollisionEvent.h"
-#include "systems/RenderSystem.h"
 #include "systems/AnimationSystem.h"
 #include "systems/CameraMovementSystem.h"
+#include "systems/CollisionSystem.h"
+#include "systems/KeyboardControlSystem.h"
+#include "systems/MenuSystem.h"
+#include "systems/MovementSystem.h"
 #include "systems/RenderColliderSystem.h"
+#include "systems/RenderSystem.h"
+#include "systems/RenderTextSystem.h"
+#include "systems/ScriptSystem.h"
 
 
 // initialize static member variables
@@ -22,22 +28,13 @@ int Game::windowScale;
 int Game::mapWidth;
 int Game::mapHeight;
 
-Game::Game() : 
+Game::Game() :
 	registry(),
-	dispatcher(),
-	textSystem(registry, renderer, camera, assetStore),
-	keyboardSystem(registry, dispatcher),
-	movementSystem(registry, dispatcher),
-	collisionSystem(registry, dispatcher, 8) // 8 == tileSize
-{	
+	dispatcher()
+{
 	spdlog::info("Game constructor called!");
 	Game::gameIsRunning = false;
 	debugMode = false;
-	
-	dispatcher.sink<CollisionEvent>().connect<&MovementSystem::OnCollision>(movementSystem);
-
-	assetStore = std::make_unique<AssetStore>();
-	scriptSystem = std::make_unique<ScriptSystem>();
 }
 
 Game::~Game() {
@@ -98,12 +95,23 @@ void Game::Initialize() {
 	lua.open_libraries(sol::lib::base, sol::lib::math, sol::lib::table, sol::lib::string);
 	spdlog::info("lua state created");
 
+	assetStore = std::make_unique<AssetStore>();
+
+	// Now systems can be created safely
+	textSystem = std::make_unique<RenderTextSystem>(registry, renderer, camera, assetStore, inputStack);
+	keyboardSystem = std::make_unique<KeyboardControlSystem>(registry, dispatcher, inputStack, *textSystem);
+	movementSystem = std::make_unique<MovementSystem>(registry, dispatcher);
+	collisionSystem = std::make_unique<CollisionSystem>(registry, dispatcher, 8);
+	menuSystem = std::make_unique<MenuSystem>();
+	scriptSystem = std::make_unique<ScriptSystem>();
+
+	// Dispatcher connections
+	dispatcher.sink<CollisionEvent>().connect<&MovementSystem::OnCollision>(*movementSystem);
+
 	gameIsRunning = true;
 }
 
 void Game::Setup() {
-	//dispatcher.sink<CollisionEvent>().connect<&MovementSystem::OnCollision>(*this);
-
 	// create the bindings between c++ and lua
 	scriptSystem->CreateLuaBindings(lua);
 
@@ -113,7 +121,6 @@ void Game::Setup() {
 	std::string mapName = "init";
 	loader.LoadMap(lua, registry, assetStore, renderer, mapName);
 
-	//entt::entity textBox = registry.create();
 	//registry.emplace<TextComponent>(textBox,"Hello World!/Bylina In Production!", 18, 8, 40, 176, true);
 }
 
@@ -147,14 +154,6 @@ void Game::ProcessInput() {
 				debugMode = !debugMode; // toggle
 				break;
 			}
-			if (sdlEvent.key.keysym.sym == SDLK_x) {
-				spdlog::info("action button pressed");
-				textSystem.TownMenu();
-			}
-			if (sdlEvent.key.keysym.sym == SDLK_z) {
-				spdlog::info("cancel button pressed");
-				textSystem.ClearTextBox();
-			}
 		case SDL_KEYUP:
 			dispatcher.enqueue<KeyPressedEvent>({ sdlEvent });
 			break;
@@ -163,27 +162,28 @@ void Game::ProcessInput() {
 }
 
 void Game::Update() {
-	// if we are too fast, waste some time until we reach MILLISECS_PER_FRAME
-	//while (!SDL_TICKS_PASSED(SDL_GetTicks(), millisecondsPreviousFrame + MILLISECS_PER_FRAME));
-	// SDL_Delay is way more efficient than the above while loop since it doesn't burn clock cycles while waiting
-	// can comment out below so it runs at highest framerate possible since we're using delta time now. I won't do that though.
+	// frame timing
 	int timeToWait = MILLISECS_PER_FRAME - (SDL_GetTicks() - millisecondsPreviousFrame);
 	if (timeToWait > 0 && timeToWait <= MILLISECS_PER_FRAME) {
 		SDL_Delay(timeToWait);
 	}
-
-	// the difference in ticks since the last frame converted to seconds.
 	double deltaTime = (SDL_GetTicks() - millisecondsPreviousFrame) / 1000.0;
-
-	// store the current frame time
 	millisecondsPreviousFrame = SDL_GetTicks();
 
-	
-	dispatcher.update(); // TODO RIGOLO - Not sure if this is the best spot to call the dispatchers update method : keep an eye on this
-	AnimationSystem(registry);
-	movementSystem.Update(deltaTime);
-	collisionSystem.Update(mapWidth, mapHeight);
-	CameraMovementSystem(registry, camera);
+	// 1. Deliver input events so systems can react
+	dispatcher.update(); // e.g., KeyPressedEvent will go to KeyboardControlSystem
+
+	// 2. Update systems that rely on input/events
+	if (keyboardSystem) keyboardSystem->Update(deltaTime); // usually reacts to KeyPressedEvent
+	if (menuSystem) menuSystem->Update(registry);         // menu selection
+
+	// 3. Update core game logic
+	if (movementSystem) movementSystem->Update(deltaTime); // moves player/entities based on velocity
+	if (collisionSystem) collisionSystem->Update(mapWidth, mapHeight);
+
+	// 4. Update non-event-driven systems
+	AnimationSystem(registry);           // updates animations
+	CameraMovementSystem(registry, camera); // camera follows player
 }
 
 void Game::Render() {
@@ -193,6 +193,8 @@ void Game::Render() {
 
 	// Invoke all systems that need to render
 	RenderSystem(registry, renderer, camera, assetStore);
+
+	if (textSystem) textSystem->RenderAllMenus(); // TODO RIGOLO - Need to adjust where I call this
 	
 	// debugging collision detection
 	if (debugMode) {

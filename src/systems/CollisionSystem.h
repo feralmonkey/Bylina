@@ -6,8 +6,9 @@
 #include "../components/TransformComponent.h"
 #include "../components/RigidBodyComponent.h"
 #include "../events/CollisionEvent.h"
+#include "../systems/ISystem.h"
 
-class CollisionSystem {
+class CollisionSystem : public ISystem {
 private:
 	entt::registry& registry;
 	entt::dispatcher& dispatcher;

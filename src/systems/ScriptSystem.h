@@ -1,6 +1,7 @@
 #pragma once
 
 #include "entt.hpp"
+#include "../systems/ISystem.h"
 #include "../components/ScriptComponent.h"
 #include "../components/TransformComponent.h"
 #include "../components/RigidBodyComponent.h"
@@ -73,7 +74,7 @@ inline void SetEntityAnimationFrame(entt::registry& reg, entt::entity entity, in
 	}
 }
 
-class ScriptSystem {
+class ScriptSystem : public ISystem {
 public:
 
 	class ScriptSystem() = default;
