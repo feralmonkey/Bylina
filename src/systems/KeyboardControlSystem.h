@@ -3,15 +3,15 @@
 #include <SDL.h>
 #include "entt.hpp"
 #include <spdlog/spdlog.h>
-#include "../systems/ISystem.h"
 #include "../systems/RenderTextSystem.h"
-#include "../components/MenuComponent.h"
 #include "../components/KeyboardControlComponent.h"
-#include "../components/SpriteComponent.h"
-#include "../components/RigidBodyComponent.h"
+#include "../components/MenuComponent.h"
 #include "../components/PlayerComponent.h"
-#include "../components/TransformComponent.h"
+#include "../components/RigidBodyComponent.h"
+#include "../components/SpriteComponent.h"
 #include "../components/TagComponents.h"
+#include "../components/TextComponent.h"
+#include "../components/TransformComponent.h"
 #include "../events/KeyPressedEvent.h"
 #include "../enums/InputState.h"
 
@@ -95,7 +95,15 @@ private:
 		}
 	}
 
+	void ClearOld() {
+		auto text_view = reg.view<TextComponent>();
+		for (auto entity : text_view) {
+			reg.destroy(entity);
+		}
+	}
+
 	void MenuControl(const KeyPressedEvent& e) {
+		// todo rigolo  - at this point nothing has a menu component
 		auto view = reg.view<MenuComponent>();
 		for (auto entity : view) {
 			auto& menu = view.get<MenuComponent>(entity);
@@ -108,6 +116,7 @@ private:
 					menu.currentIndex = (menu.currentIndex - 1 + menu.options.size()) % menu.options.size();
 					break;
 				case SDL_SCANCODE_DOWN:
+					ClearOld();
 					menu.currentIndex = (menu.currentIndex + 1) % menu.options.size();
 					break;
 				case SDL_SCANCODE_X: // confirm
@@ -138,12 +147,13 @@ public:
 	void onKeyPress(const KeyPressedEvent& e) {
 		// get the current input state
 		currentInput = inputStack.back();
+
 		if (currentInput == InputState::PlayerControl) {
 			std::cout << "PlayerControl" << std::endl;
 			PlayerControl(e);
 			return;
 		}
-		if (currentInput == InputState::MenuControl) {
+		else if (currentInput == InputState::MenuControl) {
 			std::cout << "MenuControl" << std::endl;
 			MenuControl(e);
 			return;

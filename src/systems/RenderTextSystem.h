@@ -212,12 +212,6 @@ public:
 			}
 		}
 
-		// clear old menu text
-		auto view = registry.view<TextComponent>();
-		for (auto entity : view) {
-			registry.destroy(entity);
-		}
-
 		TextBox(message, 9, 16, 8, 16);
 	}
 
