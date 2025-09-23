@@ -13,6 +13,9 @@
 #include "../components/TextComponent.h"
 #include "../components/TransformComponent.h"
 #include "../events/KeyPressedEvent.h"
+#include "../events/MenuOpenEvent.h"
+#include "../events/MenuCloseEvent.h"
+#include "../events/MenuNavigateEvent.h"
 #include "../enums/InputState.h"
 
 
@@ -20,6 +23,7 @@ class KeyboardControlSystem : public ISystem {
 
 private:
 	entt::registry& reg;
+	entt::dispatcher& dispatcher;
 	std::vector<InputState>& inputStack;
 	RenderTextSystem& textSystem;
 	InputState currentInput;
@@ -121,20 +125,24 @@ private:
 			if (e.event.type == SDL_KEYDOWN) {
 				switch (e.event.key.keysym.scancode) {
 				case SDL_SCANCODE_UP:
+					//ClearOld();
 					menu.currentIndex = (menu.currentIndex - 1 + menu.options.size()) % menu.options.size();
+					dispatcher.enqueue<MenuNavigateEvent>();
 					break;
 				case SDL_SCANCODE_DOWN:
-					ClearOld();
+					//ClearOld();
 					menu.currentIndex = (menu.currentIndex + 1) % menu.options.size();
+					dispatcher.enqueue<MenuNavigateEvent>();
 					break;
-				case SDL_SCANCODE_X: // confirm
+				case SDL_SCANCODE_X: 
+					// confirm
 					spdlog::info("Selected: {}", menu.options[menu.currentIndex]);
 					// TODO: trigger action depending on option
 					break;
-				case SDL_SCANCODE_Z: // cancel
+				case SDL_SCANCODE_Z: 
+					// cancel
 					menu.isActive = false;
-					//textSystem.ClearTextBox();
-					break;
+					dispatcher.enqueue<MenuCloseEvent>();
 				}
 			}
 		}
@@ -142,7 +150,7 @@ private:
 
 public:
 	KeyboardControlSystem(entt::registry& reg, entt::dispatcher& dispatcher, std::vector<InputState>& inputStack, RenderTextSystem& textSystem)
-		: reg(reg), inputStack(inputStack), textSystem(textSystem) {
+		: reg(reg), dispatcher(dispatcher), inputStack(inputStack), textSystem(textSystem) {
 
 		// set player control on the stack during construction
 		inputStack.push_back(InputState::PlayerControl);
@@ -162,6 +170,7 @@ public:
 			return;
 		}
 		else if (currentInput == InputState::MenuControl) {
+			dispatcher.enqueue<MenuOpenEvent>();
 			std::cout << "MenuControl" << std::endl;
 			MenuControl(e);
 			return;

@@ -163,6 +163,7 @@
     <ClInclude Include="src\components\MenuComponent.h" />
     <ClInclude Include="src\components\TagComponents.h" />
     <ClInclude Include="src\enums\InputState.h" />
+    <ClInclude Include="src\events\MenuOpenEvent.h" />
     <ClInclude Include="src\MapLoader.h" />
     <ClInclude Include="libs\nlohmann\json.hpp" />
     <ClInclude Include="src\components\AnimationComponent.h" />
@@ -194,6 +195,8 @@
     <ClInclude Include="src\systems\ScriptSystem.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\events\MenuCloseEvent.h" />
+    <ClCompile Include="src\events\MenuNavigateEvent.h" />
     <ClCompile Include="src\MapLoader.cpp" />
     <ClCompile Include="src\Game.cpp" />
     <ClCompile Include="src\assetstore\AssetStore.cpp" />

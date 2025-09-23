@@ -23,11 +23,9 @@ Events
 1. Create an event struct in the correct folder:
 	e.g. 
 		struct CollisionEvent { int entity_a; int entity_b; };
-2. When something happens in the system, dispatch an event:
+2. When something happens in the system, enque an event:
 	e.g.
-		void MovementSystem(ent::registry& reg, entt::dispatcher& dispatcher) {
-			... // do stuff
-			dispatcher.trigger<MovementEvent>(x, y);
+			dispatcher.enqueue<KeyPressedEvent>({ sdlEvent });
 3. Listen for the event:
 	e.g.
 			void setupEventListeners(entt::dispatcher& dispatcher) {

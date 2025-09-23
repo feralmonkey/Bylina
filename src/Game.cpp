@@ -98,7 +98,7 @@ void Game::Initialize() {
 	assetStore = std::make_unique<AssetStore>();
 
 	// Now systems can be created safely
-	textSystem = std::make_unique<RenderTextSystem>(registry, renderer, camera, assetStore, inputStack);
+	textSystem = std::make_unique<RenderTextSystem>(registry, dispatcher, renderer, camera, assetStore, inputStack);
 	keyboardSystem = std::make_unique<KeyboardControlSystem>(registry, dispatcher, inputStack, *textSystem);
 	movementSystem = std::make_unique<MovementSystem>(registry, dispatcher);
 	collisionSystem = std::make_unique<CollisionSystem>(registry, dispatcher, 8);
@@ -193,8 +193,6 @@ void Game::Render() {
 
 	// Invoke all systems that need to render
 	RenderSystem(registry, renderer, camera, assetStore);
-
-	if (textSystem) textSystem->RenderAllMenus(); // TODO RIGOLO - Need to adjust where I call this
 	
 	// debugging collision detection
 	if (debugMode) {

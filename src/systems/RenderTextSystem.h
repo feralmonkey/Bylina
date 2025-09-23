@@ -7,6 +7,9 @@
 #include <fstream>
 #include <unordered_map>
 #include <vector>
+#include "../events/MenuOpenEvent.h"
+#include "../events/MenuCloseEvent.h"
+#include "../events/MenuNavigateEvent.h"
 #include "../libs/nlohmann/json.hpp"
 #include "../systems/ISystem.h"
 #include "../components/SpriteComponent.h"
@@ -21,6 +24,7 @@ private:
 	int tileScale = 1;
 	int tileSize = 8;
 	entt::registry& registry;
+	entt::dispatcher& dispatcher;
 	SDL_Renderer* renderer;
 	SDL_Rect& camera;
 	std::unique_ptr<AssetStore>& assetStore;
@@ -134,8 +138,9 @@ private:
 	}
 
 public:
-	RenderTextSystem(entt::registry& registry, SDL_Renderer* renderer, SDL_Rect& camera, std::unique_ptr<AssetStore>& assetStore, std::vector<InputState>& inputStack, int tileScale = 1, int tileSize = 8) :
+	RenderTextSystem(entt::registry& registry, entt::dispatcher& dispatcher, SDL_Renderer* renderer, SDL_Rect& camera, std::unique_ptr<AssetStore>& assetStore, std::vector<InputState>& inputStack, int tileScale = 1, int tileSize = 8) :
 		registry(registry),
+		dispatcher(dispatcher),
 		renderer(renderer),
 		camera(camera),
 		assetStore(assetStore),
@@ -161,6 +166,14 @@ public:
 			int valueX = std::stoi(std::string(1, val[1]), nullptr, 16);
 			charLookup[key] = { valueX * tileSize, valueY * tileSize };
 		}
+
+		// subscribe to all menu events
+		dispatcher.sink<MenuOpenEvent>()
+			.connect<&RenderTextSystem::RenderAllMenus>(*this);
+		dispatcher.sink<MenuCloseEvent>()
+			.connect<&RenderTextSystem::ClearTextBox>(*this);
+		dispatcher.sink<MenuNavigateEvent>()
+			.connect<&RenderTextSystem::RenderAllMenus>(*this);   // todo rigolo - this dfunction needs to be updated
 	}
 
 	void DrawChar(entt::registry& registry, int srcx, int srcy, int dstx, int dsty) {
@@ -178,7 +191,7 @@ public:
 			return;
 		}
 
-		// TODO RIGOLO - wait - sprite tag? This works but now I've forgotten how!
+		// TODO RIGOLO - wait - sprite tag? This works but now I've forgotten how!  maybe it works accidentally because we're not giving tiles and the character this tag?
 		auto view = registry.view<SpriteTag>();
 		for (auto entity : view) {
 			registry.destroy(entity);
