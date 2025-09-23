@@ -13,14 +13,23 @@ private:
 	entt::registry& registry;
 	entt::dispatcher& dispatcher;
 	int tileSize;
+	int mapCols;
+	int mapRows;
+	int mapWidth;
+	int mapHeight;
+
 
 public:
 	CollisionSystem(entt::registry& reg, entt::dispatcher& dis, int tileSize) 
-		: registry(reg), dispatcher(dis), tileSize(tileSize)   {}
-	
+		: registry(reg), dispatcher(dis), tileSize(tileSize)   {
+
+		this->mapWidth = mapWidth;
+		this->mapHeight = mapHeight;
+	}
+
 	void Update(int mapWidth, int mapHeight) {
-		int mapCols = mapWidth / tileSize;
-		int mapRows = mapHeight / tileSize;
+		mapCols = mapWidth / tileSize;
+		mapRows = mapHeight / tileSize;
 
 		// 1D grid (each cell stores entities inside it)
 		std::vector<std::vector<entt::entity>> grid(mapRows * mapCols);

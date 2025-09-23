@@ -174,7 +174,7 @@ void Game::Update() {
 	dispatcher.update(); // e.g., KeyPressedEvent will go to KeyboardControlSystem
 
 	// 2. Update systems that rely on input/events
-	if (keyboardSystem) keyboardSystem->Update(deltaTime); // usually reacts to KeyPressedEvent
+	//if (keyboardSystem) keyboardSystem->Update(deltaTime); // usually reacts to KeyPressedEvent
 	//if (menuSystem) menuSystem->Update(registry);         // menu selection
 
 	// 3. Update core game logic
