@@ -7,40 +7,113 @@
 #include <SDL.h>
 #include <spdlog/spdlog.h> 
 #include <entt.hpp>
+#include <glm/glm.hpp>
+#include <algorithm>
+#include <cmath>
 
-
-// TODO RIGOLO - Change name to reflect Character Movement System
 class MovementSystem {
 private:
-	entt::registry& registry;
+    entt::registry& registry;
+
+    const float tileSize = 16.0f;
+    const float moveSpeed = 50.0f;
+    const float snapSpeed = 50.0f;
+    const float eps = 0.0001f;  // epsilon - represents tolerance
 
 public:
-	MovementSystem(entt::registry& reg, entt::dispatcher& dispatcher) : registry(reg) {}
+    MovementSystem(entt::registry& reg, entt::dispatcher& dispatcher) : registry(reg) {}
 
-	void Configure(entt::dispatcher& dispatcher) {
-		dispatcher.sink<CollisionEvent>().connect<&MovementSystem::OnCollision>(*this);
-	}
+    void Configure(entt::dispatcher& dispatcher) {
+        dispatcher.sink<CollisionEvent>().connect<&MovementSystem::OnCollision>(*this);
+    }
 
-	void Update(double deltaTime, bool predictive = false) {
-		// loop all enteties that the system is interested in
-		auto view = registry.view<SpriteComponent, RigidBodyComponent, TransformComponent>();
-		for (auto entity : view) {
-			// update entity position based on it's velocity
-			TransformComponent& transform = view.get<TransformComponent>(entity);
-			RigidBodyComponent rigidBody = view.get<RigidBodyComponent>(entity);
-			SpriteComponent sprite = view.get<SpriteComponent>(entity);
+    void Update(double deltaTime) {
+        auto view = registry.view<TransformComponent, RigidBodyComponent>();
 
+        for (auto entity : view) {
+            auto& transform = view.get<TransformComponent>(entity);
+            auto& rigidBody = view.get<RigidBodyComponent>(entity);
 
-			transform.position.x += rigidBody.velocity.x;// * deltaTime;
-			transform.position.y += rigidBody.velocity.y;// * deltaTime;
+            if (IsMoving(rigidBody)) {
+                ApplyMovement(transform, rigidBody, deltaTime);
+                AlignOrthogonalAxis(transform, rigidBody, deltaTime);
+                UpdateLastMoveDir(rigidBody);
+            }
+            else {
+                SnapToNextTile(transform, rigidBody, deltaTime);
+            }
+        }
+    }
 
-			// keeping this around since it might come into play later
-			//if (auto* player = registry.try_get<PlayerComponent>(entity)) { }
-		}
-	}
+    void OnCollision(const CollisionEvent& event) {
+        entt::entity a = event.a;
+        entt::entity b = event.b;
+    }
 
-	void OnCollision(const CollisionEvent& event) {
-		entt::entity a = event.a;
-		entt::entity b = event.b;
-	}
+private:
+    bool IsMoving(const RigidBodyComponent& rigidBody) {
+        return rigidBody.velocity.x != 0.0f || rigidBody.velocity.y != 0.0f;
+    }
+
+    void ApplyMovement(TransformComponent& transform, const RigidBodyComponent& rigidBody, double deltaTime) {
+        glm::vec2 frameMove = rigidBody.velocity * (moveSpeed * static_cast<float>(deltaTime));
+        transform.position += frameMove;
+    }
+
+    void AlignOrthogonalAxis(TransformComponent& transform, const RigidBodyComponent& rigidBody, double deltaTime) {
+        if (rigidBody.velocity.x != 0.0f) {
+            NudgeTowardNearest(transform.position.y, deltaTime);
+        }
+        else if (rigidBody.velocity.y != 0.0f) {
+            NudgeTowardNearest(transform.position.x, deltaTime);
+        }
+    }
+
+    void NudgeTowardNearest(float& pos, double deltaTime) {
+        float row = std::floor(pos / tileSize);
+        float remainder = pos - row * tileSize;
+        if (remainder < eps) return;
+
+        float target = (remainder < tileSize / 2.0f) ? row * tileSize : (row + 1) * tileSize;
+        float diff = target - pos;
+        float step = std::clamp(diff, -snapSpeed * static_cast<float>(deltaTime), snapSpeed * static_cast<float>(deltaTime));
+        pos += step;
+    }
+
+    void UpdateLastMoveDir(RigidBodyComponent& rigidBody) {
+        rigidBody.lastMoveDir = {
+            (rigidBody.velocity.x > 0.0f) ? 1.0f : (rigidBody.velocity.x < 0.0f ? -1.0f : 0.0f),
+            (rigidBody.velocity.y > 0.0f) ? 1.0f : (rigidBody.velocity.y < 0.0f ? -1.0f : 0.0f)
+        };
+    }
+
+    void SnapToNextTile(TransformComponent& transform, RigidBodyComponent& rigidBody, double deltaTime) {
+        glm::vec2 dir = rigidBody.lastMoveDir;
+        if (std::abs(dir.x) > 0.5f) {
+            SnapAxis(transform.position.x, dir.x, deltaTime);
+        }
+        else if (std::abs(dir.y) > 0.5f) {
+            SnapAxis(transform.position.y, dir.y, deltaTime);
+        }
+    }
+
+    void SnapAxis(float& pos, float dir, double deltaTime) {
+        float cell = std::floor(pos / tileSize);
+        float remainder = pos - cell * tileSize;
+
+        if (std::abs(remainder) < eps) {
+            dir = 0.0f; // aligned, done
+            return;
+        }
+
+        float target = (dir > 0.0f) ? (cell + 1) * tileSize : cell * tileSize;
+        float diff = target - pos;
+        float step = std::clamp(diff, -snapSpeed * static_cast<float>(deltaTime), snapSpeed * static_cast<float>(deltaTime));
+        pos += step;
+
+        if (std::abs(target - pos) < eps) {
+            pos = target;
+            dir = 0.0f; // finished snapping
+        }
+    }
 };

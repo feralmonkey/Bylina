@@ -43,24 +43,32 @@ private:
 			case SDL_SCANCODE_A:
 			case SDL_SCANCODE_LEFT: {
 				rigidBody.velocity.x = -1;
+				rigidBody.velocity.y =  0;
+				rigidBody.lastMoveDir = { -1.0f, 0.0f };
 				sprite.srcRect.y = sprite.height * 3;
 				break;
 			}
 			case SDL_SCANCODE_D:
 			case SDL_SCANCODE_RIGHT: {
 				rigidBody.velocity.x = +1;
+				rigidBody.velocity.y = 0;
+				rigidBody.lastMoveDir = { +1.0f, 0.0f };
 				sprite.srcRect.y = sprite.height * 1;
 				break;
 			}
 			case SDL_SCANCODE_W:
 			case SDL_SCANCODE_UP: {
 				rigidBody.velocity.y = -1;
+				rigidBody.velocity.y = -1;
+				rigidBody.lastMoveDir = { 0.0f, -1.0f };
 				sprite.srcRect.y = sprite.height * 0;
 				break;
 			}
 			case SDL_SCANCODE_S:
 			case SDL_SCANCODE_DOWN: {
 				rigidBody.velocity.y = +1;
+				rigidBody.velocity.y = +1;
+				rigidBody.lastMoveDir = { 0.0f, +1.0f };
 				sprite.srcRect.y = sprite.height * 2;
 				break;
 			}
@@ -125,7 +133,7 @@ private:
 					break;
 				case SDL_SCANCODE_Z: // cancel
 					menu.isActive = false;
-					textSystem.ClearTextBox();
+					//textSystem.ClearTextBox();
 					break;
 				}
 			}
