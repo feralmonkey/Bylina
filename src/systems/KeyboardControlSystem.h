@@ -13,6 +13,7 @@
 #include "../components/TextComponent.h"
 #include "../components/TransformComponent.h"
 #include "../events/KeyPressedEvent.h"
+#include "../events/KeyUpEvent.h"
 #include "../events/MenuOpenEvent.h"
 #include "../events/MenuCloseEvent.h"
 #include "../events/MenuNavigateEvent.h"
@@ -27,9 +28,9 @@ private:
 	std::vector<InputState>& inputStack;
 	RenderTextSystem& textSystem;
 	InputState currentInput;
+	SDL_Scancode activeKey = SDL_SCANCODE_UNKNOWN;
 
 	void PlayerControl(const KeyPressedEvent& e) {
-		// only one entity should have the player component so just grab the first one and get the required components
 		auto view = reg.view<PlayerTag, RigidBodyComponent, SpriteComponent, TransformComponent>();
 		entt::entity player = view.front();
 
@@ -37,12 +38,11 @@ private:
 		RigidBodyComponent& rigidBody = view.get<RigidBodyComponent>(player);
 		SpriteComponent& sprite = view.get<SpriteComponent>(player);
 
-		static SDL_Scancode activeKey = SDL_SCANCODE_UNKNOWN;
-
 		if (e.event.type == SDL_KEYDOWN) {
 			if (activeKey == SDL_SCANCODE_UNKNOWN) {
 				activeKey = e.event.key.keysym.scancode;
 			}
+
 			switch (activeKey) {
 			case SDL_SCANCODE_A:
 			case SDL_SCANCODE_LEFT: {
@@ -89,6 +89,7 @@ private:
 					true
 				);
 
+				dispatcher.enqueue<MenuOpenEvent>();
 				break;
 			}
 			case SDL_SCANCODE_Z: {
@@ -99,7 +100,6 @@ private:
 			default: break;
 			}
 		}
-		/*else if (e.event.type == SDL_KEYUP) {*/
 		else {
 			activeKey = SDL_SCANCODE_UNKNOWN;
 			rigidBody.velocity.x = 0;
@@ -160,6 +160,22 @@ public:
 
 		dispatcher.sink<KeyPressedEvent>()
 			.connect<&KeyboardControlSystem::onKeyPress>(*this);
+		dispatcher.sink<KeyUpEvent>()
+			.connect<&KeyboardControlSystem::onKeyUp>(*this);
+	}
+
+	void onKeyUp(const KeyUpEvent& e) {
+		auto view = reg.view<PlayerTag, RigidBodyComponent, SpriteComponent, TransformComponent>();
+		entt::entity player = view.front();
+
+		RigidBodyComponent& rigidBody = view.get<RigidBodyComponent>(player);
+
+
+		if (e.event.type != SDL_KEYDOWN) {
+			activeKey = SDL_SCANCODE_UNKNOWN;
+			rigidBody.velocity.x = 0;
+			rigidBody.velocity.y = 0;
+		}
 	}
 
 	void onKeyPress(const KeyPressedEvent& e) {
@@ -172,7 +188,6 @@ public:
 			return;
 		}
 		else if (currentInput == InputState::MenuControl) {
-			dispatcher.enqueue<MenuOpenEvent>();
 			/*std::cout << "MenuControl" << std::endl;*/
 			MenuControl(e);
 			return;

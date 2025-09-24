@@ -8,6 +8,7 @@
 #include "components/TextComponent.h"
 #include "components/CameraFollowComponent.h"
 #include "events/KeyPressedEvent.h"
+#include "events/KeyUpEvent.h"
 #include "events/CollisionEvent.h"
 #include "systems/AnimationSystem.h"
 #include "systems/CameraMovementSystem.h"
@@ -154,8 +155,10 @@ void Game::ProcessInput() {
 				debugMode = !debugMode; // toggle
 				break;
 			}
-		case SDL_KEYUP:
 			dispatcher.enqueue<KeyPressedEvent>({ sdlEvent });
+			break;
+		case SDL_KEYUP:
+			dispatcher.enqueue<KeyUpEvent>({ sdlEvent });
 			break;
 		}
 	}
