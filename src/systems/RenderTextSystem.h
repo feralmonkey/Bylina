@@ -201,6 +201,7 @@ public:
 		inputStack.pop_back();
 	}
 
+	// simple clear menu that doesn't touch input stack - temporary
 	void ClearText() {
 		auto view = registry.view<SpriteTag>();
 		for (auto entity : view) {
@@ -235,30 +236,14 @@ public:
 		TextBox(message, 9, 16, 8, 16);
 	}
 
-	entt::entity GetOrCreateMenuEntity() {
-		static entt::entity menuEntity = entt::null;
-
-		if (menuEntity == entt::null || !registry.valid(menuEntity)) {
-			menuEntity = registry.create();
-		}
-		return menuEntity;
-	}
 
 	entt::entity textBoxEntity = entt::null;
 	void TextBox(std::string message, int width = 18, int height = 8, int xOffset = 40, int yOffset = 176) {
 		if (textBoxEntity == entt::null || !registry.valid(textBoxEntity)) {
-			entt::entity textBoxEntity = GetOrCreateMenuEntity();
-			/*textBoxEntity = registry.create();*/
-			registry.emplace_or_replace<TextComponent>(textBoxEntity, message, width, height, xOffset, yOffset);
+			textBoxEntity = registry.create();
 		}
-		else {
-			auto& textComp = registry.get<TextComponent>(textBoxEntity);
-			textComp.text = message;
-			textComp.width = width;
-			textComp.height = height;
-			textComp.xOffset = xOffset;
-			textComp.yOffset = yOffset;
-		}
+		// TODO RIGOLO - this still doesn't work as it should : really look up emplace_or_replace
+		registry.emplace_or_replace<TextComponent>(textBoxEntity, message, width, height, xOffset, yOffset);
 
 		RenderTextBox();
 	}
