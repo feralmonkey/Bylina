@@ -125,13 +125,15 @@ private:
 			if (e.event.type == SDL_KEYDOWN) {
 				switch (e.event.key.keysym.scancode) {
 				case SDL_SCANCODE_UP:
-					//ClearOld();
+					textSystem.ClearText(); // TODO RIGOLO - this is still awful - need to get emplace_or_update working in renderTextSystem.h
 					menu.currentIndex = (menu.currentIndex - 1 + menu.options.size()) % menu.options.size();
+					std::cout << menu.currentIndex << std::endl;
 					dispatcher.enqueue<MenuNavigateEvent>();
 					break;
 				case SDL_SCANCODE_DOWN:
-					//ClearOld();
+					textSystem.ClearText();
 					menu.currentIndex = (menu.currentIndex + 1) % menu.options.size();
+					std::cout << menu.currentIndex << std::endl;
 					dispatcher.enqueue<MenuNavigateEvent>();
 					break;
 				case SDL_SCANCODE_X: 
@@ -165,13 +167,13 @@ public:
 		currentInput = inputStack.back();
 
 		if (currentInput == InputState::PlayerControl) {
-			std::cout << "PlayerControl" << std::endl;
+			/*std::cout << "PlayerControl" << std::endl;*/
 			PlayerControl(e);
 			return;
 		}
 		else if (currentInput == InputState::MenuControl) {
 			dispatcher.enqueue<MenuOpenEvent>();
-			std::cout << "MenuControl" << std::endl;
+			/*std::cout << "MenuControl" << std::endl;*/
 			MenuControl(e);
 			return;
 		}

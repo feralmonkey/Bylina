@@ -41,7 +41,7 @@ private:
 
 		for (auto entity : view) {
 			const auto textLabel = view.get<TextComponent>(entity);
-
+			std::cout << "View Size: " << view.size() << std::endl;
 			// get the first character and convert hex character to integer
 			int x = camera.x + textLabel.xOffset;
 			int y = camera.y + textLabel.yOffset;
@@ -201,6 +201,13 @@ public:
 		inputStack.pop_back();
 	}
 
+	void ClearText() {
+		auto view = registry.view<SpriteTag>();
+		for (auto entity : view) {
+			registry.destroy(entity);
+		}
+	}
+
 	void RenderAllMenus() {
 		auto view = registry.view<MenuComponent>();
 		for (auto entity : view) {
@@ -228,10 +235,30 @@ public:
 		TextBox(message, 9, 16, 8, 16);
 	}
 
+	entt::entity GetOrCreateMenuEntity() {
+		static entt::entity menuEntity = entt::null;
+
+		if (menuEntity == entt::null || !registry.valid(menuEntity)) {
+			menuEntity = registry.create();
+		}
+		return menuEntity;
+	}
+
+	entt::entity textBoxEntity = entt::null;
 	void TextBox(std::string message, int width = 18, int height = 8, int xOffset = 40, int yOffset = 176) {
-		/*inputStack.push_back(InputState::TextBox);*/
-		entt::entity textBox = registry.create();
-		registry.emplace<TextComponent>(textBox, message, width, height, xOffset, yOffset);
+		if (textBoxEntity == entt::null || !registry.valid(textBoxEntity)) {
+			entt::entity textBoxEntity = GetOrCreateMenuEntity();
+			/*textBoxEntity = registry.create();*/
+			registry.emplace_or_replace<TextComponent>(textBoxEntity, message, width, height, xOffset, yOffset);
+		}
+		else {
+			auto& textComp = registry.get<TextComponent>(textBoxEntity);
+			textComp.text = message;
+			textComp.width = width;
+			textComp.height = height;
+			textComp.xOffset = xOffset;
+			textComp.yOffset = yOffset;
+		}
 
 		RenderTextBox();
 	}
