@@ -140,7 +140,7 @@ void MapLoader::LoadMap(sol::state& lua, entt::registry& registry, const std::un
 			break;
 		}
 
-		sol::table entity = entities[i];
+ 		sol::table entity = entities[i];
 
 		entt::entity newEntity = registry.create();
 
