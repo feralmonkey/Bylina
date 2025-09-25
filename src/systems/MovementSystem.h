@@ -23,10 +23,6 @@ private:
 public:
     MovementSystem(entt::registry& reg, entt::dispatcher& dispatcher) : registry(reg) {}
 
-    void Configure(entt::dispatcher& dispatcher) {
-        dispatcher.sink<CollisionEvent>().connect<&MovementSystem::OnCollision>(*this);
-    }
-
     void Update(double deltaTime) {
         auto view = registry.view<TransformComponent, RigidBodyComponent>();
 
@@ -45,11 +41,6 @@ public:
         }
     }
 
-    void OnCollision(const CollisionEvent& event) {
-        entt::entity a = event.a;
-        entt::entity b = event.b;
-    }
-
 private:
     bool IsMoving(const RigidBodyComponent& rigidBody) {
         return rigidBody.velocity.x != 0.0f || rigidBody.velocity.y != 0.0f;
@@ -57,6 +48,7 @@ private:
 
     void ApplyMovement(TransformComponent& transform, const RigidBodyComponent& rigidBody, double deltaTime) {
         glm::vec2 frameMove = rigidBody.velocity * (moveSpeed * static_cast<float>(deltaTime));
+        transform.previousPosition = transform.position;
         transform.position += frameMove;
     }
 

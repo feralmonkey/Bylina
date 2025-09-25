@@ -160,6 +160,7 @@
     <Object Include="x64\Debug\Main.obj" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\components\CollisionComponent.h" />
     <ClInclude Include="src\components\MenuComponent.h" />
     <ClInclude Include="src\components\TagComponents.h" />
     <ClInclude Include="src\enums\InputState.h" />

@@ -13,6 +13,7 @@ class RenderTextSystem;
 class KeyboardControlSystem;
 class MovementSystem;
 class CollisionSystem;
+class CollisionResolutionSystem;
 class MenuSystem;
 class ScriptSystem;
 
@@ -41,6 +42,7 @@ private:
 	std::unique_ptr<KeyboardControlSystem> keyboardSystem;
 	std::unique_ptr<MovementSystem> movementSystem;
 	std::unique_ptr<CollisionSystem> collisionSystem;
+	std::unique_ptr<CollisionResolutionSystem> collisionResolutionSystem;
 	std::unique_ptr<MenuSystem> menuSystem;
 	std::unique_ptr<ScriptSystem> scriptSystem;
 	

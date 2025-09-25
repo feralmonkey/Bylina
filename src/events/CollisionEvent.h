@@ -2,6 +2,7 @@
 #include "entt.hpp"
 
 struct CollisionEvent {
-		entt::entity a;
-		entt::entity b;
+    entt::entity a;
+    entt::entity b;
+    glm::vec2 overlap;
 };

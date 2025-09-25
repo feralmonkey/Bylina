@@ -74,10 +74,11 @@ Map = {
             }
         },
         {
-            -- Farmer
+            -- Shepherd
             components = {
+                npc_tag = {},
                 transform = {
-                    position = { x = 64, y = 64 },
+                    position = { x = 192, y = 64 },
                     scale = { x = 1.0, y = 1.0 },
                     rotation = 0.0, -- degrees
                 },

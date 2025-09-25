@@ -2,7 +2,9 @@
 
 #include <entt.hpp>
 #include <spdlog/spdlog.h>
+#include "../components/TagComponents.h"
 #include "../components/BoxColliderComponent.h"
+#include "../components/CollisionComponent.h"
 #include "../components/TransformComponent.h"
 #include "../components/RigidBodyComponent.h"
 #include "../events/CollisionEvent.h"
@@ -19,14 +21,14 @@ private:
 	int mapHeight;
 
 
+// TODO RIGOLO - Probably won't be using a dispatcher here
+	// Remove dispatcher references
+
 public:
 	CollisionSystem(entt::registry& reg, entt::dispatcher& dis, int tileSize) 
-		: registry(reg), dispatcher(dis), tileSize(tileSize)   {
+		: registry(reg), dispatcher(dis), tileSize(tileSize)   { }
 
-		this->mapWidth = mapWidth;
-		this->mapHeight = mapHeight;
-	}
-
+	// TODO RIGOLO - not all of this logic needs to be called every frame ; some can be in a map-refresh method
 	void Update(int mapWidth, int mapHeight) {
 		mapCols = mapWidth / tileSize;
 		mapRows = mapHeight / tileSize;
@@ -90,41 +92,64 @@ public:
 							posA.y + sizeA.y > posB.y;
 
 						if (collided) {
-							// --- Resolve overlap ---
 							glm::vec2 overlap(
 								std::min(posA.x + sizeA.x, posB.x + sizeB.x) - std::max(posA.x, posB.x),
 								std::min(posA.y + sizeA.y, posB.y + sizeB.y) - std::max(posA.y, posB.y)
 							);
 
-							if (overlap.x < overlap.y) {
-								// Push along X axis
-								if (posA.x < posB.x) {
-									registry.get<TransformComponent>(entityA).position.x -= overlap.x;
-								}
-								else {
-									registry.get<TransformComponent>(entityA).position.x += overlap.x;
-								}
-							}
-							else {
-								// Push along Y axis
-								if (posA.y < posB.y) {
-									registry.get<TransformComponent>(entityA).position.y -= overlap.y;
-								}
-								else {
-									registry.get<TransformComponent>(entityA).position.y += overlap.y;
-								}
-							}
-
-							// Stop velocity if entity has one
-							if (registry.any_of<RigidBodyComponent>(entityA)) {
-								registry.get<RigidBodyComponent>(entityA).velocity = { 0, 0 };
-							}
-
-							dispatcher.enqueue<CollisionEvent>({ entityA, entityB });
+							dispatcher.enqueue<CollisionEvent>({ entityA, entityB, overlap });
 						}
 					}
 				}
 			}
+		}
+	}
+};
+
+class CollisionResolutionSystem : public ISystem {
+private:
+	entt::registry& registry;
+
+public:
+	CollisionResolutionSystem(entt::registry& reg, entt::dispatcher& dispatcher)
+		: registry(reg) {
+		dispatcher.sink<CollisionEvent>().connect<&CollisionResolutionSystem::OnCollision>(*this);
+	}
+
+	void OnCollision(const CollisionEvent& event) {
+		auto entityA = event.a;
+		auto entityB = event.b;
+
+		bool aIsPlayer = registry.any_of<PlayerTag>(entityA);
+		bool bIsPlayer = registry.any_of<PlayerTag>(entityB);
+
+		bool aIsNPC = registry.any_of<NPCTag>(entityA);
+		bool bIsNPC = registry.any_of<NPCTag>(entityB);
+
+		// Player vs NPC
+		if (aIsPlayer && bIsNPC) {
+			auto& transform = registry.get<TransformComponent>(entityA);
+			transform.position = transform.previousPosition; // stop player
+		}
+		else if (bIsPlayer && aIsNPC) {
+			auto& transform = registry.get<TransformComponent>(entityB);
+			transform.position = transform.previousPosition; // stop player
+		}
+		// Player vs Wall (or any static object)
+		else if (aIsPlayer) {
+			auto& transform = registry.get<TransformComponent>(entityA);
+			transform.position = transform.previousPosition;
+		}
+		else if (bIsPlayer) {
+			auto& transform = registry.get<TransformComponent>(entityB);
+			transform.position = transform.previousPosition;
+		}
+		// Pushable objects (future)
+		else if (registry.any_of<PushableComponent>(entityA) && aIsPlayer) {
+			// allow push
+		}
+		else if (registry.any_of<PushableComponent>(entityB) && bIsPlayer) {
+			// allow push
 		}
 	}
 };

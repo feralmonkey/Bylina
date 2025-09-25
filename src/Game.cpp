@@ -103,11 +103,9 @@ void Game::Initialize() {
 	keyboardSystem = std::make_unique<KeyboardControlSystem>(registry, dispatcher, inputStack, *textSystem);
 	movementSystem = std::make_unique<MovementSystem>(registry, dispatcher);
 	collisionSystem = std::make_unique<CollisionSystem>(registry, dispatcher, 8);
+	collisionResolutionSystem = std::make_unique<CollisionResolutionSystem>(registry, dispatcher);
 	menuSystem = std::make_unique<MenuSystem>();
 	scriptSystem = std::make_unique<ScriptSystem>();
-
-	// Dispatcher connections
-	dispatcher.sink<CollisionEvent>().connect<&MovementSystem::OnCollision>(*movementSystem);
 
 	gameIsRunning = true;
 }
@@ -173,18 +171,19 @@ void Game::Update() {
 	double deltaTime = (SDL_GetTicks() - millisecondsPreviousFrame) / 1000.0;
 	millisecondsPreviousFrame = SDL_GetTicks();
 
-	// 1. Deliver input events so systems can react
+	// 1. deliver input events so systems can react
 	dispatcher.update(); // e.g., KeyPressedEvent will go to KeyboardControlSystem
 
-	// 2. Update systems that rely on input/events
-	//if (keyboardSystem) keyboardSystem->Update(deltaTime); // usually reacts to KeyPressedEvent
-	//if (menuSystem) menuSystem->Update(registry);         // menu selection
+	// 2. movement (positions change)
+	if (movementSystem) movementSystem->Update(deltaTime);
 
-	// 3. Update core game logic
-	if (movementSystem) movementSystem->Update(deltaTime); // moves player/entities based on velocity
+	// 3. collision detection (enqueue collision events)
 	if (collisionSystem) collisionSystem->Update(mapWidth, mapHeight);
 
-	// 4. Update non-event-driven systems
+	// 4. deliver collision events so resolution runs *this frame*
+	dispatcher.update();
+
+	// 5. other systems
 	AnimationSystem(registry);           // updates animations
 	CameraMovementSystem(registry, camera); // camera follows player
 }

@@ -279,6 +279,10 @@ void MapLoader::LoadMap(sol::state& lua, entt::registry& registry, const std::un
 			if (player_tag) {
 				registry.emplace<PlayerTag>(newEntity);
 			}
+			sol::optional<sol::table> npc_tag = entity["components"]["npc_tag"];
+			if (npc_tag) {
+				registry.emplace<NPCTag>(newEntity);
+			}
 #pragma endregion
 
 		}
