@@ -15,6 +15,7 @@ class MovementSystem;
 class CollisionSystem;
 class CollisionResolutionSystem;
 class MenuSystem;
+class NPCSystem;
 class ScriptSystem;
 
 const int FPS = 60;
@@ -44,6 +45,7 @@ private:
 	std::unique_ptr<CollisionSystem> collisionSystem;
 	std::unique_ptr<CollisionResolutionSystem> collisionResolutionSystem;
 	std::unique_ptr<MenuSystem> menuSystem;
+	std::unique_ptr<NPCSystem> npcSystem;
 	std::unique_ptr<ScriptSystem> scriptSystem;
 	
 

@@ -1,6 +1,7 @@
 #include "./MapLoader.h"
 #include "./Game.h"
 #include <fstream>
+#include <unordered_map>
 #include <sol/sol.hpp>
 #include <spdlog/spdlog.h> 
 #include "../src/components/TransformComponent.h"
@@ -11,6 +12,7 @@
 #include "../src/components/KeyboardControlComponent.h"
 #include "../src/components/CameraFollowComponent.h"
 #include "../src/components/HealthComponent.h"
+#include "../src/components/NPCComponent.h"
 #include "../src/components/ScriptComponent.h"
 #include "../src/components/TagComponents.h"
 
@@ -265,6 +267,20 @@ void MapLoader::LoadMap(sol::state& lua, entt::registry& registry, const std::un
 					glm::vec2(left["x"].get_or(0.0f), left["y"].get_or(0.0f))
 				);
 			}
+
+			sol::optional<sol::table> npc = entity["components"]["npc"];
+			if (npc) {
+				sol::table npc = entity["components"]["npc"];
+				// todo rigolo - make this not suck
+				registry.emplace<NPCComponent>(
+					newEntity,
+					npc["name"].get<std::string>(),
+					npc["conversation"].get<std::unordered_map<std::string, std::string>>(),
+					npc["pattern"].get<MovementPattern>(),
+					npc["speed"].get<MovementSpeed>()
+					);
+			}
+
 
 			// Script Component
 			sol::optional<sol::table> script = entity["components"]["on_update_script"];

@@ -2,6 +2,7 @@
 
 #include "entt.hpp"
 #include "../systems/ISystem.h"
+#include "../components/NPCComponent.h"
 #include "../components/ScriptComponent.h"
 #include "../components/TransformComponent.h"
 #include "../components/RigidBodyComponent.h"
@@ -84,6 +85,17 @@ public:
 		lua.new_usertype<entt::entity>(
 			"entity"
 		);
+		lua.new_usertype<NPCComponent>("NPCComponent",
+			sol::constructors<
+			NPCComponent(std::string,
+				std::unordered_map<std::string, std::string>,
+				MovementPattern,
+				MovementSpeed)>(),
+			"name", &NPCComponent::name,
+			"conversation", &NPCComponent::conversation,
+			"movementPattern", &NPCComponent::movementPattern,
+			"speed", &NPCComponent::speed
+		);
 
 		// create the 'registry' user type so lua knows what a registry is...
 		// ...and expose methods we will use in lua
@@ -107,6 +119,20 @@ public:
 				r.destroy(e);
 				return alive;
 			}
+		);
+
+		// configure LUA enums
+		lua.new_enum("MovementPattern",
+			"Still", MovementPattern::Still,
+			"Box", MovementPattern::Box,
+			"Random", MovementPattern::Random,
+			"Line", MovementPattern::Line
+		);
+
+		lua.new_enum("MovementSpeed",
+			"Slow", MovementSpeed::Slow,
+			"Normal", MovementSpeed::Normal,
+			"Fast", MovementSpeed::Fast
 		);
 
 		// create all the bindings between c++ and lua functions

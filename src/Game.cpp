@@ -16,6 +16,7 @@
 #include "systems/KeyboardControlSystem.h"
 #include "systems/MenuSystem.h"
 #include "systems/MovementSystem.h"
+#include "systems/NPCSystem.h"
 #include "systems/RenderColliderSystem.h"
 #include "systems/RenderSystem.h"
 #include "systems/RenderTextSystem.h"
@@ -105,6 +106,7 @@ void Game::Initialize() {
 	collisionSystem = std::make_unique<CollisionSystem>(registry, dispatcher, 8);
 	collisionResolutionSystem = std::make_unique<CollisionResolutionSystem>(registry, dispatcher);
 	menuSystem = std::make_unique<MenuSystem>();
+	npcSystem = std::make_unique<NPCSystem>(registry, dispatcher);
 	scriptSystem = std::make_unique<ScriptSystem>();
 
 	gameIsRunning = true;
@@ -170,6 +172,9 @@ void Game::Update() {
 	}
 	double deltaTime = (SDL_GetTicks() - millisecondsPreviousFrame) / 1000.0;
 	millisecondsPreviousFrame = SDL_GetTicks();
+
+	// 0. Move NPCS
+	npcSystem->Update();
 
 	// 1. deliver input events so systems can react
 	dispatcher.update(); // e.g., KeyPressedEvent will go to KeyboardControlSystem

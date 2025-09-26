@@ -109,6 +109,7 @@
       <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
       <AdditionalIncludeDirectories>D:\source\repos\vcpkg\installed\x64-windows\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -164,8 +165,10 @@
     <ClInclude Include="src\components\MenuComponent.h" />
     <ClInclude Include="src\components\TagComponents.h" />
     <ClInclude Include="src\enums\InputState.h" />
+    <ClInclude Include="src\enums\NPCMovement.h" />
     <ClInclude Include="src\events\KeyUpEvent.h" />
     <ClInclude Include="src\events\MenuOpenEvent.h" />
+    <ClInclude Include="src\events\TalkEvent.h" />
     <ClInclude Include="src\MapLoader.h" />
     <ClInclude Include="libs\nlohmann\json.hpp" />
     <ClInclude Include="src\components\AnimationComponent.h" />
@@ -190,6 +193,7 @@
     <ClInclude Include="src\systems\KeyboardControlSystem.h" />
     <ClInclude Include="src\systems\MenuSystem.h" />
     <ClInclude Include="src\systems\MovementSystem.h" />
+    <ClInclude Include="src\systems\NPCSystem.h" />
     <ClInclude Include="src\systems\RenderColliderSystem.h" />
     <ClInclude Include="src\systems\RenderGUISystem.h" />
     <ClInclude Include="src\systems\RenderSystem.h" />
@@ -197,6 +201,7 @@
     <ClInclude Include="src\systems\ScriptSystem.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\components\NPCComponent.h" />
     <ClCompile Include="src\events\MenuCloseEvent.h" />
     <ClCompile Include="src\events\MenuNavigateEvent.h" />
     <ClCompile Include="src\MapLoader.cpp" />

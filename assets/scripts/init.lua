@@ -103,6 +103,15 @@ Map = {
                     width = 16,
                     height = 16,
                     offset = { x = 0, y = 0 }
+                },
+                npc = {
+                    name = "anna",
+                    conversation = {
+                        basic = "I'm looking for my lost puppy Zoe. Can you help me find her?",
+                        found = "Thank you!"
+                    },
+                    pattern = MovementPattern.Random,
+                    speed = MovementSpeed.Normal
                 }
             }
         }
