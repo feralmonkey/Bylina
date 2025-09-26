@@ -174,7 +174,7 @@ void Game::Update() {
 	millisecondsPreviousFrame = SDL_GetTicks();
 
 	// 0. Move NPCS
-	npcSystem->Update();
+	npcSystem->Update(deltaTime);
 
 	// 1. deliver input events so systems can react
 	dispatcher.update(); // e.g., KeyPressedEvent will go to KeyboardControlSystem
