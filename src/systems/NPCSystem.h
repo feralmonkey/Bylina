@@ -10,12 +10,14 @@
 #include "../components/TransformComponent.h"
 #include "../enums/NPCMovement.h"
 #include "../events/TalkEvent.h"
+#include "../systems/RenderTextSystem.h"
 
 
 class NPCSystem {
 private:
 	entt::registry& registry;
 	entt::dispatcher& dispatcher;
+	RenderTextSystem& textSystem;
 
 	int RNG() {
 		std::random_device rd;                     // seed
@@ -25,8 +27,21 @@ private:
 		return dist(gen);
 	}
 
-	void onTalk() {
-
+	void onTalk(const TalkEvent& e) { 
+		
+		auto view = registry.view<NPCComponent, TransformComponent>();
+		bool foundTarget = false;
+		for (auto entity : view) {
+			auto& npc       = view.get<NPCComponent>(entity);
+			auto& transform = view.get<TransformComponent>(entity);
+			if (e.target == transform.position) {
+				textSystem.TextBox(npc.conversation["default"]);
+				foundTarget = true;
+			}
+		}
+		if (!foundTarget) {
+			textSystem.TextBox("No one to talk to");
+		}
 	}
 
 	void MoveRandom(RigidBodyComponent& rigidBody, TransformComponent& transform, SpriteComponent& sprite, NPCComponent& npc) {
@@ -52,11 +67,12 @@ private:
 
 public:
 
-	NPCSystem(entt::registry& reg, entt::dispatcher& dis) :
+	NPCSystem(entt::registry& reg, entt::dispatcher& dis, RenderTextSystem& textSystem) :
 		dispatcher(dis),
-		registry(reg)
+		registry(reg),
+		textSystem(textSystem)
 	{
-		//dispatcher.sink<TalkEvent>().connect<&NPCSystem::onTalk>(*this); //todo rigolo will need to deal with this
+		dispatcher.sink<TalkEvent>().connect<&NPCSystem::onTalk>(*this); //todo rigolo will need to deal with this
 	}
 
 	void Update(double deltaTime) {
@@ -105,8 +121,6 @@ public:
 				transform.position = npc.targetTile;
 				npc.isMoving = false;
 			}
-
-
 		}
 	}
 };

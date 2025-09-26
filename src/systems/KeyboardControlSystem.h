@@ -17,6 +17,8 @@
 #include "../events/MenuOpenEvent.h"
 #include "../events/MenuCloseEvent.h"
 #include "../events/MenuNavigateEvent.h"
+#include "../events/TalkEvent.h"
+#include "../enums/Direction.h"
 #include "../enums/InputState.h"
 
 
@@ -30,13 +32,21 @@ private:
 	InputState currentInput;
 	SDL_Scancode activeKey = SDL_SCANCODE_UNKNOWN;
 
-	void PlayerControl(const KeyPressedEvent& e) {
-		auto view = reg.view<PlayerTag, RigidBodyComponent, SpriteComponent, TransformComponent>();
-		entt::entity player = view.front();
+	void ClearOld() {
+		auto text_view = reg.view<TextComponent>();
+		for (auto entity : text_view) {
+			reg.destroy(entity);
+		}
+	}
 
-		const TransformComponent transform = view.get<TransformComponent>(player);
-		RigidBodyComponent& rigidBody = view.get<RigidBodyComponent>(player);
-		SpriteComponent& sprite = view.get<SpriteComponent>(player);
+	void PlayerControl(const KeyPressedEvent& e) {
+		auto view = reg.view<PlayerComponent, RigidBodyComponent, SpriteComponent, TransformComponent>();
+		entt::entity entity = view.front();
+
+		const TransformComponent transform = view.get<TransformComponent>(entity);
+		RigidBodyComponent& rigidBody = view.get<RigidBodyComponent>(entity);
+		SpriteComponent& sprite = view.get<SpriteComponent>(entity);
+		PlayerComponent& player = view.get<PlayerComponent>(entity);
 
 		if (e.event.type == SDL_KEYDOWN) {
 			if (activeKey == SDL_SCANCODE_UNKNOWN) {
@@ -50,6 +60,7 @@ private:
 				rigidBody.velocity.y =  0;
 				rigidBody.lastMoveDir = { -1.0f, 0.0f };
 				sprite.srcRect.y = sprite.height * 3;
+				player.direction = Direction::Left;
 				break;
 			}
 			case SDL_SCANCODE_D:
@@ -58,6 +69,7 @@ private:
 				rigidBody.velocity.y = 0;
 				rigidBody.lastMoveDir = { +1.0f, 0.0f };
 				sprite.srcRect.y = sprite.height * 1;
+				player.direction = Direction::Right;
 				break;
 			}
 			case SDL_SCANCODE_W:
@@ -66,6 +78,7 @@ private:
 				rigidBody.velocity.y = -1;
 				rigidBody.lastMoveDir = { 0.0f, -1.0f };
 				sprite.srcRect.y = sprite.height * 0;
+				player.direction = Direction::Up;
 				break;
 			}
 			case SDL_SCANCODE_S:
@@ -74,6 +87,7 @@ private:
 				rigidBody.velocity.y = +1;
 				rigidBody.lastMoveDir = { 0.0f, +1.0f };
 				sprite.srcRect.y = sprite.height * 2;
+				player.direction = Direction::Down;
 				break;
 			}
 			case SDL_SCANCODE_X: {
@@ -107,13 +121,6 @@ private:
 		}
 	}
 
-	void ClearOld() {
-		auto text_view = reg.view<TextComponent>();
-		for (auto entity : text_view) {
-			reg.destroy(entity);
-		}
-	}
-
 	void MenuControl(const KeyPressedEvent& e) {
 		// todo rigolo  - at this point nothing has a menu component
 		auto view = reg.view<MenuComponent>();
@@ -139,7 +146,14 @@ private:
 				case SDL_SCANCODE_X: 
 					// confirm
 					spdlog::info("Selected: {}", menu.options[menu.currentIndex]);
-					// TODO: trigger action depending on option
+					if (menu.options[menu.currentIndex] == "Talk") {
+						auto view = reg.view<PlayerComponent, TransformComponent>();
+						const auto entity = view.front();
+						const auto& player = view.get<PlayerComponent>(entity);
+						const auto& transform = view.get<TransformComponent>(entity);
+
+						dispatcher.enqueue<TalkEvent>(transform.position, player.direction);
+					}
 					break;
 				case SDL_SCANCODE_Z: 
 					// cancel
@@ -165,7 +179,7 @@ public:
 	}
 
 	void onKeyUp(const KeyUpEvent& e) {
-		auto view = reg.view<PlayerTag, RigidBodyComponent, SpriteComponent, TransformComponent>();
+		auto view = reg.view<PlayerComponent, RigidBodyComponent, SpriteComponent, TransformComponent>();
 		entt::entity player = view.front();
 
 		RigidBodyComponent& rigidBody = view.get<RigidBodyComponent>(player);

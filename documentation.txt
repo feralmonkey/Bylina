@@ -5,12 +5,12 @@ Tagging
 =======
 1. Create an empty struct in TagComponents.h:
 	e.g
-		struct PlayerTag {};
+		struct PlayerComponent {};
 2. Add emplacement logic in MapLoader.cpp:
 			// Player Tag
-			sol::optional<sol::table> player_tag = entity["components"]["player_tag"];
-			if (player_tag) {
-				registry.emplace<PlayerTag>(newEntity);
+			sol::optional<sol::table> player = entity["components"]["player"];
+			if (player) {
+				registry.emplace<PlayerComponent>(newEntity);
 			}
 3. To tag an entity in lua:
             components = {

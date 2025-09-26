@@ -106,7 +106,7 @@ void Game::Initialize() {
 	collisionSystem = std::make_unique<CollisionSystem>(registry, dispatcher, 8);
 	collisionResolutionSystem = std::make_unique<CollisionResolutionSystem>(registry, dispatcher);
 	menuSystem = std::make_unique<MenuSystem>();
-	npcSystem = std::make_unique<NPCSystem>(registry, dispatcher);
+	npcSystem = std::make_unique<NPCSystem>(registry, dispatcher, *textSystem);
 	scriptSystem = std::make_unique<ScriptSystem>();
 
 	gameIsRunning = true;

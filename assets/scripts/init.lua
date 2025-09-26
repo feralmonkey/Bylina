@@ -34,7 +34,7 @@ Map = {
             -- Player
             tag = "hero",
             components = {
-                player_tag = {},
+                player = {},
                 transform = {
                     position = { x = 48, y = 48 },
                     scale = { x = 1.0, y = 1.0 },
@@ -107,7 +107,7 @@ Map = {
                 npc = {
                     name = "anna",
                     conversation = {
-                        basic = "I'm looking for my lost puppy Zoe. Can you help me find her?",
+                        default = "I'm looking for/my lost puppy /Zoe. Can you helpme find her?",
                         found = "Thank you!"
                     },
                     pattern = MovementPattern.Random,

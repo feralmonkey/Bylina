@@ -137,6 +137,31 @@ private:
 		}
 	}
 
+	void RenderMenu(const MenuComponent& menu) {
+		if (!menu.isActive) return;
+
+		std::string message = " /";
+
+		for (size_t i = 0; i < menu.options.size(); i++) {
+			if (i == menu.currentIndex) {
+				message += ">" + menu.options[i] + "/ /";  // cursor
+			}
+			else {
+				message += " " + menu.options[i] + "/ /";
+			}
+		}
+
+		TextBox(message, 9, 16, 8, 16);
+	}
+
+	void DrawChar(entt::registry& registry, int srcx, int srcy, int dstx, int dsty) {
+		//std::cout << "dstx, dsty: " << dstx << " , " << dsty << std::endl;
+		entt::entity textWindow = registry.create();
+		registry.emplace<SpriteComponent>(textWindow, "character-tiles", tileSize, tileSize, 10, false, srcx, srcy);
+		registry.emplace<TransformComponent>(textWindow, glm::vec2(dstx * (tileScale), dsty * (tileScale)), glm::vec2(tileScale, tileScale), 0.0);
+		registry.emplace<SpriteTag>(textWindow);
+	}
+
 public:
 	RenderTextSystem(entt::registry& registry, entt::dispatcher& dispatcher, SDL_Renderer* renderer, SDL_Rect& camera, std::unique_ptr<AssetStore>& assetStore, std::vector<InputState>& inputStack, int tileScale = 1, int tileSize = 8) :
 		registry(registry),
@@ -176,14 +201,6 @@ public:
 			.connect<&RenderTextSystem::RenderAllMenus>(*this);   // todo rigolo - this dfunction needs to be updated
 	}
 
-	void DrawChar(entt::registry& registry, int srcx, int srcy, int dstx, int dsty) {
-		//std::cout << "dstx, dsty: " << dstx << " , " << dsty << std::endl;
-		entt::entity textWindow = registry.create();
-		registry.emplace<SpriteComponent>(textWindow, "character-tiles", tileSize, tileSize, 10, false, srcx, srcy);
-		registry.emplace<TransformComponent>(textWindow, glm::vec2(dstx * (tileScale), dsty * (tileScale)), glm::vec2(tileScale, tileScale), 0.0);
-		registry.emplace<SpriteTag>(textWindow);
-	}
-
 	inline void ClearTextBox() {
 
 		// if player hits cancel button and we are already at the bottom of the stack
@@ -201,7 +218,6 @@ public:
 		inputStack.pop_back();
 	}
 
-	// simple clear menu that doesn't touch input stack - temporary
 	void ClearText() {
 		auto view = registry.view<SpriteTag>();
 		for (auto entity : view) {
@@ -218,24 +234,6 @@ public:
 			}
 		}
 	}
-
-	void RenderMenu(const MenuComponent& menu) {
-		if (!menu.isActive) return;
-
-		std::string message = " /";
-
-		for (size_t i = 0; i < menu.options.size(); i++) {
-			if (i == menu.currentIndex) {
-				message += ">" + menu.options[i] + "/ /";  // cursor
-			}
-			else {
-				message += " " + menu.options[i] + "/ /";
-			}
-		}
-
-		TextBox(message, 9, 16, 8, 16);
-	}
-
 
 	entt::entity textBoxEntity = entt::null;
 	void TextBox(std::string message, int width = 18, int height = 8, int xOffset = 40, int yOffset = 176) {

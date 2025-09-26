@@ -2,7 +2,7 @@
 #include "entt.hpp"
 
 struct MenuNavigateEvent {
-    enum class Direction { Up, Down, Confirm, Cancel };
-    Direction dir;
+    enum class MenuDirection { Up, Down, Confirm, Cancel };
+    MenuDirection dir;
     entt::entity menuEntity;
 };

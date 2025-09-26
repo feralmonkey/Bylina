@@ -4,17 +4,18 @@
 #include <unordered_map>
 #include <sol/sol.hpp>
 #include <spdlog/spdlog.h> 
-#include "../src/components/TransformComponent.h"
-#include "../src/components/RigidBodyComponent.h"
-#include "../src/components/SpriteComponent.h"
 #include "../src/components/AnimationComponent.h"
 #include "../src/components/BoxColliderComponent.h"
-#include "../src/components/KeyboardControlComponent.h"
 #include "../src/components/CameraFollowComponent.h"
 #include "../src/components/HealthComponent.h"
+#include "../src/components/KeyboardControlComponent.h"
 #include "../src/components/NPCComponent.h"
+#include "../src/components/PlayerComponent.h"
+#include "../src/components/RigidBodyComponent.h"
 #include "../src/components/ScriptComponent.h"
+#include "../src/components/SpriteComponent.h"
 #include "../src/components/TagComponents.h"
+#include "../src/components/TransformComponent.h"
 
 MapLoader::MapLoader() {
 	spdlog::info("MapLoader constructer called");
@@ -289,12 +290,14 @@ void MapLoader::LoadMap(sol::state& lua, entt::registry& registry, const std::un
 				registry.emplace<ScriptComponent>(newEntity, func);
 			}
 
-#pragma region Tags
-			// Player Tag
-			sol::optional<sol::table> player_tag = entity["components"]["player_tag"];
-			if (player_tag) {
-				registry.emplace<PlayerTag>(newEntity);
+			// Player Component
+			sol::optional<sol::table> player = entity["components"]["player"];
+			if (player) {
+				registry.emplace<PlayerComponent>(newEntity);
 			}
+
+#pragma region Tags
+			// npc tag
 			sol::optional<sol::table> npc_tag = entity["components"]["npc_tag"];
 			if (npc_tag) {
 				registry.emplace<NPCTag>(newEntity);

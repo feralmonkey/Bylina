@@ -120,8 +120,8 @@ public:
 		auto entityA = event.a;
 		auto entityB = event.b;
 
-		bool aIsPlayer = registry.any_of<PlayerTag>(entityA);
-		bool bIsPlayer = registry.any_of<PlayerTag>(entityB);
+		bool aIsPlayer = registry.any_of<PlayerComponent>(entityA);
+		bool bIsPlayer = registry.any_of<PlayerComponent>(entityB);
 
 		bool aIsNPC = registry.any_of<NPCTag>(entityA);
 		bool bIsNPC = registry.any_of<NPCTag>(entityB);
