@@ -46,9 +46,10 @@ private:
 		}
 	}
 
-	void MoveSprite(RigidBodyComponent&rigidBody, SpriteComponent& sprite,int x, int y, int spriteIndex, Direction direction) {
+	void MoveSprite(RigidBodyComponent&rigidBody, SpriteComponent& sprite, TransformComponent& transform, int x, int y, int spriteIndex, Direction direction) {
 		// todo rigolo - check for collision here
 		rigidBody.velocity = { x, y };
+		transform.nextPosition = transform.position + rigidBody.velocity * TILE_SIZE;
 		rigidBody.lastMoveDir = { (float)x, (float)y };
 		sprite.srcRect.y = sprite.height * spriteIndex;
 		rigidBody.direction = direction;
@@ -58,16 +59,16 @@ private:
 
 		switch (RNG()) {
 		case 6: 
-			MoveSprite(rigidBody, sprite, 0, -1, 0, Direction::Up);
+			MoveSprite(rigidBody, sprite, transform, 0, -1, 0, Direction::Up);
 			break;  // up
 		case 7: 
-			MoveSprite(rigidBody, sprite, 1, 0, 1, Direction::Right);
+			MoveSprite(rigidBody, sprite, transform, 1, 0, 1, Direction::Right);
 			break;
 		case 8: 
-			MoveSprite(rigidBody, sprite, 0, 1, 2, Direction::Down);
+			MoveSprite(rigidBody, sprite, transform, 0, 1, 2, Direction::Down);
 			break;  // down
 		case 9: 
-			MoveSprite(rigidBody, sprite, -1, 0, 3, Direction::Left);
+			MoveSprite(rigidBody, sprite, transform, -1, 0, 3, Direction::Left);
 			break;  // left
 		default: 
 			rigidBody.velocity = { 0.0f, 0.0f };
@@ -79,7 +80,8 @@ private:
 			transform.nextPosition = transform.position + rigidBody.velocity * TILE_SIZE;  // todo rigolo - smooth movement has something to do here.... maybe only set motion and handle position in the movment system
 		}
 		else {
-			rigidBody.inMotion = false;
+			// todo rigolo - inMotion should be false by default. It should be reset to false in the movement system not here
+			//rigidBody.inMotion = false;
 		}
 	}
 
@@ -130,19 +132,20 @@ public:
 			if (!rigidBody.inMotion) continue;
 
 
-			glm::vec2 direction = glm::normalize(transform.nextPosition - transform.position);
-			float speed = 60.0f; // pixels/sec or tie to npc.speed
-			transform.position += direction * TILE_SIZE;// *speed;// *deltaTime;
+			// todo rigolo - this should really be handled in movement
+			//glm::vec2 direction = glm::normalize(transform.nextPosition - transform.position);
+			//float speed = 60.0f; // pixels/sec or tie to npc.speed
+			//transform.position += direction * TILE_SIZE;// *speed;// *deltaTime;
 
-			//// If we’ve arrived (within epsilon), snap to grid and stop
-			if (transform.position == transform.nextPosition) {
-				rigidBody.velocity = { 0.0f, 0.0f };
-				rigidBody.inMotion = 0;
-			}
-			if (glm::length(transform.nextPosition - transform.position) < 1.0f) {
-				transform.position = transform.nextPosition;
-				rigidBody.inMotion = false;
-			}
+			////// If we’ve arrived (within epsilon), snap to grid and stop
+			//if (transform.position == transform.nextPosition) {
+			//	rigidBody.velocity = { 0.0f, 0.0f };
+			//	rigidBody.inMotion = false;
+			//}
+			//if (glm::length(transform.nextPosition - transform.position) < 1.0f) {
+			//	transform.position = transform.nextPosition;
+			//	rigidBody.inMotion = false;
+			//}
 		}
 	}
 };

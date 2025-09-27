@@ -3,6 +3,7 @@
 #include <SDL.h>
 #include "entt.hpp"
 #include <spdlog/spdlog.h>
+#include "../Constants.h"
 #include "../systems/RenderTextSystem.h"
 #include "../components/KeyboardControlComponent.h"
 #include "../components/MenuComponent.h"
@@ -43,7 +44,7 @@ private:
 		auto view = reg.view<PlayerComponent, RigidBodyComponent, SpriteComponent, TransformComponent>();
 		entt::entity entity = view.front();
 
-		const TransformComponent transform = view.get<TransformComponent>(entity);
+		TransformComponent& transform = view.get<TransformComponent>(entity);
 		RigidBodyComponent& rigidBody = view.get<RigidBodyComponent>(entity);
 		SpriteComponent& sprite = view.get<SpriteComponent>(entity);
 		PlayerComponent& player = view.get<PlayerComponent>(entity);
@@ -58,32 +59,40 @@ private:
 			case SDL_SCANCODE_UP: {
 				rigidBody.velocity = { 0, -1 };
 				rigidBody.lastMoveDir = { 0.0f, -1.0f };
+				transform.nextPosition = transform.position + rigidBody.velocity * TILE_SIZE;
 				sprite.srcRect.y = sprite.height * 0;
 				rigidBody.direction = Direction::Up;
+				rigidBody.inMotion = true;
 				break;
 			}
 			case SDL_SCANCODE_D:
 			case SDL_SCANCODE_RIGHT: {
 				rigidBody.velocity = { 1, 0 };
 				rigidBody.lastMoveDir = { +1.0f, 0.0f };
+				transform.nextPosition = transform.position + rigidBody.velocity * TILE_SIZE;
 				sprite.srcRect.y = sprite.height * 1;
 				rigidBody.direction = Direction::Right;
+				rigidBody.inMotion = true;
 				break;
 			}
 			case SDL_SCANCODE_S:
 			case SDL_SCANCODE_DOWN: {
 				rigidBody.velocity = { 0, 1 };
 				rigidBody.lastMoveDir = { 0.0f, +1.0f };
+				transform.nextPosition = transform.position + rigidBody.velocity * TILE_SIZE;
 				sprite.srcRect.y = sprite.height * 2;
 				rigidBody.direction = Direction::Down;
+				rigidBody.inMotion = true;
 				break;
 			}
 			case SDL_SCANCODE_A:
 			case SDL_SCANCODE_LEFT: {
 				rigidBody.velocity = { -1, 0 };
 				rigidBody.lastMoveDir = { -1.0f, 0.0f };
+				transform.nextPosition = transform.position + rigidBody.velocity * TILE_SIZE;
 				sprite.srcRect.y = sprite.height * 3;
 				rigidBody.direction = Direction::Left;
+				rigidBody.inMotion = true;
 				break;
 			}
 			case SDL_SCANCODE_X: {
@@ -112,8 +121,8 @@ private:
 		}
 		else {
 			activeKey = SDL_SCANCODE_UNKNOWN;
-			rigidBody.velocity.x = 0;
-			rigidBody.velocity.y = 0;
+			//rigidBody.velocity.x = 0;
+			//rigidBody.velocity.y = 0;
 		}
 	}
 
@@ -184,8 +193,8 @@ public:
 
 		if (e.event.type != SDL_KEYDOWN) {
 			activeKey = SDL_SCANCODE_UNKNOWN;
-			rigidBody.velocity.x = 0;
-			rigidBody.velocity.y = 0;
+			//rigidBody.velocity.x = 0;
+			//rigidBody.velocity.y = 0;
 		}
 	}
 

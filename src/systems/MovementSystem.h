@@ -30,10 +30,12 @@ public:
             auto& transform = view.get<TransformComponent>(entity);
             auto& rigidBody = view.get<RigidBodyComponent>(entity);
 
-            if (IsMoving(rigidBody)) {
+            if (rigidBody.inMotion) {
                 ApplyMovement(transform, rigidBody, deltaTime);
-                AlignOrthogonalAxis(transform, rigidBody, deltaTime);
+                CheckTileAlignment(transform, rigidBody);
                 UpdateLastMoveDir(rigidBody);
+                //AlignOrthogonalAxis(transform, rigidBody, deltaTime);
+                
             }
             else {
                 SnapToNextTile(transform, rigidBody, deltaTime);
@@ -42,37 +44,47 @@ public:
     }
 
 private:
-    // returns true if the entity;s rigid body component currently has an active velocity on either axis
-    bool IsMoving(const RigidBodyComponent& rigidBody) {
-        return rigidBody.velocity.x != 0.0f || rigidBody.velocity.y != 0.0f;
-    }
-
     void ApplyMovement(TransformComponent& transform, const RigidBodyComponent& rigidBody, double deltaTime) {
         glm::vec2 frameMove = rigidBody.velocity * (moveSpeed * static_cast<float>(deltaTime));
         transform.previousPosition = transform.position;
         transform.position += frameMove;
     }
 
+    void CheckTileAlignment(TransformComponent& transform, RigidBodyComponent& rigidBody) {
+        if (rigidBody.velocity.x > 0) {
+            if (transform.position.x >= transform.nextPosition.x) { rigidBody.inMotion = false; transform.position.x = transform.nextPosition.x; }
+        } 
+        else if (rigidBody.velocity.x < 0) {
+            if (transform.position.x <= transform.nextPosition.x) { rigidBody.inMotion = false; transform.position.x = transform.nextPosition.x; }
+        }
+        else if (rigidBody.velocity.y > 0) {
+            if (transform.position.y >= transform.nextPosition.y) { rigidBody.inMotion = false; transform.position.y = transform.nextPosition.y; }
+        }
+        else if (rigidBody.velocity.y < 0) {
+            if (transform.position.y <= transform.nextPosition.y) { rigidBody.inMotion = false; transform.position.y = transform.nextPosition.y; }
+        }
+    }
+
     // keeps sprite aligned on grid - no diagonals
-    void AlignOrthogonalAxis(TransformComponent& transform, const RigidBodyComponent& rigidBody, double deltaTime) {
-        if (rigidBody.velocity.x != 0.0f) {
-            NudgeTowardNearest(transform.position.y, deltaTime);
-        }
-        else if (rigidBody.velocity.y != 0.0f) {
-            NudgeTowardNearest(transform.position.x, deltaTime);
-        }
-    }
+    //void AlignOrthogonalAxis(TransformComponent& transform, const RigidBodyComponent& rigidBody, double deltaTime) {
+    //    if (rigidBody.velocity.x != 0.0f) {
+    //        NudgeTowardNearest(transform.position.y, deltaTime);
+    //    }
+    //    else if (rigidBody.velocity.y != 0.0f) {
+    //        NudgeTowardNearest(transform.position.x, deltaTime);
+    //    }
+    //}
 
-    void NudgeTowardNearest(float& pos, double deltaTime) {
-        float row = std::floor(pos / tileSize);
-        float remainder = pos - row * tileSize;
-        if (remainder < eps) return;
+    //void NudgeTowardNearest(float& pos, double deltaTime) {
+    //    float row = std::floor(pos / tileSize);
+    //    float remainder = pos - row * tileSize;
+    //    if (remainder < eps) return;
 
-        float target = (remainder < tileSize / 2.0f) ? row * tileSize : (row + 1) * tileSize;
-        float diff = target - pos;
-        float step = std::clamp(diff, -snapSpeed * static_cast<float>(deltaTime), snapSpeed * static_cast<float>(deltaTime));
-        pos += step;
-    }
+    //    float target = (remainder < tileSize / 2.0f) ? row * tileSize : (row + 1) * tileSize;
+    //    float diff = target - pos;
+    //    float step = std::clamp(diff, -snapSpeed * static_cast<float>(deltaTime), snapSpeed * static_cast<float>(deltaTime));
+    //    pos += step;
+    //}
 
     void UpdateLastMoveDir(RigidBodyComponent& rigidBody) {
         rigidBody.lastMoveDir = {
