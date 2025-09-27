@@ -4,6 +4,7 @@
 #include <random>
 #include <entt.hpp>
 #include <glm/glm.hpp>
+#include "../Constants.h"
 #include "../components/NPCComponent.h"
 #include "../components/RigidBodyComponent.h"
 #include "../components/SpriteComponent.h"
@@ -58,7 +59,7 @@ private:
 
 		if (dir != glm::vec2{ 0,0 }) {
 			npc.isMoving = true;
-			npc.targetTile = transform.position + dir;// *16; // move 1 square -- tilesize = 16 : this should be a global constant
+			npc.targetTile = transform.position + dir * TILE_SIZE; // move 1 square -- tilesize = 16 : this should be a global constant
 		}
 		else {
 			npc.isMoving = false;
@@ -102,19 +103,19 @@ public:
 			}
 			else {
 				npc.framesSinceLastAction++;
-				return;
+				continue;
 			}
 
 			if (npc.movementPattern == MovementPattern::Random) {
 				MoveRandom(rigidBody, transform, sprite, npc);
 			}
 
-			if (!npc.isMoving) return;
+			if (!npc.isMoving) continue;
 
 
 			glm::vec2 direction = glm::normalize(npc.targetTile - transform.position);
 			float speed = 60.0f; // pixels/sec or tie to npc.speed
-			transform.position += direction * glm::vec2{ 16,16 };// *speed;// *deltaTime;
+			transform.position += direction * TILE_SIZE;// *speed;// *deltaTime;
 
 			//// If we’ve arrived (within epsilon), snap to grid and stop
 			if (glm::length(npc.targetTile - transform.position) < 1.0f) {

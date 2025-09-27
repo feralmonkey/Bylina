@@ -164,6 +164,7 @@
     <ClInclude Include="src\components\CollisionComponent.h" />
     <ClInclude Include="src\components\MenuComponent.h" />
     <ClInclude Include="src\components\TagComponents.h" />
+    <ClInclude Include="src\Constants.h" />
     <ClInclude Include="src\enums\Direction.h" />
     <ClInclude Include="src\enums\InputState.h" />
     <ClInclude Include="src\enums\NPCMovement.h" />
