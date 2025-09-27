@@ -56,8 +56,7 @@ private:
 			switch (activeKey) {
 			case SDL_SCANCODE_A:
 			case SDL_SCANCODE_LEFT: {
-				rigidBody.velocity.x = -1;
-				rigidBody.velocity.y =  0;
+				rigidBody.velocity = { -1, 0 };
 				rigidBody.lastMoveDir = { -1.0f, 0.0f };
 				sprite.srcRect.y = sprite.height * 3;
 				player.direction = Direction::Left;
@@ -65,8 +64,7 @@ private:
 			}
 			case SDL_SCANCODE_D:
 			case SDL_SCANCODE_RIGHT: {
-				rigidBody.velocity.x = +1;
-				rigidBody.velocity.y = 0;
+				rigidBody.velocity = { 1, 0 };
 				rigidBody.lastMoveDir = { +1.0f, 0.0f };
 				sprite.srcRect.y = sprite.height * 1;
 				player.direction = Direction::Right;
@@ -74,8 +72,7 @@ private:
 			}
 			case SDL_SCANCODE_W:
 			case SDL_SCANCODE_UP: {
-				rigidBody.velocity.y = -1;
-				rigidBody.velocity.y = -1;
+				rigidBody.velocity = { 0, -1 };
 				rigidBody.lastMoveDir = { 0.0f, -1.0f };
 				sprite.srcRect.y = sprite.height * 0;
 				player.direction = Direction::Up;
@@ -83,8 +80,7 @@ private:
 			}
 			case SDL_SCANCODE_S:
 			case SDL_SCANCODE_DOWN: {
-				rigidBody.velocity.y = +1;
-				rigidBody.velocity.y = +1;
+				rigidBody.velocity = { 0, 1 };
 				rigidBody.lastMoveDir = { 0.0f, +1.0f };
 				sprite.srcRect.y = sprite.height * 2;
 				player.direction = Direction::Down;

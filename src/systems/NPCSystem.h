@@ -50,11 +50,25 @@ private:
 		glm::vec2 dir{ 0, 0 };
 
 		switch (RNG()) {
-		case 6: dir = { 0, -1 }; sprite.srcRect.y = 0;  break;  // up
-		case 7: dir =  { 1, 0 }; sprite.srcRect.y = 16; break;  // right
-		case 8: dir =  { 0, 1 }; sprite.srcRect.y = 32; break;  // down
-		case 9: dir = { -1, 0 }; sprite.srcRect.y = 48; break;  // left
-		default: dir = { 0, 0 }; break;  // idle
+		case 6: 
+			dir = { 0, -1 }; 
+			sprite.srcRect.y = 0;  
+			break;  // up
+		case 7: 
+			dir =  { 1, 0 }; 
+			sprite.srcRect.y = 16; 
+			break;  // right
+		case 8: 
+			dir =  { 0, 1 }; 
+			sprite.srcRect.y = 32; 
+			break;  // down
+		case 9: 
+			dir = { -1, 0 }; 
+			sprite.srcRect.y = 48; 
+			break;  // left
+		default: 
+			dir = { 0, 0 }; 
+			break;  // idle
 		}
 
 		if (dir != glm::vec2{ 0,0 }) {

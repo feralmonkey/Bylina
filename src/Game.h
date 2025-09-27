@@ -5,6 +5,7 @@
 #include <entt.hpp>
 #include <memory>
 #include <vector>
+#include "Constants.h"
 #include "enums/InputState.h"
 
 // Forward declarations
@@ -17,9 +18,6 @@ class CollisionResolutionSystem;
 class MenuSystem;
 class NPCSystem;
 class ScriptSystem;
-
-const int FPS = 60;
-const int MILLISECS_PER_FRAME = 1000 / FPS;
 
 class Game {
 private:
