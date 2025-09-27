@@ -46,7 +46,7 @@ private:
 		}
 	}
 
-	void MoveSprite(RigidBodyComponent&rigidBody, TransformComponent& transform, SpriteComponent& sprite, NPCComponent& npc, int x, int y, int spriteIndex, Direction direction) {
+	void MoveSprite(RigidBodyComponent&rigidBody, SpriteComponent& sprite,int x, int y, int spriteIndex, Direction direction) {
 		// todo rigolo - check for collision here
 		rigidBody.velocity = { x, y };
 		rigidBody.lastMoveDir = { (float)x, (float)y };
@@ -54,20 +54,20 @@ private:
 		rigidBody.direction = direction;
 	}
 
-	void MoveRandom(RigidBodyComponent& rigidBody, TransformComponent& transform, SpriteComponent& sprite, NPCComponent& npc) {
+	void MoveRandom(RigidBodyComponent& rigidBody, TransformComponent& transform, SpriteComponent& sprite) {
 
 		switch (RNG()) {
 		case 6: 
-			MoveSprite(rigidBody, transform, sprite, npc, 0, -1, 0, Direction::Up);
+			MoveSprite(rigidBody, sprite, 0, -1, 0, Direction::Up);
 			break;  // up
 		case 7: 
-			MoveSprite(rigidBody, transform, sprite, npc, 1, 0, 1, Direction::Right);
+			MoveSprite(rigidBody, sprite, 1, 0, 1, Direction::Right);
 			break;
 		case 8: 
-			MoveSprite(rigidBody, transform, sprite, npc, 0, 1, 2, Direction::Down);
+			MoveSprite(rigidBody, sprite, 0, 1, 2, Direction::Down);
 			break;  // down
 		case 9: 
-			MoveSprite(rigidBody, transform, sprite, npc, -1, 0, 3, Direction::Left);
+			MoveSprite(rigidBody, sprite, -1, 0, 3, Direction::Left);
 			break;  // left
 		default: 
 			rigidBody.velocity = { 0.0f, 0.0f };
@@ -76,7 +76,7 @@ private:
 
 		if (rigidBody.velocity != glm::vec2{ 0,0 }) {
 			rigidBody.inMotion = true;
-			transform.nextPosition = transform.position + rigidBody.velocity * TILE_SIZE; 
+			transform.nextPosition = transform.position + rigidBody.velocity * TILE_SIZE;  // todo rigolo - smooth movement has something to do here.... maybe only set motion and handle position in the movment system
 		}
 		else {
 			rigidBody.inMotion = false;
@@ -124,7 +124,7 @@ public:
 			}
 
 			if (npc.movementPattern == MovementPattern::Random) {
-				MoveRandom(rigidBody, transform, sprite, npc);
+				MoveRandom(rigidBody, transform, sprite);
 			}
 
 			if (!rigidBody.inMotion) continue;
