@@ -182,7 +182,7 @@ void Game::Update() {
 	// 2. movement (positions change)
 	if (movementSystem) movementSystem->Update(deltaTime);
 
-	// 3. collision detection (enqueue collision events)
+	// 3. collision detection (enqueue collision events)  -- rigolo todo temporarily comment out
 	if (collisionSystem) collisionSystem->Update(mapWidth, mapHeight);
 
 	// 4. deliver collision events so resolution runs *this frame*

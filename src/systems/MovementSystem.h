@@ -42,6 +42,7 @@ public:
     }
 
 private:
+    // returns true if the entity;s rigid body component currently has an active velocity on either axis
     bool IsMoving(const RigidBodyComponent& rigidBody) {
         return rigidBody.velocity.x != 0.0f || rigidBody.velocity.y != 0.0f;
     }
@@ -52,6 +53,7 @@ private:
         transform.position += frameMove;
     }
 
+    // keeps sprite aligned on grid - no diagonals
     void AlignOrthogonalAxis(TransformComponent& transform, const RigidBodyComponent& rigidBody, double deltaTime) {
         if (rigidBody.velocity.x != 0.0f) {
             NudgeTowardNearest(transform.position.y, deltaTime);

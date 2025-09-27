@@ -54,12 +54,12 @@ private:
 			}
 
 			switch (activeKey) {
-			case SDL_SCANCODE_A:
-			case SDL_SCANCODE_LEFT: {
-				rigidBody.velocity = { -1, 0 };
-				rigidBody.lastMoveDir = { -1.0f, 0.0f };
-				sprite.srcRect.y = sprite.height * 3;
-				player.direction = Direction::Left;
+			case SDL_SCANCODE_W:
+			case SDL_SCANCODE_UP: {
+				rigidBody.velocity = { 0, -1 };
+				rigidBody.lastMoveDir = { 0.0f, -1.0f };
+				sprite.srcRect.y = sprite.height * 0;
+				rigidBody.direction = Direction::Up;
 				break;
 			}
 			case SDL_SCANCODE_D:
@@ -67,15 +67,7 @@ private:
 				rigidBody.velocity = { 1, 0 };
 				rigidBody.lastMoveDir = { +1.0f, 0.0f };
 				sprite.srcRect.y = sprite.height * 1;
-				player.direction = Direction::Right;
-				break;
-			}
-			case SDL_SCANCODE_W:
-			case SDL_SCANCODE_UP: {
-				rigidBody.velocity = { 0, -1 };
-				rigidBody.lastMoveDir = { 0.0f, -1.0f };
-				sprite.srcRect.y = sprite.height * 0;
-				player.direction = Direction::Up;
+				rigidBody.direction = Direction::Right;
 				break;
 			}
 			case SDL_SCANCODE_S:
@@ -83,7 +75,15 @@ private:
 				rigidBody.velocity = { 0, 1 };
 				rigidBody.lastMoveDir = { 0.0f, +1.0f };
 				sprite.srcRect.y = sprite.height * 2;
-				player.direction = Direction::Down;
+				rigidBody.direction = Direction::Down;
+				break;
+			}
+			case SDL_SCANCODE_A:
+			case SDL_SCANCODE_LEFT: {
+				rigidBody.velocity = { -1, 0 };
+				rigidBody.lastMoveDir = { -1.0f, 0.0f };
+				sprite.srcRect.y = sprite.height * 3;
+				rigidBody.direction = Direction::Left;
 				break;
 			}
 			case SDL_SCANCODE_X: {
@@ -143,12 +143,13 @@ private:
 					// confirm
 					spdlog::info("Selected: {}", menu.options[menu.currentIndex]);
 					if (menu.options[menu.currentIndex] == "Talk") {
-						auto view = reg.view<PlayerComponent, TransformComponent>();
+						auto view = reg.view<PlayerComponent, TransformComponent, RigidBodyComponent>();
 						const auto entity = view.front();
 						const auto& player = view.get<PlayerComponent>(entity);
+						auto& rigidBody = view.get<RigidBodyComponent>(entity);
 						const auto& transform = view.get<TransformComponent>(entity);
 
-						dispatcher.enqueue<TalkEvent>(transform.position, player.direction);
+						dispatcher.enqueue<TalkEvent>(transform.position, rigidBody.direction);
 					}
 					break;
 				case SDL_SCANCODE_Z: 

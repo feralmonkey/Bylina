@@ -1,10 +1,12 @@
 #pragma once
 
-# include <glm/glm.hpp>
+#include <glm/glm.hpp>
+#include "../enums/Direction.h"
 
 struct RigidBodyComponent {
 	glm::vec2 velocity;
 	glm::vec2 lastMoveDir{ 0.0f, 0.0f };
+	Direction direction = Direction::Up;
 	bool inMotion = false;
 	
 	RigidBodyComponent(glm::vec2 velocity = glm::vec2(0.0, 0.0), bool inMotion = false) {

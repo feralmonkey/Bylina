@@ -9,6 +9,7 @@
 #include "../components/RigidBodyComponent.h"
 #include "../components/SpriteComponent.h"
 #include "../components/TransformComponent.h"
+#include "../enums/Direction.h"
 #include "../enums/NPCMovement.h"
 #include "../events/TalkEvent.h"
 #include "../systems/RenderTextSystem.h"
@@ -45,38 +46,40 @@ private:
 		}
 	}
 
-	void MoveRandom(RigidBodyComponent& rigidBody, TransformComponent& transform, SpriteComponent& sprite, NPCComponent& npc) {
+	void MoveSprite(RigidBodyComponent&rigidBody, TransformComponent& transform, SpriteComponent& sprite, NPCComponent& npc, int x, int y, int spriteIndex, Direction direction) {
+		// todo rigolo - check for collision here
+		rigidBody.velocity = { x, y };
+		rigidBody.lastMoveDir = { (float)x, (float)y };
+		sprite.srcRect.y = sprite.height * spriteIndex;
+		rigidBody.direction = direction;
+	}
 
-		glm::vec2 dir{ 0, 0 };
+	void MoveRandom(RigidBodyComponent& rigidBody, TransformComponent& transform, SpriteComponent& sprite, NPCComponent& npc) {
 
 		switch (RNG()) {
 		case 6: 
-			dir = { 0, -1 }; 
-			sprite.srcRect.y = 0;  
+			MoveSprite(rigidBody, transform, sprite, npc, 0, -1, 0, Direction::Up);
 			break;  // up
 		case 7: 
-			dir =  { 1, 0 }; 
-			sprite.srcRect.y = 16; 
-			break;  // right
+			MoveSprite(rigidBody, transform, sprite, npc, 1, 0, 1, Direction::Right);
+			break;
 		case 8: 
-			dir =  { 0, 1 }; 
-			sprite.srcRect.y = 32; 
+			MoveSprite(rigidBody, transform, sprite, npc, 0, 1, 2, Direction::Down);
 			break;  // down
 		case 9: 
-			dir = { -1, 0 }; 
-			sprite.srcRect.y = 48; 
+			MoveSprite(rigidBody, transform, sprite, npc, -1, 0, 3, Direction::Left);
 			break;  // left
 		default: 
-			dir = { 0, 0 }; 
+			rigidBody.velocity = { 0.0f, 0.0f };
 			break;  // idle
 		}
 
-		if (dir != glm::vec2{ 0,0 }) {
-			npc.isMoving = true;
-			npc.targetTile = transform.position + dir * TILE_SIZE; // move 1 square -- tilesize = 16 : this should be a global constant
+		if (rigidBody.velocity != glm::vec2{ 0,0 }) {
+			rigidBody.inMotion = true;
+			transform.nextPosition = transform.position + rigidBody.velocity * TILE_SIZE; 
 		}
 		else {
-			npc.isMoving = false;
+			rigidBody.inMotion = false;
 		}
 	}
 
@@ -124,17 +127,21 @@ public:
 				MoveRandom(rigidBody, transform, sprite, npc);
 			}
 
-			if (!npc.isMoving) continue;
+			if (!rigidBody.inMotion) continue;
 
 
-			glm::vec2 direction = glm::normalize(npc.targetTile - transform.position);
+			glm::vec2 direction = glm::normalize(transform.nextPosition - transform.position);
 			float speed = 60.0f; // pixels/sec or tie to npc.speed
 			transform.position += direction * TILE_SIZE;// *speed;// *deltaTime;
 
 			//// If we’ve arrived (within epsilon), snap to grid and stop
-			if (glm::length(npc.targetTile - transform.position) < 1.0f) {
-				transform.position = npc.targetTile;
-				npc.isMoving = false;
+			if (transform.position == transform.nextPosition) {
+				rigidBody.velocity = { 0.0f, 0.0f };
+				rigidBody.inMotion = 0;
+			}
+			if (glm::length(transform.nextPosition - transform.position) < 1.0f) {
+				transform.position = transform.nextPosition;
+				rigidBody.inMotion = false;
 			}
 		}
 	}
