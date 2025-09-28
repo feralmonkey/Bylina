@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../Constants.h"
 #include "../events/CollisionEvent.h"
 #include "../systems/ISystem.h"
 #include "../components/KeyboardControlComponent.h"
@@ -14,38 +15,11 @@
 class MovementSystem {
 private:
     entt::registry& registry;
-
-    const float tileSize = 16.0f;
-    const float moveSpeed = 50.0f;
     const float snapSpeed = 50.0f;
     const float eps = 0.0001f;  // epsilon - represents tolerance
 
-public:
-    MovementSystem(entt::registry& reg, entt::dispatcher& dispatcher) : registry(reg) {}
-
-    void Update(double deltaTime) {
-        auto view = registry.view<TransformComponent, RigidBodyComponent>();
-
-        for (auto entity : view) {
-            auto& transform = view.get<TransformComponent>(entity);
-            auto& rigidBody = view.get<RigidBodyComponent>(entity);
-
-            if (rigidBody.inMotion) {
-                ApplyMovement(transform, rigidBody, deltaTime);
-                CheckTileAlignment(transform, rigidBody);
-                UpdateLastMoveDir(rigidBody);
-                //AlignOrthogonalAxis(transform, rigidBody, deltaTime);
-                
-            }
-            else {
-                SnapToNextTile(transform, rigidBody, deltaTime);
-            }
-        }
-    }
-
-private:
     void ApplyMovement(TransformComponent& transform, const RigidBodyComponent& rigidBody, double deltaTime) {
-        glm::vec2 frameMove = rigidBody.velocity * (moveSpeed * static_cast<float>(deltaTime));
+        glm::vec2 frameMove = rigidBody.velocity * (PC_MOVE_SPEED * static_cast<float>(deltaTime));
         transform.previousPosition = transform.position;
         transform.position += frameMove;
     }
@@ -65,27 +39,6 @@ private:
         }
     }
 
-    // keeps sprite aligned on grid - no diagonals
-    //void AlignOrthogonalAxis(TransformComponent& transform, const RigidBodyComponent& rigidBody, double deltaTime) {
-    //    if (rigidBody.velocity.x != 0.0f) {
-    //        NudgeTowardNearest(transform.position.y, deltaTime);
-    //    }
-    //    else if (rigidBody.velocity.y != 0.0f) {
-    //        NudgeTowardNearest(transform.position.x, deltaTime);
-    //    }
-    //}
-
-    //void NudgeTowardNearest(float& pos, double deltaTime) {
-    //    float row = std::floor(pos / tileSize);
-    //    float remainder = pos - row * tileSize;
-    //    if (remainder < eps) return;
-
-    //    float target = (remainder < tileSize / 2.0f) ? row * tileSize : (row + 1) * tileSize;
-    //    float diff = target - pos;
-    //    float step = std::clamp(diff, -snapSpeed * static_cast<float>(deltaTime), snapSpeed * static_cast<float>(deltaTime));
-    //    pos += step;
-    //}
-
     void UpdateLastMoveDir(RigidBodyComponent& rigidBody) {
         rigidBody.lastMoveDir = {
             (rigidBody.velocity.x > 0.0f) ? 1.0f : (rigidBody.velocity.x < 0.0f ? -1.0f : 0.0f),
@@ -104,15 +57,15 @@ private:
     }
 
     void SnapAxis(float& pos, float dir, double deltaTime) {
-        float cell = std::floor(pos / tileSize);
-        float remainder = pos - cell * tileSize;
+        float cell = std::floor(pos / TILE_SIZE);
+        float remainder = pos - cell * TILE_SIZE;
 
         if (std::abs(remainder) < eps) {
             dir = 0.0f; // aligned, done
             return;
         }
 
-        float target = (dir > 0.0f) ? (cell + 1) * tileSize : cell * tileSize;
+        float target = (dir > 0.0f) ? (cell + 1) * TILE_SIZE : cell * TILE_SIZE;
         float diff = target - pos;
         float step = std::clamp(diff, -snapSpeed * static_cast<float>(deltaTime), snapSpeed * static_cast<float>(deltaTime));
         pos += step;
@@ -120,6 +73,24 @@ private:
         if (std::abs(target - pos) < eps) {
             pos = target;
             dir = 0.0f; // finished snapping
+        }
+    }
+
+public:
+    MovementSystem(entt::registry& reg, entt::dispatcher& dispatcher) : registry(reg) {}
+
+    void Update(double deltaTime) {
+        auto view = registry.view<TransformComponent, RigidBodyComponent>();
+
+        for (auto entity : view) {
+            auto& transform = view.get<TransformComponent>(entity);
+            auto& rigidBody = view.get<RigidBodyComponent>(entity);
+
+            if (rigidBody.inMotion) {
+                ApplyMovement(transform, rigidBody, deltaTime);
+                CheckTileAlignment(transform, rigidBody);
+                UpdateLastMoveDir(rigidBody);
+            }
         }
     }
 };

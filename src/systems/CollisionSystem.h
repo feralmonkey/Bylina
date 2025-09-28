@@ -38,7 +38,6 @@ public:
 
 		auto view = registry.view<BoxColliderComponent, TransformComponent>();
 
-
 		// Insert entities into the grid
 		for (auto entity : view) {
 			const auto& transform = view.get<TransformComponent>(entity);

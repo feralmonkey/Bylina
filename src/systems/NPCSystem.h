@@ -20,11 +20,12 @@ private:
 	entt::registry& registry;
 	entt::dispatcher& dispatcher;
 	RenderTextSystem& textSystem;
+	std::random_device rd;	// seed
 
-	int RNG() {
-		std::random_device rd;                     // seed
-		std::mt19937 gen(rd());                    // Mersenne Twister engine
-		std::uniform_int_distribution<> dist(0, 9); // inclusive range [1,10]
+	int RNG(int min = 0, int max = 9) {
+		
+		std::mt19937 gen(rd());                         // wersenne twister engine
+		std::uniform_int_distribution<> dist(min, max); // inclusive range [0, 9] by default
 
 		return dist(gen);
 	}
@@ -36,6 +37,7 @@ private:
 		for (auto entity : view) {
 			auto& npc       = view.get<NPCComponent>(entity);
 			auto& transform = view.get<TransformComponent>(entity);
+			// TODO rigolo - handle the NPC about-face here
 			if (e.target == transform.position) {
 				textSystem.TextBox(npc.conversation["default"]);
 				foundTarget = true;
