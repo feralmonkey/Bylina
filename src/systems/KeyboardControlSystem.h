@@ -40,6 +40,17 @@ private:
 		}
 	}
 
+	// an almost identical copy of this method is also in the NPC system - it should move to the MovementSystem at some point
+	void MoveSprite(RigidBodyComponent& rigidBody, SpriteComponent& sprite, TransformComponent& transform, int x, int y, int spriteIndex, Direction direction) {
+		// todo rigolo - check for collision here
+		rigidBody.velocity = { x, y };
+		transform.nextPosition = transform.position + rigidBody.velocity * TILE_SIZE;
+		rigidBody.lastMoveDir = { (float)x, (float)y };
+		sprite.srcRect.y = sprite.height * spriteIndex;
+		rigidBody.direction = direction;
+		rigidBody.inMotion = true;
+	}
+
 	void PlayerControl(const KeyPressedEvent& e) {
 		auto view = reg.view<PlayerComponent, RigidBodyComponent, SpriteComponent, TransformComponent>();
 		entt::entity entity = view.front();
@@ -49,7 +60,10 @@ private:
 		SpriteComponent& sprite = view.get<SpriteComponent>(entity);
 		PlayerComponent& player = view.get<PlayerComponent>(entity);
 
+		
 		if (e.event.type == SDL_KEYDOWN) {
+			if (rigidBody.inMotion == true) { return; } // -- todo rigolo GOOD IDEA! But broken. ( it might not be - collision may be broken)
+
 			if (activeKey == SDL_SCANCODE_UNKNOWN) {
 				activeKey = e.event.key.keysym.scancode;
 			}
@@ -57,42 +71,22 @@ private:
 			switch (activeKey) {
 			case SDL_SCANCODE_W:
 			case SDL_SCANCODE_UP: {
-				rigidBody.velocity = { 0, -1 };
-				rigidBody.lastMoveDir = { 0.0f, -1.0f };
-				transform.nextPosition = transform.position + rigidBody.velocity * TILE_SIZE;
-				sprite.srcRect.y = sprite.height * 0;
-				rigidBody.direction = Direction::Up;
-				rigidBody.inMotion = true;
+				MoveSprite(rigidBody, sprite, transform, 0, -1, 0, Direction::Up);
 				break;
 			}
 			case SDL_SCANCODE_D:
 			case SDL_SCANCODE_RIGHT: {
-				rigidBody.velocity = { 1, 0 };
-				rigidBody.lastMoveDir = { +1.0f, 0.0f };
-				transform.nextPosition = transform.position + rigidBody.velocity * TILE_SIZE;
-				sprite.srcRect.y = sprite.height * 1;
-				rigidBody.direction = Direction::Right;
-				rigidBody.inMotion = true;
+				MoveSprite(rigidBody, sprite, transform, 1, 0, 1, Direction::Right);
 				break;
 			}
 			case SDL_SCANCODE_S:
 			case SDL_SCANCODE_DOWN: {
-				rigidBody.velocity = { 0, 1 };
-				rigidBody.lastMoveDir = { 0.0f, +1.0f };
-				transform.nextPosition = transform.position + rigidBody.velocity * TILE_SIZE;
-				sprite.srcRect.y = sprite.height * 2;
-				rigidBody.direction = Direction::Down;
-				rigidBody.inMotion = true;
+				MoveSprite(rigidBody, sprite, transform, 0, 1, 2, Direction::Down);
 				break;
 			}
 			case SDL_SCANCODE_A:
 			case SDL_SCANCODE_LEFT: {
-				rigidBody.velocity = { -1, 0 };
-				rigidBody.lastMoveDir = { -1.0f, 0.0f };
-				transform.nextPosition = transform.position + rigidBody.velocity * TILE_SIZE;
-				sprite.srcRect.y = sprite.height * 3;
-				rigidBody.direction = Direction::Left;
-				rigidBody.inMotion = true;
+				MoveSprite(rigidBody, sprite, transform, -1, 0, 3, Direction::Left);
 				break;
 			}
 			case SDL_SCANCODE_X: {
@@ -121,8 +115,6 @@ private:
 		}
 		else {
 			activeKey = SDL_SCANCODE_UNKNOWN;
-			//rigidBody.velocity.x = 0;
-			//rigidBody.velocity.y = 0;
 		}
 	}
 
@@ -193,8 +185,6 @@ public:
 
 		if (e.event.type != SDL_KEYDOWN) {
 			activeKey = SDL_SCANCODE_UNKNOWN;
-			//rigidBody.velocity.x = 0;
-			//rigidBody.velocity.y = 0;
 		}
 	}
 

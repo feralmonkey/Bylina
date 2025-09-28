@@ -46,6 +46,7 @@ private:
 		}
 	}
 
+	// an almost identical copy of this method is also in the keyboard contro system - it should move to the MovementSystem at some point
 	void MoveSprite(RigidBodyComponent&rigidBody, SpriteComponent& sprite, TransformComponent& transform, int x, int y, int spriteIndex, Direction direction) {
 		// todo rigolo - check for collision here
 		rigidBody.velocity = { x, y };
@@ -63,7 +64,7 @@ private:
 			break;  // up
 		case 7: 
 			MoveSprite(rigidBody, sprite, transform, 1, 0, 1, Direction::Right);
-			break;
+			break; // right
 		case 8: 
 			MoveSprite(rigidBody, sprite, transform, 0, 1, 2, Direction::Down);
 			break;  // down

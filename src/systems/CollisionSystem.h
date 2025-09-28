@@ -129,21 +129,31 @@ public:
 		// Player vs NPC
 		if (aIsPlayer && bIsNPC) {
 			auto& transform = registry.get<TransformComponent>(entityA);
+			auto& rigidBody = registry.get<RigidBodyComponent>(entityA);
 			transform.position = transform.previousPosition; // stop player
+			rigidBody.inMotion = false;
 		}
 		else if (bIsPlayer && aIsNPC) {
 			auto& transform = registry.get<TransformComponent>(entityB);
+			auto& rigidBody = registry.get<RigidBodyComponent>(entityB);
 			transform.position = transform.previousPosition; // stop player
+			rigidBody.inMotion = false;
 		}
+
 		// Player vs Wall (or any static object)
 		else if (aIsPlayer) {
 			auto& transform = registry.get<TransformComponent>(entityA);
+			auto& rigidBody = registry.get<RigidBodyComponent>(entityA);
 			transform.position = transform.previousPosition;
+			rigidBody.inMotion = false;
 		}
 		else if (bIsPlayer) {
 			auto& transform = registry.get<TransformComponent>(entityB);
+			auto& rigidBody = registry.get<RigidBodyComponent>(entityB);
 			transform.position = transform.previousPosition;
+			rigidBody.inMotion = false;
 		}
+
 		// Pushable objects (future)
 		else if (registry.any_of<PushableComponent>(entityA) && aIsPlayer) {
 			// allow push
