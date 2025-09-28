@@ -127,17 +127,19 @@ public:
 		bool bIsNPC = registry.any_of<NPCTag>(entityB);
 
 		// Player vs NPC
-		if (aIsPlayer && bIsNPC) {
-			auto& transform = registry.get<TransformComponent>(entityA);
-			auto& rigidBody = registry.get<RigidBodyComponent>(entityA);
-			transform.position = transform.previousPosition; // stop player
-			rigidBody.inMotion = false;
-		}
-		else if (bIsPlayer && aIsNPC) {
-			auto& transform = registry.get<TransformComponent>(entityB);
-			auto& rigidBody = registry.get<RigidBodyComponent>(entityB);
-			transform.position = transform.previousPosition; // stop player
-			rigidBody.inMotion = false;
+		if ((aIsPlayer && bIsNPC) || (bIsPlayer && aIsNPC)) {
+			auto& ta = registry.get<TransformComponent>(entityA);
+			auto& ra = registry.get<RigidBodyComponent>(entityA);
+			auto& tb = registry.get<TransformComponent>(entityB);
+			auto& rb = registry.get<RigidBodyComponent>(entityB);
+			if (ra.inMotion) {
+				ta.position = ta.previousPosition;
+				ra.inMotion = false;
+			}
+			if (rb.inMotion) {
+				tb.position = tb.previousPosition;
+				rb.inMotion = false;
+			}
 		}
 
 		// Player vs Wall (or any static object)
@@ -148,6 +150,20 @@ public:
 			rigidBody.inMotion = false;
 		}
 		else if (bIsPlayer) {
+			auto& transform = registry.get<TransformComponent>(entityB);
+			auto& rigidBody = registry.get<RigidBodyComponent>(entityB);
+			transform.position = transform.previousPosition;
+			rigidBody.inMotion = false;
+		}
+
+		// NPC vs Wall (or any static object)
+		else if (aIsNPC) {
+			auto& transform = registry.get<TransformComponent>(entityA);
+			auto& rigidBody = registry.get<RigidBodyComponent>(entityA);
+			transform.position = transform.previousPosition;
+			rigidBody.inMotion = false;
+		}
+		else if (bIsNPC) {
 			auto& transform = registry.get<TransformComponent>(entityB);
 			auto& rigidBody = registry.get<RigidBodyComponent>(entityB);
 			transform.position = transform.previousPosition;
