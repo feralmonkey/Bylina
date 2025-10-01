@@ -5,20 +5,49 @@
     },
     "activeFile": "",
     "expandedProjectPaths": [
+        "."
     ],
+    "file.lastUsedOpenFilter": "All Files (*)",
     "fileStates": {
+        ":/automap-tiles.tsx": {
+            "dynamicWrapping": false,
+            "scaleInDock": 1
+        },
+        "overworld.tmx": {
+            "scale": 2,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 2531,
+                "y": 234
+            }
+        },
+        "overworld.tmx#outdoor_tiles": {
+            "dynamicWrapping": false,
+            "scaleInDock": 3,
+            "scaleInEditor": 5.5
+        },
+        "overworld.tsx": {
+            "dynamicWrapping": true,
+            "scaleInDock": 3,
+            "scaleInEditor": 1
+        }
     },
-    "last.imagePath": "C:/Users/Travis/source/repos/Bylina/assets/images",
+    "last.imagePath": "D:/source/repos/Bylina/Bylina/assets/images",
     "map.height": 512,
     "map.lastUsedFormat": "tmx",
     "map.tileHeight": 8,
     "map.tileWidth": 8,
     "map.width": 512,
     "openFiles": [
+        "overworld.tmx"
     ],
     "project": "overworld.tiled-project",
+    "property.type": "bool",
     "recentFiles": [
+        "overworld.tmx",
+        "overworld.tsx"
     ],
+    "tileset.embedInMap": true,
     "tileset.lastUsedFormat": "tsx",
     "tileset.tileSize": {
         "height": 8,

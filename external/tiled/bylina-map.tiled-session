@@ -3,12 +3,13 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "village1.tmx",
+    "activeFile": "village-collisio.tmx",
     "expandedProjectPaths": [
-        "Bylina",
-        "Bylina/assets/tilemaps",
+        "Bylina/assets",
+        ".",
         "tiled",
-        "Bylina/assets"
+        "Bylina/assets/tilemaps",
+        "Bylina"
     ],
     "file.lastUsedOpenFilter": "All Files (*)",
     "fileStates": {
@@ -43,6 +44,14 @@
             "scaleInDock": 1,
             "scaleInEditor": 1
         },
+        "village-collisio.tmx": {
+            "scale": 1.669921875,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 255.70058479532167,
+                "y": 255.70058479532165
+            }
+        },
         "village1.json": {
             "scale": 1.669921875,
             "selectedLayer": 0,
@@ -56,7 +65,7 @@
             "selectedLayer": 0,
             "viewCenter": {
                 "x": 255.70058479532167,
-                "y": 255.70058479532167
+                "y": 255.70058479532165
             }
         }
     },
@@ -69,15 +78,14 @@
     "map.tileWidth": 8,
     "map.width": 64,
     "openFiles": [
-        "town_set.tsx",
-        "village1.json",
-        "village1.tmx"
+        "village-collisio.tmx"
     ],
     "project": "bylina-map.tiled-project",
     "recentFiles": [
+        "village-collisio.tmx",
         "town_set.tsx",
-        "village1.json",
         "village1.tmx",
+        "village1.json",
         "town1.tmx",
         "tiled/village1.tmx",
         "tiled/town_set.tsx",
