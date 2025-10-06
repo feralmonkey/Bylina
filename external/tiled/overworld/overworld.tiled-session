@@ -3,7 +3,7 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "",
+    "activeFile": "overworld.tmx",
     "expandedProjectPaths": [
         "."
     ],
@@ -14,11 +14,11 @@
             "scaleInDock": 1
         },
         "overworld.tmx": {
-            "scale": 2,
+            "scale": 0.33,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 2531,
-                "y": 234
+                "x": 396.969696969697,
+                "y": 1118.181818181818
             }
         },
         "overworld.tmx#outdoor_tiles": {
