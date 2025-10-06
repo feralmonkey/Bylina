@@ -78,8 +78,8 @@ inline void SetEntityAnimationFrame(entt::registry& reg, entt::entity entity, in
 class ScriptSystem : public ISystem {
 public:
 
-	class ScriptSystem() = default;
-
+	ScriptSystem() = default;
+	
 	void CreateLuaBindings(sol::state& lua) {
 		// create the 'entity' user type so lua knows what an entity is
 		lua.new_usertype<entt::entity>(

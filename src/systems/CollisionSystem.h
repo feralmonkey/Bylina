@@ -4,7 +4,7 @@
 #include <spdlog/spdlog.h>
 #include "../components/TagComponents.h"
 #include "../components/BoxColliderComponent.h"
-#include "../components/CollisionComponent.h"
+#include "../components/PlayerComponent.h"
 #include "../components/TransformComponent.h"
 #include "../components/RigidBodyComponent.h"
 #include "../events/CollisionEvent.h"

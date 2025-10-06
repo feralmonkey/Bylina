@@ -23,7 +23,7 @@
 #include "../enums/InputState.h"
 
 
-class KeyboardControlSystem : public ISystem {
+class KeyboardControlSystem final : public ISystem {
 
 private:
 	entt::registry& reg;
@@ -33,7 +33,7 @@ private:
 	InputState currentInput;
 	SDL_Scancode activeKey = SDL_SCANCODE_UNKNOWN;
 
-	void ClearOld() {
+	void ClearOld() const {
 		auto text_view = reg.view<TextComponent>();
 		for (auto entity : text_view) {
 			reg.destroy(entity);
@@ -45,7 +45,7 @@ private:
 		// todo rigolo - check for collision here
 		rigidBody.velocity = { x, y };
 		transform.nextPosition = transform.position + rigidBody.velocity * TILE_SIZE;
-		rigidBody.lastMoveDir = { (float)x, (float)y };
+		rigidBody.lastMoveDir = { static_cast<float>(x), static_cast<float>(y) };
 		sprite.srcRect.y = sprite.height * spriteIndex;
 		rigidBody.direction = direction;
 		rigidBody.inMotion = true;
@@ -101,7 +101,6 @@ private:
 					0,
 					true
 				);
-
 				dispatcher.enqueue<MenuOpenEvent>();
 				break;
 			}
@@ -118,10 +117,10 @@ private:
 		}
 	}
 
-	void MenuControl(const KeyPressedEvent& e) {
+	void MenuControl(const KeyPressedEvent& e) const {
 		// todo rigolo  - at this point nothing has a menu component
 		auto view = reg.view<MenuComponent>();
-		for (auto entity : view) {
+		for (auto const entity : view) {
 			auto& menu = view.get<MenuComponent>(entity);
 
 			if (!menu.isActive) return;
@@ -130,13 +129,13 @@ private:
 				switch (e.event.key.keysym.scancode) {
 				case SDL_SCANCODE_UP:
 					textSystem.ClearText(); // TODO RIGOLO - this is still awful - need to get emplace_or_update working in renderTextSystem.h
-					menu.currentIndex = (menu.currentIndex - 1 + menu.options.size()) % menu.options.size();
+					menu.currentIndex = (menu.currentIndex - 1 + static_cast<int>(menu.options.size())) % static_cast<int>(menu.options.size());
 					std::cout << menu.currentIndex << std::endl;
 					dispatcher.enqueue<MenuNavigateEvent>();
 					break;
 				case SDL_SCANCODE_DOWN:
 					textSystem.ClearText();
-					menu.currentIndex = (menu.currentIndex + 1) % menu.options.size();
+					menu.currentIndex = (menu.currentIndex + 1) % static_cast<int>(menu.options.size());
 					std::cout << menu.currentIndex << std::endl;
 					dispatcher.enqueue<MenuNavigateEvent>();
 					break;
@@ -144,11 +143,11 @@ private:
 					// confirm
 					spdlog::info("Selected: {}", menu.options[menu.currentIndex]);
 					if (menu.options[menu.currentIndex] == "Talk") {
-						auto view = reg.view<PlayerComponent, TransformComponent, RigidBodyComponent>();
-						const auto entity = view.front();
-						const auto& player = view.get<PlayerComponent>(entity);
-						auto& rigidBody = view.get<RigidBodyComponent>(entity);
-						const auto& transform = view.get<TransformComponent>(entity);
+						auto inner_view = reg.view<PlayerComponent, TransformComponent, RigidBodyComponent>();
+						const auto inner_entity = inner_view.front();
+						const auto& player = inner_view.get<PlayerComponent>(inner_entity);
+						auto& rigidBody = inner_view.get<RigidBodyComponent>(inner_entity);
+						const auto& transform = inner_view.get<TransformComponent>(inner_entity);
 
 						dispatcher.enqueue<TalkEvent>(transform.position, rigidBody.direction);
 					}
@@ -157,6 +156,9 @@ private:
 					// cancel
 					menu.isActive = false;
 					dispatcher.enqueue<MenuCloseEvent>();
+						break;
+				default:
+					break;
 				}
 			}
 		}
@@ -178,7 +180,7 @@ public:
 
 	void onKeyUp(const KeyUpEvent& e) {
 		auto view = reg.view<PlayerComponent, RigidBodyComponent, SpriteComponent, TransformComponent>();
-		entt::entity player = view.front();
+		const entt::entity player = view.front();
 
 		RigidBodyComponent& rigidBody = view.get<RigidBodyComponent>(player);
 

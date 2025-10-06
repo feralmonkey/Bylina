@@ -1,15 +1,8 @@
 #include "Game.h"
 #include "MapLoader.h"
-#include "components/TransformComponent.h"
-#include "components/RigidBodyComponent.h"
 #include "components/SpriteComponent.h"
-#include "components/AnimationComponent.h"
-#include "components/PlayerComponent.h"
-#include "components/TextComponent.h"
-#include "components/CameraFollowComponent.h"
 #include "events/KeyPressedEvent.h"
 #include "events/KeyUpEvent.h"
-#include "events/CollisionEvent.h"
 #include "systems/AnimationSystem.h"
 #include "systems/CameraMovementSystem.h"
 #include "systems/CollisionSystem.h"
@@ -100,7 +93,7 @@ void Game::Initialize() {
 	assetStore = std::make_unique<AssetStore>();
 
 	// Now systems can be created safely
-	textSystem = std::make_unique<RenderTextSystem>(registry, dispatcher, renderer, camera, assetStore, inputStack);
+	textSystem = std::make_unique<RenderTextSystem>(registry, dispatcher, camera,  inputStack);
 	keyboardSystem = std::make_unique<KeyboardControlSystem>(registry, dispatcher, inputStack, *textSystem);
 	movementSystem = std::make_unique<MovementSystem>(registry, dispatcher);
 	collisionSystem = std::make_unique<CollisionSystem>(registry, dispatcher, 8);
@@ -119,10 +112,8 @@ void Game::Setup() {
 	// load first level
 	MapLoader loader;
 	lua.open_libraries(sol::lib::base, sol::lib::math, sol::lib::os);
-	std::string mapName = "init";
+	const std::string mapName = "init";
 	loader.LoadMap(lua, registry, assetStore, renderer, mapName);
-
-	//registry.emplace<TextComponent>(textBox,"Hello World!/Bylina In Production!", 18, 8, 40, 176, true);
 }
 
 void Game::Run() {
@@ -160,29 +151,31 @@ void Game::ProcessInput() {
 		case SDL_KEYUP:
 			dispatcher.enqueue<KeyUpEvent>({ sdlEvent });
 			break;
+		default:
+			break;
 		}
 	}
 }
 
 void Game::Update() {
 	// frame timing
-	int timeToWait = MILLISECS_PER_FRAME - (SDL_GetTicks() - millisecondsPreviousFrame);
+	uint timeToWait = MILLISECS_PER_FRAME - (SDL_GetTicks() - millisecondsPreviousFrame);
 	if (timeToWait > 0 && timeToWait <= MILLISECS_PER_FRAME) {
 		SDL_Delay(timeToWait);
 	}
-	double deltaTime = (SDL_GetTicks() - millisecondsPreviousFrame) / 1000.0;
+	const auto deltaTime = static_cast<double>((SDL_GetTicks() - millisecondsPreviousFrame) / 1000.0);
 	millisecondsPreviousFrame = SDL_GetTicks();
 
 	// 0. Move NPCS
 	npcSystem->Update(deltaTime);
 
 	// 1. deliver input events so systems can react
-	dispatcher.update(); // e.g., KeyPressedEvent will go to KeyboardControlSystem
+	dispatcher.update();
 
 	// 2. movement (positions change)
 	if (movementSystem) movementSystem->Update(deltaTime);
 
-	// 3. collision detection (enqueue collision events)  -- rigolo todo temporarily comment out
+	// 3. collision detection (enqueue collision events)
 	if (collisionSystem) collisionSystem->Update(mapWidth, mapHeight);
 
 	// 4. deliver collision events so resolution runs *this frame*
@@ -211,7 +204,7 @@ void Game::Render() {
 	SDL_RenderPresent(renderer);
 }
 
-void Game::Destroy() {
+void Game::Destroy() const {
 	SDL_DestroyRenderer(renderer);
 	SDL_DestroyWindow(window);
 	SDL_Quit();

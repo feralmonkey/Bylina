@@ -23,7 +23,7 @@ class Game {
 private:
 	bool gameIsRunning;
 	bool debugMode;
-	int millisecondsPreviousFrame;
+	uint millisecondsPreviousFrame;
 
 	SDL_Window* window;
 	SDL_Renderer* renderer;
@@ -57,7 +57,7 @@ public:
 	void ProcessInput();
 	void Update();
 	void Render();
-	void Destroy();
+	void Destroy() const;
 
 	static int windowScale;
 	static int logicalWidth;

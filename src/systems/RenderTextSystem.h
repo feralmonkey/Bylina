@@ -7,6 +7,7 @@
 #include <fstream>
 #include <unordered_map>
 #include <vector>
+#include <memory>
 #include "../events/MenuOpenEvent.h"
 #include "../events/MenuCloseEvent.h"
 #include "../events/MenuNavigateEvent.h"
@@ -25,15 +26,12 @@ private:
 	int tileSize = 8;
 	entt::registry& registry;
 	entt::dispatcher& dispatcher;
-	SDL_Renderer* renderer;
 	SDL_Rect& camera;
-	std::unique_ptr<AssetStore>& assetStore;
 	std::vector<InputState>& inputStack;
 	std::unordered_map<char, std::pair<int, int>> charLookup;
 
 	// menu pointer variables
 	int currentIndex = 0;
-	int itemCount;
 	std::vector<std::string> menuSelectTracker;
 
 	void RenderTextBox() {
@@ -66,7 +64,7 @@ private:
 
 			// draw text rows
 			int textCounter = 0;
-			bool pauseLine;
+			bool pauseLine = false;
 			for (int i = 1; i < textLabel.height - 1; i++) {
 				// left border
 				DrawChar(registry, 48, 0, x, y);
@@ -78,7 +76,7 @@ private:
 
 					// if we still have additional characters in the text label then print the next character
 					// otherwise just print a black square
-					if (textCounter < textLabel.text.size()) {
+					if (textCounter < static_cast<int>(textLabel.text.size())) {
 						char character = textLabel.text[textCounter];
 
 						if (character == '/') {
@@ -163,20 +161,18 @@ private:
 	}
 
 public:
-	RenderTextSystem(entt::registry& registry, entt::dispatcher& dispatcher, SDL_Renderer* renderer, SDL_Rect& camera, std::unique_ptr<AssetStore>& assetStore, std::vector<InputState>& inputStack, int tileScale = 1, int tileSize = 8) :
+	RenderTextSystem(entt::registry& registry, entt::dispatcher& dispatcher, SDL_Rect& camera, std::vector<InputState>& inputStack, int tileScale = 1, int tileSize = 8) :
 		registry(registry),
 		dispatcher(dispatcher),
-		renderer(renderer),
 		camera(camera),
-		assetStore(assetStore),
 		inputStack(inputStack)
 	{
 		this->tileScale = tileScale;
 		this->tileSize = tileSize;
 
-		std::ifstream charMap("./assets/tilemaps/charMap.json");
+		std::ifstream charMap("./assets/tilemaps/charmap.json");
 		if (!charMap.is_open()) {
-			spdlog::error("could not open charMap.json!");
+			spdlog::error("could not open charmap.json!");
 			return;
 		}
 
@@ -198,7 +194,7 @@ public:
 		dispatcher.sink<MenuCloseEvent>()
 			.connect<&RenderTextSystem::ClearTextBox>(*this);
 		dispatcher.sink<MenuNavigateEvent>()
-			.connect<&RenderTextSystem::RenderAllMenus>(*this);   // todo rigolo - this dfunction needs to be updated
+			.connect<&RenderTextSystem::RenderAllMenus>(*this);   // todo rigolo - this function needs to be updated
 	}
 
 	inline void ClearTextBox() {
@@ -226,6 +222,7 @@ public:
 	}
 
 	void RenderAllMenus() {
+		spdlog::info("here");
 		auto view = registry.view<MenuComponent>();
 		for (auto entity : view) {
 			const auto& menu = view.get<MenuComponent>(entity);
@@ -248,7 +245,7 @@ public:
 
 	void UpdateMenu(entt::entity entity, MenuComponent& menu) {
 		std::string message = "//";
-		for (size_t i = 0; i < menu.options.size(); i++) {
+		for (int i = 0; i < static_cast<int>(menu.options.size()); i++) {
 			if (i == menu.currentIndex) {
 				message += "> " + menu.options[i] + "//";
 			}
