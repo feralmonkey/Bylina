@@ -1,26 +1,52 @@
 #pragma once
-#include "../src/assetstore/AssetStore.h"
-#include "systems/ScriptSystem.h"
-#include "systems/KeyboardControlSystem.h"
+
 #include <SDL.h>
 #include <sol/sol.hpp>
 #include <entt.hpp>
+#include <memory>
+#include <vector>
+//#include "Constants.h"
+#include "enums/InputState.h"
 
-const int FPS = 60;
-const int MILLISECS_PER_FRAME = 1000 / FPS;
+// Forward declarations
+class AssetStore;
+class RenderTextSystem;
+class KeyboardControlSystem;
+class MovementSystem;
+class CollisionSystem;
+class CollisionResolutionSystem;
+class MenuSystem;
+class NPCSystem;
+class ScriptSystem;
 
 class Game {
 private:
 	bool gameIsRunning;
 	bool debugMode;
-	int millisecondsPreviousFrame;
-	SDL_Window* window;
-	SDL_Renderer* renderer;
-	SDL_Rect camera;
+	uint millisecondsPreviousFrame;
+
+	SDL_Window* window {};
+	SDL_Renderer* renderer {};
+	SDL_Rect camera {};
+
 	sol::state lua;
-	
+	entt::dispatcher dispatcher;
+	entt::registry registry;
+
+	std::vector<InputState> inputStack;
 	std::unique_ptr<AssetStore> assetStore;
+
+	// Use smart pointers for systems
+	std::unique_ptr<RenderTextSystem> textSystem;
+	std::unique_ptr<KeyboardControlSystem> keyboardSystem;
+	std::unique_ptr<MovementSystem> movementSystem;
+	std::unique_ptr<CollisionSystem> collisionSystem;
+	std::unique_ptr<CollisionResolutionSystem> collisionResolutionSystem;
+	std::unique_ptr<MenuSystem> menuSystem;
+	std::unique_ptr<NPCSystem> npcSystem;
 	std::unique_ptr<ScriptSystem> scriptSystem;
+	
+
 
 public:
 	Game();
@@ -31,11 +57,7 @@ public:
 	void ProcessInput();
 	void Update();
 	void Render();
-	void Destroy();
-
-	entt::registry registry; // on the fence about exposing these as public
-	entt::dispatcher dispatcher;
-	KeyboardControlSystem keyboardSystem;
+	void Destroy() const;
 
 	static int windowScale;
 	static int logicalWidth;

@@ -1,6 +1,8 @@
 #pragma once
 
 #include "entt.hpp"
+#include "../systems/ISystem.h"
+#include "../components/NPCComponent.h"
 #include "../components/ScriptComponent.h"
 #include "../components/TransformComponent.h"
 #include "../components/RigidBodyComponent.h"
@@ -73,15 +75,26 @@ inline void SetEntityAnimationFrame(entt::registry& reg, entt::entity entity, in
 	}
 }
 
-class ScriptSystem {
+class ScriptSystem : public ISystem {
 public:
 
-	class ScriptSystem() = default;
-
+	ScriptSystem() = default;
+	
 	void CreateLuaBindings(sol::state& lua) {
 		// create the 'entity' user type so lua knows what an entity is
 		lua.new_usertype<entt::entity>(
 			"entity"
+		);
+		lua.new_usertype<NPCComponent>("NPCComponent",
+			sol::constructors<
+			NPCComponent(std::string,
+				std::unordered_map<std::string, std::string>,
+				MovementPattern,
+				MovementSpeed)>(),
+			"name", &NPCComponent::name,
+			"conversation", &NPCComponent::conversation,
+			"movementPattern", &NPCComponent::movementPattern,
+			"speed", &NPCComponent::speed
 		);
 
 		// create the 'registry' user type so lua knows what a registry is...
@@ -106,6 +119,20 @@ public:
 				r.destroy(e);
 				return alive;
 			}
+		);
+
+		// configure LUA enums
+		lua.new_enum("MovementPattern",
+			"Still", MovementPattern::Still,
+			"Box", MovementPattern::Box,
+			"Random", MovementPattern::Random,
+			"Line", MovementPattern::Line
+		);
+
+		lua.new_enum("MovementSpeed",
+			"Slow", MovementSpeed::Slow,
+			"Normal", MovementSpeed::Normal,
+			"Fast", MovementSpeed::Fast
 		);
 
 		// create all the bindings between c++ and lua functions

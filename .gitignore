@@ -13,6 +13,7 @@ x64/
 *.user
 *.userosscache
 *.sln.docstates
+*.vsidx
 
 # OS
 .DS_Store

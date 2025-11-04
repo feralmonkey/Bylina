@@ -1,18 +1,21 @@
 #include "./MapLoader.h"
 #include "./Game.h"
 #include <fstream>
+#include <unordered_map>
 #include <sol/sol.hpp>
 #include <spdlog/spdlog.h> 
-#include "../src/components/TransformComponent.h"
-#include "../src/components/RigidBodyComponent.h"
-#include "../src/components/SpriteComponent.h"
 #include "../src/components/AnimationComponent.h"
 #include "../src/components/BoxColliderComponent.h"
-#include "../src/components/KeyboardControlComponent.h"
 #include "../src/components/CameraFollowComponent.h"
 #include "../src/components/HealthComponent.h"
+#include "../src/components/KeyboardControlComponent.h"
+#include "../src/components/NPCComponent.h"
+#include "../src/components/PlayerComponent.h"
+#include "../src/components/RigidBodyComponent.h"
 #include "../src/components/ScriptComponent.h"
+#include "../src/components/SpriteComponent.h"
 #include "../src/components/TagComponents.h"
+#include "../src/components/TransformComponent.h"
 
 MapLoader::MapLoader() {
 	spdlog::info("MapLoader constructer called");
@@ -93,7 +96,8 @@ void MapLoader::LoadMap(sol::state& lua, entt::registry& registry, const std::un
 	for (int y = 0; y < numMapRows; y++) {
 		for (int x = 0; x < numMapCols; x++) {
 			char ch;
-					
+			bool collider = false;
+
 			// get the first character and convert hex character to integer
 			mapFile.get(ch);
 			int valueY = std::stoi(std::string(1, ch), nullptr, 16);
@@ -104,13 +108,22 @@ void MapLoader::LoadMap(sol::state& lua, entt::registry& registry, const std::un
 			int valueX = std::stoi(std::string(1, ch), nullptr, 16);
 			int srcRectX = valueX * tileSize;
 
+			// get collision boolean
+			mapFile.get(ch);
+			if (std::string(1, ch) == "1") {
+				collider = true;
+			}
+
 			// ignore commas
-			mapFile.ignore();
+			mapFile.ignore(); 
 
 			entt::entity tile = registry.create();
 			// tile.Group("tiles");  // todo rigolo - add group and tagging support
 			registry.emplace<TransformComponent>(tile, glm::vec2(x * (tileSize * tileScale), y * (tileSize * tileScale)), glm::vec2(tileScale, tileScale), 0.0);
 			registry.emplace<SpriteComponent>(tile, asset_id, tileSize, tileSize, 0, false, srcRectX, srcRectY);
+			if (collider) {
+				registry.emplace<BoxColliderComponent>(tile);
+			}
 		}
 	}
 	mapFile.close();
@@ -130,7 +143,7 @@ void MapLoader::LoadMap(sol::state& lua, entt::registry& registry, const std::un
 			break;
 		}
 
-		sol::table entity = entities[i];
+ 		sol::table entity = entities[i];
 
 		entt::entity newEntity = registry.create();
 
@@ -256,6 +269,20 @@ void MapLoader::LoadMap(sol::state& lua, entt::registry& registry, const std::un
 				);
 			}
 
+			sol::optional<sol::table> npc = entity["components"]["npc"];
+			if (npc) {
+				sol::table npc = entity["components"]["npc"];
+				// todo rigolo - make this not suck
+				registry.emplace<NPCComponent>(
+					newEntity,
+					npc["name"].get<std::string>(),
+					npc["conversation"].get<std::unordered_map<std::string, std::string>>(),
+					npc["pattern"].get<MovementPattern>(),
+					npc["speed"].get<MovementSpeed>()
+					);
+			}
+
+
 			// Script Component
 			sol::optional<sol::table> script = entity["components"]["on_update_script"];
 			if (script != sol::nullopt) {
@@ -263,11 +290,17 @@ void MapLoader::LoadMap(sol::state& lua, entt::registry& registry, const std::un
 				registry.emplace<ScriptComponent>(newEntity, func);
 			}
 
+			// Player Component
+			sol::optional<sol::table> player = entity["components"]["player"];
+			if (player) {
+				registry.emplace<PlayerComponent>(newEntity);
+			}
+
 #pragma region Tags
-			// Player Tag
-			sol::optional<sol::table> player_tag = entity["components"]["player_tag"];
-			if (player_tag) {
-				registry.emplace<PlayerTag>(newEntity);
+			// npc tag
+			sol::optional<sol::table> npc_tag = entity["components"]["npc_tag"];
+			if (npc_tag) {
+				registry.emplace<NPCTag>(newEntity);
 			}
 #pragma endregion
 

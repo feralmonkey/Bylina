@@ -3,17 +3,32 @@ Documentation
 
 Tagging
 =======
-1. Create an empty struct in TagComponents.h
+1. Create an empty struct in TagComponents.h:
 	e.g
-		struct PlayerTag {};
-2. Add emplacement logic in MapLoader.cpp
+		struct PlayerComponent {};
+2. Add emplacement logic in MapLoader.cpp:
 			// Player Tag
-			sol::optional<sol::table> player_tag = entity["components"]["player_tag"];
-			if (player_tag) {
-				registry.emplace<PlayerTag>(newEntity);
+			sol::optional<sol::table> player = entity["components"]["player"];
+			if (player) {
+				registry.emplace<PlayerComponent>(newEntity);
 			}
 3. To tag an entity in lua:
             components = {
                 player_tag = {},
 				other_component {
 					...
+
+Events
+======
+1. Create an event struct in the correct folder:
+	e.g. 
+		struct CollisionEvent { int entity_a; int entity_b; };
+2. When something happens in the system, enque an event:
+	e.g.
+			dispatcher.enqueue<KeyPressedEvent>({ sdlEvent });
+3. Listen for the event:
+	e.g.
+			void setupEventListeners(entt::dispatcher& dispatcher) {
+			dispatcher.sink<PlayerMovedEvent>().connect<&onPlayerMoved>();
+		}
+

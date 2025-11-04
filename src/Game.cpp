@@ -1,19 +1,19 @@
 #include "Game.h"
 #include "MapLoader.h"
-#include "components/TransformComponent.h"
-#include "components/RigidBodyComponent.h"
 #include "components/SpriteComponent.h"
-#include "components/AnimationComponent.h"
-#include "components/PlayerComponent.h"
-#include "components/TextComponent.h"
-#include "components/CameraFollowComponent.h"
 #include "events/KeyPressedEvent.h"
-#include "systems/RenderSystem.h"
+#include "events/KeyUpEvent.h"
 #include "systems/AnimationSystem.h"
-#include "systems/KeyboardControlSystem.h"
-#include "systems/MovementSystem.h"
-#include "systems/RenderTextSystem.h"
 #include "systems/CameraMovementSystem.h"
+#include "systems/CollisionSystem.h"
+#include "systems/KeyboardControlSystem.h"
+#include "systems/MenuSystem.h"
+#include "systems/MovementSystem.h"
+#include "systems/NPCSystem.h"
+#include "systems/RenderColliderSystem.h"
+#include "systems/RenderSystem.h"
+#include "systems/RenderTextSystem.h"
+#include "systems/ScriptSystem.h"
 
 
 // initialize static member variables
@@ -23,14 +23,13 @@ int Game::windowScale;
 int Game::mapWidth;
 int Game::mapHeight;
 
-Game::Game() : keyboardSystem(registry, dispatcher)
+Game::Game() :
+	dispatcher(),
+	registry()
 {
 	spdlog::info("Game constructor called!");
 	Game::gameIsRunning = false;
 	debugMode = false;
-
-	assetStore = std::make_unique<AssetStore>();
-	scriptSystem = std::make_unique<ScriptSystem>();
 }
 
 Game::~Game() {
@@ -60,7 +59,7 @@ void Game::Initialize() {
 		logicalWidth * windowScale, logicalHeight * windowScale, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
 
 	if (!window) {
-		// testing for null pointer
+		// testing for a null pointer
 		spdlog::error("Error creating SDL window");
 		return;
 	}
@@ -91,6 +90,18 @@ void Game::Initialize() {
 	lua.open_libraries(sol::lib::base, sol::lib::math, sol::lib::table, sol::lib::string);
 	spdlog::info("lua state created");
 
+	assetStore = std::make_unique<AssetStore>();
+
+	// Now systems can be created safely
+	textSystem = std::make_unique<RenderTextSystem>(registry, dispatcher, camera,  inputStack);
+	keyboardSystem = std::make_unique<KeyboardControlSystem>(registry, dispatcher, inputStack, *textSystem);
+	movementSystem = std::make_unique<MovementSystem>(registry, dispatcher);
+	collisionSystem = std::make_unique<CollisionSystem>(registry, dispatcher, 8);
+	collisionResolutionSystem = std::make_unique<CollisionResolutionSystem>(registry, dispatcher);
+	menuSystem = std::make_unique<MenuSystem>();
+	npcSystem = std::make_unique<NPCSystem>(registry, dispatcher, *textSystem);
+	scriptSystem = std::make_unique<ScriptSystem>();
+
 	gameIsRunning = true;
 }
 
@@ -101,11 +112,11 @@ void Game::Setup() {
 	// load first level
 	MapLoader loader;
 	lua.open_libraries(sol::lib::base, sol::lib::math, sol::lib::os);
-	std::string mapName = "init";
+	const std::string mapName = "overworld";
 	loader.LoadMap(lua, registry, assetStore, renderer, mapName);
 
-	entt::entity textBox = registry.create();
-	registry.emplace<TextComponent>(textBox,"Hey Everybody!/What's Up?", 18, 8, 32, 128, true);
+	// not actually using this here am I...
+	collisionSystem->SetMapDimensions(mapWidth, mapHeight);
 }
 
 void Game::Run() {
@@ -124,9 +135,8 @@ void Game::ProcessInput() {
 		// handle core sdl events
 		switch (sdlEvent.type) {
 		case SDL_QUIT:  // if user tries to close the window using the x button
-			gameIsRunning = false;
+			gameIsRunning = false; 
 			break;
-		case SDL_KEYUP:
 		case SDL_KEYDOWN:
 			// exit the game if user presses escape key
 			if (sdlEvent.key.keysym.sym == SDLK_ESCAPE) {
@@ -139,36 +149,44 @@ void Game::ProcessInput() {
 				debugMode = !debugMode; // toggle
 				break;
 			}
-			if (sdlEvent.key.keysym.sym == SDLK_x) {
-				spdlog::info("action button pressed");
-				RenderTextBox(registry, renderer, camera, assetStore);
-			}
 			dispatcher.enqueue<KeyPressedEvent>({ sdlEvent });
+			break;
+		case SDL_KEYUP:
+			dispatcher.enqueue<KeyUpEvent>({ sdlEvent });
+			break;
+		default:
 			break;
 		}
 	}
 }
 
 void Game::Update() {
-	// if we are too fast, waste some time until we reach MILLISECS_PER_FRAME
-	//while (!SDL_TICKS_PASSED(SDL_GetTicks(), millisecondsPreviousFrame + MILLISECS_PER_FRAME));
-	// SDL_Delay is way more efficient than the above while loop since it doesn't burn clock cycles while waiting
-	// can comment out below so it runs at highest framerate possible since we're using delta time now. I won't do that though.
-	int timeToWait = MILLISECS_PER_FRAME - (SDL_GetTicks() - millisecondsPreviousFrame);
+	// frame timing
+	uint timeToWait = MILLISECS_PER_FRAME - (SDL_GetTicks() - millisecondsPreviousFrame);
 	if (timeToWait > 0 && timeToWait <= MILLISECS_PER_FRAME) {
 		SDL_Delay(timeToWait);
 	}
-
-	// the difference in ticks since the last frame converted to seconds.
-	double deltaTime = (SDL_GetTicks() - millisecondsPreviousFrame) / 1000.0;
-
-	// store the current frame time
+	const auto deltaTime = static_cast<double>((SDL_GetTicks() - millisecondsPreviousFrame) / 1000.0);
 	millisecondsPreviousFrame = SDL_GetTicks();
 
-	dispatcher.update(); // TODO RIGOLO - Not sure if this is the best spot to call the dispatchers update method : keep an eye on this
-	AnimationSystem(registry);
-	MovementSystem(registry, deltaTime);
-	CameraMovementSystem(registry, camera); // TODO RIGOLO - SHOULD THIS BE HERE OR IN THE RENDERING SECTION?
+	// 0. Move NPCs
+	npcSystem->Update(deltaTime);
+
+	// 1. deliver input events so systems can react
+	dispatcher.update();
+
+	// 2. movement (positions change)
+	if (movementSystem) movementSystem->Update(deltaTime);
+
+	// 3. collision detection (enqueue collision events)
+	if (collisionSystem) collisionSystem->Update();
+
+	// 4. deliver collision events so resolution runs *this frame*
+	dispatcher.update();
+
+	// 5. other systems
+	AnimationSystem(registry);           // updates animations
+	CameraMovementSystem(registry, camera); // camera follows player
 }
 
 void Game::Render() {
@@ -181,7 +199,7 @@ void Game::Render() {
 	
 	// debugging collision detection
 	if (debugMode) {
-	/*	registry.GetSystem<RenderColliderSystem>().Update(renderer, camera);*/
+		RenderColliderSystem(registry, renderer, camera);
 	}
  
 	//// Set logical size so our drawing uses NES-ish resolution regardless of window size
@@ -189,7 +207,7 @@ void Game::Render() {
 	SDL_RenderPresent(renderer);
 }
 
-void Game::Destroy() {
+void Game::Destroy() const {
 	SDL_DestroyRenderer(renderer);
 	SDL_DestroyWindow(window);
 	SDL_Quit();

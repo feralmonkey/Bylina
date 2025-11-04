@@ -1,4 +1,6 @@
 #include "AssetStore.h"
+
+#include <ranges>
 #include <spdlog/spdlog.h>
 #include <SDL_image.h>
 
@@ -12,13 +14,13 @@ AssetStore::~AssetStore() {
 }
 
 void AssetStore::Clear() {
-	for (auto texture: textures) {
-		SDL_DestroyTexture(texture.second);
+	for (const auto &val: textures | std::views::values) {
+		SDL_DestroyTexture(val);
 	}
 	textures.clear(); // this won't de allocate the textures inside the map. We need to clear them individually above. 
 
-	for (auto font : fonts) {
-		TTF_CloseFont(font.second);
+	for (const auto &val: fonts | std::views::values) {
+		TTF_CloseFont(val);
 	}
 	fonts.clear();
 	

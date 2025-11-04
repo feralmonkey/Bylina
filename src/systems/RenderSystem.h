@@ -21,7 +21,7 @@ inline void RenderSystem(entt::registry& reg, SDL_Renderer* renderer, SDL_Rect c
 		RenderableEntity renderableEntity;
 		renderableEntity.spriteComponent = view.get<SpriteComponent>(entity);
 		renderableEntity.transformComponent = view.get<TransformComponent>(entity);
-
+		
 		// margin to continue rendering sprite if it falls outside of the camera
 		int cameraMargin = 100;
 
