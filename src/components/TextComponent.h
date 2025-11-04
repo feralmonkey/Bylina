@@ -1,7 +1,5 @@
 #pragma once
 #include <string>
-#include <glm/glm.hpp>
-#include <SDL.h>
 
 struct TextComponent {
 	// width and height in characters (each character is 8 pixels)
@@ -13,7 +11,7 @@ struct TextComponent {
 	std::string text;
 	bool hasSelector;
 
-	TextComponent(std::string text = "", int width = 8, int height = 6, int xOffset = 0, int yOffset = 0, bool hasSelector = true) {
+	explicit TextComponent(const std::string& text = "", const int width = 8, const int height = 6, const int xOffset = 0, const int yOffset = 0, const bool hasSelector = true) {
 		this->text = text;
 		this->width = width;
 		this->height = height;

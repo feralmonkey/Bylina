@@ -1,12 +1,12 @@
 #pragma once
-#include "entt.hpp"
+
 #include <glm/glm.hpp>
 #include "../enums/Direction.h"
 
 struct TalkEvent {
 	glm::vec2 target{ -1,-1 };
 
-	TalkEvent(glm::vec2 location, Direction direction) {
+	TalkEvent(const glm::vec2 location, const Direction direction) {
 		switch (direction) {
 		case Direction::Up:
 			target = location + glm::vec2{ 0,-16 };

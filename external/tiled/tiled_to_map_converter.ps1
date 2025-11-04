@@ -5,10 +5,10 @@
 
 # --- Configuration / defaults (change if you like) ---
 if ([string]::IsNullOrEmpty($InputFile)) {
-    $InputFile = "D:\source\repos\Bylina\Bylina\external\tiled\village-collisio.tmx"
+    $InputFile = "~/dev/Bylina/external/tiled/overworld/overworld.tmx"
 }
 if ([string]::IsNullOrEmpty($OutputFile)) {
-    $OutputFile = "D:\source\repos\Bylina\Bylina\external\tiled\villagec.map"
+    $OutputFile = "~/dev/Bylina/external/tiled/overworld/overworld.map"
 }
 
 # Flipping bit masks (uint32)

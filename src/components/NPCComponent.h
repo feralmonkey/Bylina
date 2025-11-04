@@ -1,7 +1,5 @@
 #pragma once
-#include <iostream>
 #include <unordered_map>
-#include <glm/glm.hpp>
 #include "../enums/NPCMovement.h"
 
 struct NPCComponent {
@@ -11,7 +9,7 @@ struct NPCComponent {
 	MovementPattern movementPattern;
 	MovementSpeed speed;
 
-	NPCComponent(std::string name, std::unordered_map<std::string, std::string> conversation, MovementPattern movementPattern = MovementPattern::Still, MovementSpeed speed = MovementSpeed::Normal) 
+	NPCComponent(const std::string& name, const std::unordered_map<std::string, std::string>& conversation, const MovementPattern movementPattern = MovementPattern::Still, const MovementSpeed speed = MovementSpeed::Normal)
 	{
 		this->name = name;
 		this->conversation = conversation;

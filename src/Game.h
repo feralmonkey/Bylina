@@ -5,7 +5,7 @@
 #include <entt.hpp>
 #include <memory>
 #include <vector>
-#include "Constants.h"
+//#include "Constants.h"
 #include "enums/InputState.h"
 
 // Forward declarations
@@ -25,9 +25,9 @@ private:
 	bool debugMode;
 	uint millisecondsPreviousFrame;
 
-	SDL_Window* window;
-	SDL_Renderer* renderer;
-	SDL_Rect camera;
+	SDL_Window* window {};
+	SDL_Renderer* renderer {};
+	SDL_Rect camera {};
 
 	sol::state lua;
 	entt::dispatcher dispatcher;

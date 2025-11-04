@@ -20,21 +20,31 @@ private:
 	int mapWidth;
 	int mapHeight;
 
+	std::vector<std::vector<entt::entity>> grid;
 
-// TODO RIGOLO - Probably won't be using a dispatcher here
-	// Remove dispatcher references
 
 public:
-	CollisionSystem(entt::registry& reg, entt::dispatcher& dis, int tileSize) 
-		: registry(reg), dispatcher(dis), tileSize(tileSize)   { }
+	CollisionSystem(entt::registry& reg, entt::dispatcher& dis, const int tileSize)
+		: registry(reg), dispatcher(dis), tileSize(tileSize),
+		  mapCols(0), mapRows(0), mapWidth(0), mapHeight(0) {}
 
-	// TODO RIGOLO - not all of this logic needs to be called every frame ; some can be in a map-refresh method
-	void Update(int mapWidth, int mapHeight) {
-		mapCols = mapWidth / tileSize;
-		mapRows = mapHeight / tileSize;
+	void SetMapDimensions(const int width, const int height) {
+		mapWidth = width;
+		mapHeight = height;
+		mapCols = width / tileSize;
+		mapRows = height / tileSize;
 
-		// 1D grid (each cell stores entities inside it)
-		std::vector<std::vector<entt::entity>> grid(mapRows * mapCols);
+		grid.clear();
+		grid.resize(mapRows * mapCols);
+
+		spdlog::info("Collision grid initialized: {}x{} tiles ({} cells)",
+			mapCols, mapRows, mapRows * mapCols);
+	}
+
+	void Update() {
+		for (auto& cell : grid) {
+			cell.clear();
+		}
 
 		auto view = registry.view<BoxColliderComponent, TransformComponent>();
 
@@ -43,8 +53,8 @@ public:
 			const auto& transform = view.get<TransformComponent>(entity);
 			const auto& collider = view.get<BoxColliderComponent>(entity);
 
-			glm::vec2 pos = transform.position + collider.offset;
-			glm::vec2 size = collider.size;
+			const glm::vec2 pos = transform.position + collider.offset;
+			const glm::vec2 size = collider.size;
 
 			int startCol = static_cast<int>(pos.x) / tileSize;
 			int startRow = static_cast<int>(pos.y) / tileSize;
@@ -58,7 +68,7 @@ public:
 
 			for (int r = startRow; r <= endRow; ++r) {
 				for (int c = startCol; c <= endCol; ++c) {
-					int index = r * mapCols + c;
+					const int index = r * mapCols + c;
 					grid[index].push_back(entity);
 				}
 			}

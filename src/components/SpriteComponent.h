@@ -1,6 +1,5 @@
 #pragma once
 
-# include <glm/glm.hpp>
 # include <string>
 # include <SDL.h>
 
@@ -11,11 +10,11 @@ struct SpriteComponent {
 		int height;
 		int zIndex;
 		int anchor_x;
-		SDL_RendererFlip flip;
-		SDL_Rect srcRect;
+		SDL_RendererFlip flip {};
+		SDL_Rect srcRect {};
 		bool isFixed;
 
-		SpriteComponent(std::string assetId = "", int width = 0, int height = 0, int zIndex = 0, bool isFixed = false, int srcRectX = 0, int srcRectY = 0) {			
+		explicit SpriteComponent(const std::string& assetId = "", const int width = 0, const int height = 0, const int zIndex = 0, const bool isFixed = false, const int srcRectX = 0, const int srcRectY = 0) {
 			this->assetId = assetId;
 			this->width = width;
 			this->height = height;
@@ -26,7 +25,7 @@ struct SpriteComponent {
 			this->srcRect = { srcRectX, srcRectY, width, height };
 		};
 
-		bool compareZindex(const SpriteComponent& a, const SpriteComponent& b) {
+		static bool compareZIndex(const SpriteComponent& a, const SpriteComponent& b) {
 			return a.zIndex < b.zIndex;
 		}
 };

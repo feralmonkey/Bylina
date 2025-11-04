@@ -24,8 +24,8 @@ int Game::mapWidth;
 int Game::mapHeight;
 
 Game::Game() :
-	registry(),
-	dispatcher()
+	dispatcher(),
+	registry()
 {
 	spdlog::info("Game constructor called!");
 	Game::gameIsRunning = false;
@@ -59,7 +59,7 @@ void Game::Initialize() {
 		logicalWidth * windowScale, logicalHeight * windowScale, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
 
 	if (!window) {
-		// testing for null pointer
+		// testing for a null pointer
 		spdlog::error("Error creating SDL window");
 		return;
 	}
@@ -112,8 +112,11 @@ void Game::Setup() {
 	// load first level
 	MapLoader loader;
 	lua.open_libraries(sol::lib::base, sol::lib::math, sol::lib::os);
-	const std::string mapName = "init";
+	const std::string mapName = "overworld";
 	loader.LoadMap(lua, registry, assetStore, renderer, mapName);
+
+	// not actually using this here am I...
+	collisionSystem->SetMapDimensions(mapWidth, mapHeight);
 }
 
 void Game::Run() {
@@ -166,7 +169,7 @@ void Game::Update() {
 	const auto deltaTime = static_cast<double>((SDL_GetTicks() - millisecondsPreviousFrame) / 1000.0);
 	millisecondsPreviousFrame = SDL_GetTicks();
 
-	// 0. Move NPCS
+	// 0. Move NPCs
 	npcSystem->Update(deltaTime);
 
 	// 1. deliver input events so systems can react
@@ -176,7 +179,7 @@ void Game::Update() {
 	if (movementSystem) movementSystem->Update(deltaTime);
 
 	// 3. collision detection (enqueue collision events)
-	if (collisionSystem) collisionSystem->Update(mapWidth, mapHeight);
+	if (collisionSystem) collisionSystem->Update();
 
 	// 4. deliver collision events so resolution runs *this frame*
 	dispatcher.update();

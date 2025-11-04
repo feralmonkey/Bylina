@@ -3,4 +3,4 @@
 constexpr float TILE_SIZE = 16.0f;
 constexpr int FPS = 60;
 constexpr float PC_MOVE_SPEED = 50.0f;
-const int MILLISECS_PER_FRAME = 1000 / FPS;
+constexpr int MILLISECS_PER_FRAME = 1000 / FPS;

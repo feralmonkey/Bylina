@@ -9,11 +9,11 @@ struct AnimationComponent {
 	int startTime;
 	bool isLoop;
 
-	AnimationComponent(int numFrames = 1, int frameSpeedRate = 1, bool isLoop = true) {
+	explicit AnimationComponent(const int numFrames = 1, const int frameSpeedRate = 1, const bool isLoop = true) {
 		this->numFrames = numFrames;
 		this->currentFrame = 1;
 		this->frameSpeedRate = frameSpeedRate;
 		this->isLoop = isLoop;
-		this->startTime = SDL_GetTicks();
+		this->startTime = static_cast<int>(SDL_GetTicks());
 	}
 };

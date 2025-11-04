@@ -85,6 +85,15 @@ endif()
 # ==== Executable ====
 add_executable(Bylina ${SRC_FILES} ${HEADER_FILES})
 
+add_custom_target(sync_assets ALL
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+        ${PROJECT_SOURCE_DIR}/assets
+        ${CMAKE_CURRENT_BINARY_DIR}/assets
+        COMMENT "Syncing assets (including Lua scripts) before run..."
+)
+
+add_dependencies(Bylina sync_assets)
+
 # ==== Link Libraries ====
 target_link_libraries(Bylina
     SDL2::SDL2
