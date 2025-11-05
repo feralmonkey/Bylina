@@ -103,7 +103,8 @@ void Game::Setup() {
 	// load first level
 	MapLoader loader;
 	lua.open_libraries(sol::lib::base, sol::lib::math, sol::lib::os);
-	const std::string mapName = "overworld";
+	const std::string mapName = "init";
+	//const std::string mapName = "overworld";
 	loader.LoadMap(lua, registry, assetStore, renderer, mapName, config);
 
 	// not actually using this here am I...
@@ -165,6 +166,9 @@ void Game::Update() {
 
 	// 1. deliver input events so systems can react
 	dispatcher.update();
+
+	// 1.5. Update keyboard system (for continuous movement)
+	if (keyboardSystem) keyboardSystem->Update(deltaTime);
 
 	// 2. movement (positions change)
 	if (movementSystem) movementSystem->Update(deltaTime);
