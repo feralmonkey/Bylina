@@ -15,21 +15,12 @@
 #include "systems/RenderTextSystem.h"
 #include "systems/ScriptSystem.h"
 
-
-// initialize static member variables
-int Game::logicalWidth;
-int Game::logicalHeight;
-int Game::windowScale;
-int Game::mapWidth;
-int Game::mapHeight;
-
 Game::Game() :
+	gameIsRunning(false),
 	dispatcher(),
 	registry()
 {
 	spdlog::info("Game constructor called!");
-	Game::gameIsRunning = false;
-	debugMode = false;
 }
 
 Game::~Game() {
@@ -49,14 +40,14 @@ void Game::Initialize() {
 	SDL_DisplayMode displayMode;
 	SDL_GetCurrentDisplayMode(0, &displayMode);
 	
-	windowScale = 3;
-	logicalWidth = 256;
-	logicalHeight = 240;
+	config.windowScale = 3;
+	config.logicalWidth = 256;
+	config.logicalHeight = 240;
 
 	// Create window
 	SDL_Window* window = SDL_CreateWindow(
 		"Bylina", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-		logicalWidth * windowScale, logicalHeight * windowScale, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
+		config.logicalWidth * config.windowScale, config.logicalHeight * config.windowScale, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
 
 	if (!window) {
 		// testing for a null pointer
@@ -81,8 +72,8 @@ void Game::Initialize() {
 	// initialize the camera view with the whole screen area
 	camera.x = 0;
 	camera.y = 0;
-	camera.w = logicalWidth;
-	camera.h = logicalHeight;
+	camera.w = config.logicalWidth;
+	camera.h = config.logicalHeight;
 
 	SDL_SetWindowFullscreen(window, 0);
 
@@ -113,10 +104,10 @@ void Game::Setup() {
 	MapLoader loader;
 	lua.open_libraries(sol::lib::base, sol::lib::math, sol::lib::os);
 	const std::string mapName = "overworld";
-	loader.LoadMap(lua, registry, assetStore, renderer, mapName);
+	loader.LoadMap(lua, registry, assetStore, renderer, mapName, config);
 
 	// not actually using this here am I...
-	collisionSystem->SetMapDimensions(mapWidth, mapHeight);
+	collisionSystem->SetMapDimensions(config.mapWidth, config.mapHeight);
 }
 
 void Game::Run() {
@@ -146,7 +137,7 @@ void Game::ProcessInput() {
 			// toggle debug mode if user presses tilde key
 			if (sdlEvent.key.keysym.sym == SDLK_BACKQUOTE) {
 				spdlog::info("debug mode engaged");
-				debugMode = !debugMode; // toggle
+				config.debugMode = !config.debugMode; // toggle
 				break;
 			}
 			dispatcher.enqueue<KeyPressedEvent>({ sdlEvent });
@@ -186,7 +177,7 @@ void Game::Update() {
 
 	// 5. other systems
 	AnimationSystem(registry);           // updates animations
-	CameraMovementSystem(registry, camera); // camera follows player
+	CameraMovementSystem(registry, camera, config); // camera follows player
 }
 
 void Game::Render() {
@@ -198,12 +189,12 @@ void Game::Render() {
 	RenderSystem(registry, renderer, camera, assetStore);
 	
 	// debugging collision detection
-	if (debugMode) {
+	if (config.debugMode) {
 		RenderColliderSystem(registry, renderer, camera);
 	}
  
 	//// Set logical size so our drawing uses NES-ish resolution regardless of window size
-	SDL_RenderSetLogicalSize(renderer, logicalWidth, logicalHeight);
+	SDL_RenderSetLogicalSize(renderer, config.logicalWidth, config.logicalHeight);
 	SDL_RenderPresent(renderer);
 }
 

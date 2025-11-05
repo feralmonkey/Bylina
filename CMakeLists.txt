@@ -49,6 +49,7 @@ set(HEADER_FILES
     src/systems/RenderTextSystem.h
     src/systems/ScriptSystem.h
     libs/nlohmann/json.hpp
+        src/GameConfig.h
 )
 
 # ==== Include Directories ====

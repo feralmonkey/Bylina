@@ -1,21 +1,24 @@
-#include "./MapLoader.h"
-#include "./Game.h"
+#include "MapLoader.h"
+#include "Game.h"
+#include "GameConfig.h"
+
+#include "components/AnimationComponent.h"
+#include "components/BoxColliderComponent.h"
+#include "components/CameraFollowComponent.h"
+#include "components/HealthComponent.h"
+#include "components/KeyboardControlComponent.h"
+#include "components/NPCComponent.h"
+#include "components/PlayerComponent.h"
+#include "components/RigidBodyComponent.h"
+#include "components/ScriptComponent.h"
+#include "components/SpriteComponent.h"
+#include "components/TagComponents.h"
+#include "components/TransformComponent.h"
+
 #include <fstream>
-#include <unordered_map>
+#include <spdlog/spdlog.h>
 #include <sol/sol.hpp>
-#include <spdlog/spdlog.h> 
-#include "../src/components/AnimationComponent.h"
-#include "../src/components/BoxColliderComponent.h"
-#include "../src/components/CameraFollowComponent.h"
-#include "../src/components/HealthComponent.h"
-#include "../src/components/KeyboardControlComponent.h"
-#include "../src/components/NPCComponent.h"
-#include "../src/components/PlayerComponent.h"
-#include "../src/components/RigidBodyComponent.h"
-#include "../src/components/ScriptComponent.h"
-#include "../src/components/SpriteComponent.h"
-#include "../src/components/TagComponents.h"
-#include "../src/components/TransformComponent.h"
+#include <unordered_map>
 
 MapLoader::MapLoader() {
 	spdlog::info("MapLoader constructer called");
@@ -25,7 +28,7 @@ MapLoader::~MapLoader() {
 	spdlog::info("MapLoader destructor called");
 }
 
-void MapLoader::LoadMap(sol::state& lua, entt::registry& registry, const std::unique_ptr<AssetStore>& assetStore, SDL_Renderer* renderer, std::string mapName) {
+void MapLoader::LoadMap(sol::state& lua, entt::registry& registry, const std::unique_ptr<AssetStore>& assetStore, SDL_Renderer* renderer, std::string mapName, GameConfig& gameConfig) {
 	// load and test the script
 	sol::load_result script = lua.load_file("./assets/scripts/" + mapName + ".lua");
 	if (!script.valid()) {
@@ -127,8 +130,8 @@ void MapLoader::LoadMap(sol::state& lua, entt::registry& registry, const std::un
 		}
 	}
 	mapFile.close();
-	Game::mapWidth = numMapCols * tileSize * tileScale;
-	Game::mapHeight = numMapRows * tileSize * tileScale;
+	gameConfig.mapWidth = numMapCols * tileSize * tileScale;
+	gameConfig.mapHeight = numMapRows * tileSize * tileScale;
 #pragma endregion
 
 #pragma region LOAD MAP ENTITIES
