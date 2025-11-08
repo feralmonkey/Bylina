@@ -1,6 +1,9 @@
 #include "Game.h"
 #include "MapLoader.h"
+#include "components/PlayerComponent.h"
 #include "components/SpriteComponent.h"
+#include "components/StatsComponent.h"
+
 #include "events/KeyPressedEvent.h"
 #include "events/KeyUpEvent.h"
 #include "systems/AnimationSystem.h"
@@ -15,21 +18,12 @@
 #include "systems/RenderTextSystem.h"
 #include "systems/ScriptSystem.h"
 
-
-// initialize static member variables
-int Game::logicalWidth;
-int Game::logicalHeight;
-int Game::windowScale;
-int Game::mapWidth;
-int Game::mapHeight;
-
 Game::Game() :
+	gameIsRunning(false),
 	dispatcher(),
 	registry()
 {
 	spdlog::info("Game constructor called!");
-	Game::gameIsRunning = false;
-	debugMode = false;
 }
 
 Game::~Game() {
@@ -49,14 +43,14 @@ void Game::Initialize() {
 	SDL_DisplayMode displayMode;
 	SDL_GetCurrentDisplayMode(0, &displayMode);
 	
-	windowScale = 3;
-	logicalWidth = 256;
-	logicalHeight = 240;
+	config.windowScale = 3;
+	config.logicalWidth = 256;
+	config.logicalHeight = 240;
 
-	// Create window
-	SDL_Window* window = SDL_CreateWindow(
+	// create the game window
+	window = SDL_CreateWindow(
 		"Bylina", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-		logicalWidth * windowScale, logicalHeight * windowScale, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
+		config.logicalWidth * config.windowScale, config.logicalHeight * config.windowScale, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
 
 	if (!window) {
 		// testing for a null pointer
@@ -70,7 +64,7 @@ void Game::Initialize() {
 	// -1 index param means get default monitor
 	// flags seperated by pipe
 	// SDL_RENDERER_ACCELERATED - use GPU if available
-	// SDL_RENDERER_PRESENTVSYNC - Use VSync; match frame rate with monitor refresh for smoother experience and prevents screen tearing
+	// SDL_RENDERER_PRESENTVSYNC - Use VSync; match frame rate with monitor refresh for a smoother experience and prevents screen tearing
 	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 	if (!renderer) {
 		// testing for a null pointer
@@ -81,8 +75,8 @@ void Game::Initialize() {
 	// initialize the camera view with the whole screen area
 	camera.x = 0;
 	camera.y = 0;
-	camera.w = logicalWidth;
-	camera.h = logicalHeight;
+	camera.w = config.logicalWidth;
+	camera.h = config.logicalHeight;
 
 	SDL_SetWindowFullscreen(window, 0);
 
@@ -112,11 +106,12 @@ void Game::Setup() {
 	// load first level
 	MapLoader loader;
 	lua.open_libraries(sol::lib::base, sol::lib::math, sol::lib::os);
+	//const std::string mapName = "init";
 	const std::string mapName = "overworld";
-	loader.LoadMap(lua, registry, assetStore, renderer, mapName);
+	loader.LoadMap(lua, registry, assetStore, renderer, mapName, config);
 
 	// not actually using this here am I...
-	collisionSystem->SetMapDimensions(mapWidth, mapHeight);
+	collisionSystem->SetMapDimensions(config.mapWidth, config.mapHeight);
 }
 
 void Game::Run() {
@@ -134,21 +129,36 @@ void Game::ProcessInput() {
 
 		// handle core sdl events
 		switch (sdlEvent.type) {
-		case SDL_QUIT:  // if user tries to close the window using the x button
+		case SDL_QUIT:  // if the user tries to close the window using the x button...
 			gameIsRunning = false; 
 			break;
 		case SDL_KEYDOWN:
-			// exit the game if user presses escape key
+			// exit the game if the user presses the escape key
 			if (sdlEvent.key.keysym.sym == SDLK_ESCAPE) {
 				gameIsRunning = false;
 				break;
 			}
 			// toggle debug mode if user presses tilde key
-			if (sdlEvent.key.keysym.sym == SDLK_BACKQUOTE) {
-				spdlog::info("debug mode engaged");
-				debugMode = !debugMode; // toggle
-				break;
-			}
+				if (sdlEvent.key.keysym.sym == SDLK_BACKQUOTE) {
+					spdlog::info("debug mode engaged");
+					config.debugMode = !config.debugMode;
+
+					// Show stats in debug mode
+					if (config.debugMode) {
+						auto view = registry.view<PlayerComponent, StatsComponent>();
+							const auto& player = view.front();
+							if (player == entt::null) { break; }
+
+							const auto& stats = view.get<StatsComponent>(player);
+							const std::string statsMsg = "HP:" + std::to_string(stats.currentHP) + " " +
+												   "MP:" + std::to_string(stats.currentMP) + " " +
+												   "G:" + std::to_string(stats.gold);
+						textSystem->TextBox(statsMsg, 20, 3, 8, 8);
+					} else {
+						textSystem->ClearText();
+					}
+					break;
+				}
 			dispatcher.enqueue<KeyPressedEvent>({ sdlEvent });
 			break;
 		case SDL_KEYUP:
@@ -175,6 +185,9 @@ void Game::Update() {
 	// 1. deliver input events so systems can react
 	dispatcher.update();
 
+	// 1.5. Update keyboard system (for continuous movement)
+	if (keyboardSystem) keyboardSystem->Update(deltaTime);
+
 	// 2. movement (positions change)
 	if (movementSystem) movementSystem->Update(deltaTime);
 
@@ -186,7 +199,7 @@ void Game::Update() {
 
 	// 5. other systems
 	AnimationSystem(registry);           // updates animations
-	CameraMovementSystem(registry, camera); // camera follows player
+	CameraMovementSystem(registry, camera, config); // camera follows player
 }
 
 void Game::Render() {
@@ -198,12 +211,12 @@ void Game::Render() {
 	RenderSystem(registry, renderer, camera, assetStore);
 	
 	// debugging collision detection
-	if (debugMode) {
+	if (config.debugMode) {
 		RenderColliderSystem(registry, renderer, camera);
 	}
  
 	//// Set logical size so our drawing uses NES-ish resolution regardless of window size
-	SDL_RenderSetLogicalSize(renderer, logicalWidth, logicalHeight);
+	SDL_RenderSetLogicalSize(renderer, config.logicalWidth, config.logicalHeight);
 	SDL_RenderPresent(renderer);
 }
 

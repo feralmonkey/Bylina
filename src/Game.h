@@ -6,6 +6,7 @@
 #include <memory>
 #include <vector>
 //#include "Constants.h"
+#include "GameConfig.h"
 #include "enums/InputState.h"
 
 // Forward declarations
@@ -19,11 +20,13 @@ class MenuSystem;
 class NPCSystem;
 class ScriptSystem;
 
+
 class Game {
 private:
 	bool gameIsRunning;
-	bool debugMode;
-	uint millisecondsPreviousFrame;
+	uint millisecondsPreviousFrame = 0;
+
+	GameConfig config;
 
 	SDL_Window* window {};
 	SDL_Renderer* renderer {};
@@ -58,10 +61,4 @@ public:
 	void Update();
 	void Render();
 	void Destroy() const;
-
-	static int windowScale;
-	static int logicalWidth;
-	static int logicalHeight;
-	static int mapWidth;
-	static int mapHeight;
 };

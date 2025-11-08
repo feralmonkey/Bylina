@@ -4,9 +4,45 @@
 #include "entt.hpp"
 #include <spdlog/spdlog.h>
 #include "../components/SpriteComponent.h"
+#include "../components/TileMap.h"
 #include "../components/TransformComponent.h"
 
 inline void RenderSystem(entt::registry& reg, SDL_Renderer* renderer, SDL_Rect camera, std::unique_ptr<AssetStore>& assetStore) {
+	if (reg.ctx().contains<TilemapData>()) {
+		auto &tm = reg.ctx().get<TilemapData>();
+
+		int ts   = tm.tileSize;
+		double s = tm.tileScale;
+
+		int firstCol = camera.x / (ts * s);
+		int lastCol  = (camera.x + camera.w) / (ts * s);
+		int firstRow = camera.y / (ts * s);
+		int lastRow  = (camera.y + camera.h) / (ts * s);
+
+		firstCol = std::max(0, firstCol);
+		firstRow = std::max(0, firstRow);
+		lastCol  = std::min(tm.cols - 1, lastCol);
+		lastRow  = std::min(tm.rows - 1, lastRow);
+
+		SDL_Texture* tex = assetStore->GetTexture(tm.textureAssetId);
+
+		for (int row = firstRow; row <= lastRow; ++row) {
+			for (int col = firstCol; col <= lastCol; ++col) {
+				const Tile& t = tm.tiles[row * tm.cols + col];
+
+				SDL_Rect src { t.srcX, t.srcY, ts, ts };
+				SDL_Rect dst {
+					static_cast<int>(col * ts * s - camera.x),
+					static_cast<int>(row * ts * s - camera.y),
+					static_cast<int>(ts * s),
+					static_cast<int>(ts * s)
+				};
+
+				SDL_RenderCopy(renderer, tex, &src, &dst);
+			}
+		}
+	}
+
 	auto view = reg.view<SpriteComponent, TransformComponent>();
 
 	// create a vector with both sprite and transform components of all entities
@@ -22,10 +58,10 @@ inline void RenderSystem(entt::registry& reg, SDL_Renderer* renderer, SDL_Rect c
 		renderableEntity.spriteComponent = view.get<SpriteComponent>(entity);
 		renderableEntity.transformComponent = view.get<TransformComponent>(entity);
 		
-		// margin to continue rendering sprite if it falls outside of the camera
-		int cameraMargin = 100;
+		// margin to continue rendering sprite if it falls outside the camera
+		int cameraMargin = 0;
 
-		// is the entity outside of the camera view...?
+		// is the entity outside the camera view...?
 		bool isEntityOutsideCameraView = (
 			renderableEntity.transformComponent.position.x + (renderableEntity.transformComponent.scale.x * renderableEntity.spriteComponent.width) < camera.x - cameraMargin ||
 			renderableEntity.transformComponent.position.x > camera.x + camera.w + cameraMargin ||
@@ -41,7 +77,7 @@ inline void RenderSystem(entt::registry& reg, SDL_Renderer* renderer, SDL_Rect c
 		renderableEntities.emplace_back(renderableEntity);
 	}
 
-	// sort all entities of render system by zIndex
+	// sort all entities of the render system by zIndex
 	std::sort(renderableEntities.begin(), renderableEntities.end(),
 		[](const RenderableEntity& a, const RenderableEntity& b) {
 			return a.spriteComponent.zIndex < b.spriteComponent.zIndex;
@@ -70,7 +106,7 @@ inline void RenderSystem(entt::registry& reg, SDL_Renderer* renderer, SDL_Rect c
 			&srcRect,
 			&dstRect,
 			transform.rotation,
-			NULL, // rotation will be done around the center by default
+			nullptr, // rotation will be done around the center by default
 			sprite.flip
 		);
 	}

@@ -1,13 +1,13 @@
-local map_texture_asset_id = "outdoor-tiles"
+local map_texture_asset_id = "town-tiles"
 
--- Define a table with the start values of the outdoor map
+-- Define a table with the start values of the town map
 Map = {
 	    ----------------------------------------------------
     -- Table to define the list of assets
     ----------------------------------------------------
     assets = {
         [0] =
-        { type = "texture", id = "outdoor-tiles",               file = "./assets/images/town_tiles.png" },
+        { type = "texture", id = "town-tiles",               file = "./assets/images/town_tiles.png" },
         { type = "texture", id = "hero-tiles",                  file = "./assets/images/heroes.png" },  
         { type = "texture", id = "character-tiles",             file = "./assets/images/character_tiles.png" },
         { type = "texture", id = "npc-tiles",                   file = "./assets/images/npc-1.png" },  
@@ -62,12 +62,6 @@ Map = {
                     height = 16,
                     offset = { x = 0, y = 0 }
                 },
-                --keyboard_controller = {
-                    --up_velocity = { x = 0, y = -50 },
-                    --right_velocity = { x = 50, y = 0 },
-                    --down_velocity = { x = 0, y = 50 },
-                    --left_velocity = { x = -50, y = 0 }
-                --},
                 camera_follow = {
                     follow = true
                 }
