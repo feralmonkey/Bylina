@@ -50,6 +50,8 @@ set(HEADER_FILES
     src/systems/ScriptSystem.h
     libs/nlohmann/json.hpp
         src/GameConfig.h
+        src/components/StatsComponent.h
+        src/components/TileMap.h
 )
 
 # ==== Include Directories ====

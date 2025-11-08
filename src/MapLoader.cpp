@@ -12,13 +12,17 @@
 #include "components/RigidBodyComponent.h"
 #include "components/ScriptComponent.h"
 #include "components/SpriteComponent.h"
+#include "components/StatsComponent.h"
 #include "components/TagComponents.h"
+#include "components/TileMap.h"
 #include "components/TransformComponent.h"
 
 #include <fstream>
 #include <spdlog/spdlog.h>
 #include <sol/sol.hpp>
 #include <unordered_map>
+
+#include "components/StatsComponent.h"
 
 MapLoader::MapLoader() {
 	spdlog::info("MapLoader constructer called");
@@ -95,6 +99,19 @@ void MapLoader::LoadMap(sol::state& lua, entt::registry& registry, const std::un
 
 	std::fstream mapFile;
 	mapFile.open(map_file);
+	if (!mapFile.is_open()) {
+		spdlog::error("Failed to open map file: {}", map_file);
+		return;
+	}
+
+	// prepare tilemap data
+	TilemapData tm;
+	tm.tileSize       = tileSize;
+	tm.tileScale      = tileScale;
+	tm.cols           = numMapCols;
+	tm.rows           = numMapRows;
+	tm.textureAssetId = asset_id;
+	tm.tiles.resize(numMapCols * numMapRows);
 
 	for (int y = 0; y < numMapRows; y++) {
 		for (int x = 0; x < numMapCols; x++) {
@@ -106,7 +123,7 @@ void MapLoader::LoadMap(sol::state& lua, entt::registry& registry, const std::un
 			int valueY = std::stoi(std::string(1, ch), nullptr, 16);
 			int srcRectY = valueY * tileSize;
 
-			// get second character and convert
+			// get the second character and convert
 			mapFile.get(ch);
 			int valueX = std::stoi(std::string(1, ch), nullptr, 16);
 			int srcRectX = valueX * tileSize;
@@ -120,16 +137,28 @@ void MapLoader::LoadMap(sol::state& lua, entt::registry& registry, const std::un
 			// ignore commas
 			mapFile.ignore(); 
 
-			entt::entity tile = registry.create();
+			Tile tile;
+			tile.srcX    = srcRectX;
+			tile.srcY    = srcRectY;
+			tile.collider = collider;
+
+			tm.tiles[y * numMapCols + x] = tile;
+
+			///entt::entity tile = registry.create();
 			// tile.Group("tiles");  // todo rigolo - add group and tagging support
-			registry.emplace<TransformComponent>(tile, glm::vec2(x * (tileSize * tileScale), y * (tileSize * tileScale)), glm::vec2(tileScale, tileScale), 0.0);
-			registry.emplace<SpriteComponent>(tile, asset_id, tileSize, tileSize, 0, false, srcRectX, srcRectY);
-			if (collider) {
-				registry.emplace<BoxColliderComponent>(tile);
-			}
+			///registry.emplace<TransformComponent>(tile, glm::vec2(x * (tileSize * tileScale), y * (tileSize * tileScale)), glm::vec2(tileScale, tileScale), 0.0);
+			///registry.emplace<SpriteComponent>(tile, asset_id, tileSize, tileSize, 0, false, srcRectX, srcRectY);
+			///if (collider) {
+			///	registry.emplace<BoxColliderComponent>(tile);
+			///}
 		}
 	}
 	mapFile.close();
+
+	// stash in registry context so render/collision can access it
+	registry.ctx().emplace<TilemapData>(std::move(tm));
+
+	// let the rest of the game know the map bounds
 	gameConfig.mapWidth = numMapCols * tileSize * tileScale;
 	gameConfig.mapHeight = numMapRows * tileSize * tileScale;
 #pragma endregion
@@ -179,6 +208,14 @@ void MapLoader::LoadMap(sol::state& lua, entt::registry& registry, const std::un
 						entity["components"]["transform"]["scale"]["y"].get_or(1.0)
 					),
 					entity["components"]["transform"]["rotation"].get_or(0.0)
+				);
+			}
+
+			// StatsComponent
+			sol::optional<sol::table> stats = entity["components"]["stats"];
+			if (stats != sol::nullopt) {
+				registry.emplace<StatsComponent>(
+					newEntity
 				);
 			}
 

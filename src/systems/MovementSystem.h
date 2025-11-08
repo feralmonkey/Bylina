@@ -1,17 +1,13 @@
 #pragma once
 
-#include <algorithm>
-#include <cmath>
 #include <entt.hpp>
 #include <glm/glm.hpp>
 #include <spdlog/spdlog.h>
 #include "../Constants.h"
-#include "../components/KeyboardControlComponent.h"
 #include "../components/RigidBodyComponent.h"
 #include "../components/SpriteComponent.h"
 #include "../components/TransformComponent.h"
 #include "../enums/Direction.h"
-#include "../events/CollisionEvent.h"
 #include "../systems/ISystem.h"
 
 
@@ -19,68 +15,6 @@ class MovementSystem : public ISystem {
 private:
     entt::registry& registry;
     entt::dispatcher& dispatcher;
-    //const float snapSpeed = 50.0f;
-    //const float eps = 0.0001f;  // epsilon - represents tolerance
-
-    /*
-    void ApplyMovement(TransformComponent& transform, const RigidBodyComponent& rigidBody, double deltaTime) {
-        glm::vec2 frameMove = rigidBody.velocity * (PC_MOVE_SPEED * static_cast<float>(deltaTime));
-        transform.previousPosition = transform.position;
-        transform.position += frameMove;
-    }
-
-    void CheckTileAlignment(TransformComponent& transform, RigidBodyComponent& rigidBody) {
-        if (rigidBody.velocity.x > 0) {
-            if (transform.position.x >= transform.nextPosition.x) { rigidBody.inMotion = false; transform.position.x = transform.nextPosition.x; }
-        } 
-        else if (rigidBody.velocity.x < 0) {
-            if (transform.position.x <= transform.nextPosition.x) { rigidBody.inMotion = false; transform.position.x = transform.nextPosition.x; }
-        }
-        else if (rigidBody.velocity.y > 0) {
-            if (transform.position.y >= transform.nextPosition.y) { rigidBody.inMotion = false; transform.position.y = transform.nextPosition.y; }
-        }
-        else if (rigidBody.velocity.y < 0) {
-            if (transform.position.y <= transform.nextPosition.y) { rigidBody.inMotion = false; transform.position.y = transform.nextPosition.y; }
-        }
-    }
-
-    void UpdateLastMoveDir(RigidBodyComponent& rigidBody) {
-        rigidBody.lastMoveDir = {
-            (rigidBody.velocity.x > 0.0f) ? 1.0f : (rigidBody.velocity.x < 0.0f ? -1.0f : 0.0f),
-            (rigidBody.velocity.y > 0.0f) ? 1.0f : (rigidBody.velocity.y < 0.0f ? -1.0f : 0.0f)
-        };
-    }
-
-    void SnapToNextTile(TransformComponent& transform, RigidBodyComponent& rigidBody, double deltaTime) {
-        glm::vec2 dir = rigidBody.lastMoveDir;
-        if (std::abs(dir.x) > 0.5f) {
-            SnapAxis(transform.position.x, dir.x, deltaTime);
-        }
-        else if (std::abs(dir.y) > 0.5f) {
-            SnapAxis(transform.position.y, dir.y, deltaTime);
-        }
-    }
-
-    void SnapAxis(float& pos, float dir, double deltaTime) {
-        float cell = std::floor(pos / TILE_SIZE);
-        float remainder = pos - cell * TILE_SIZE;
-
-        if (std::abs(remainder) < eps) {
-            dir = 0.0f; // aligned, done
-            return;
-        }
-
-        float target = (dir > 0.0f) ? (cell + 1) * TILE_SIZE : cell * TILE_SIZE;
-        float diff = target - pos;
-        float step = std::clamp(diff, -snapSpeed * static_cast<float>(deltaTime), snapSpeed * static_cast<float>(deltaTime));
-        pos += step;
-
-        if (std::abs(target - pos) < eps) {
-            pos = target;
-            dir = 0.0f; // finished snapping
-        }
-    }
-    */
 
 public:
     MovementSystem(entt::registry& reg, entt::dispatcher& dis)
@@ -98,10 +32,6 @@ public:
 
             // only move if entity is in motion
             if (rigidBody.inMotion) {
-                // old
-                //ApplyMovement(transform, rigidBody, deltaTime);
-                //CheckTileAlignment(transform, rigidBody);
-                //UpdateLastMoveDir(rigidBody);
                 float moveSpeed = TILE_SIZE * PC_MOVE_SPEED; // pixels per second
                 float moveDistance = moveSpeed * static_cast<float>(deltaTime);
 

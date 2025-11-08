@@ -31,7 +31,6 @@ private:
 	std::vector<InputState>& inputStack;
 	RenderTextSystem& textSystem;
 	InputState currentInput;
-	//SDL_Scancode activeKey = SDL_SCANCODE_UNKNOWN;
 
 	// track which movement keys are currently held
 	bool upHeld = false;
@@ -60,35 +59,15 @@ private:
 		rigidBody.inMotion = true;
 	}
 
-	/*
-	// an almost identical copy of this method is also in the NPC system - it should move to the MovementSystem at some point
-	void MoveSprite(RigidBodyComponent& rigidBody, SpriteComponent& sprite, TransformComponent& transform, int x, int y, int spriteIndex, Direction direction) {
-		// todo rigolo - check for collision here
-		rigidBody.velocity = { x, y };
-		transform.nextPosition = transform.position + rigidBody.velocity * TILE_SIZE;
-		rigidBody.lastMoveDir = { static_cast<float>(x), static_cast<float>(y) };
-		sprite.srcRect.y = sprite.height * spriteIndex;
-		rigidBody.direction = direction;
-		rigidBody.inMotion = true;
-	}
-*/
 	void PlayerControl(const KeyPressedEvent& e) {
 		auto view = reg.view<PlayerComponent, RigidBodyComponent, SpriteComponent, TransformComponent>();
 		entt::entity entity = view.front();
 
 		TransformComponent& transform = view.get<TransformComponent>(entity);
 		RigidBodyComponent& rigidBody = view.get<RigidBodyComponent>(entity);
-		//SpriteComponent& sprite = view.get<SpriteComponent>(entity);
-		//PlayerComponent& player = view.get<PlayerComponent>(entity);
 
 		
 		if (e.event.type == SDL_KEYDOWN) {
-			//if (rigidBody.inMotion == true) { return; } // -- todo rigolo GOOD IDEA! But broken. ( it might not be - collision may be broken)
-
-			//if (activeKey == SDL_SCANCODE_UNKNOWN) {
-			//		activeKey = e.event.key.keysym.scancode;
-			//}
-
 			switch (e.event.key.keysym.scancode) {
 			case SDL_SCANCODE_W:
 			case SDL_SCANCODE_UP: {
@@ -137,9 +116,6 @@ private:
 			default: break;
 			}
 		}
-		//else {
-		//	activeKey = SDL_SCANCODE_UNKNOWN;
-		//}
 	}
 
 	void MenuControl(const KeyPressedEvent& e) const {
@@ -203,6 +179,8 @@ public:
 	}
 
 	void Update(double deltaTime) override {
+		(void)deltaTime; // silence unused parameter
+
 		// Check if player finished moving and a key is still held
 		auto view = reg.view<PlayerComponent, RigidBodyComponent, TransformComponent>();
 
@@ -224,19 +202,6 @@ public:
 		}
 	}
 
-	/*
-	void onKeyUp(const KeyUpEvent& e) {
-		auto view = reg.view<PlayerComponent, RigidBodyComponent, SpriteComponent, TransformComponent>();
-		const entt::entity player = view.front();
-
-		RigidBodyComponent& rigidBody = view.get<RigidBodyComponent>(player);
-
-
-		if (e.event.type != SDL_KEYDOWN) {
-			activeKey = SDL_SCANCODE_UNKNOWN;
-		}
-	}
-*/
 	void onKeyUp(const KeyUpEvent& e) {
 		// Track when keys are released
 		switch (e.event.key.keysym.scancode) {

@@ -7,7 +7,6 @@
 #include "../components/TransformComponent.h"
 #include "../GameConfig.h"
 
-// TODO RIGOLO - UPDATED System to match new paradigm
 inline void CameraMovementSystem(entt::registry& reg, SDL_Rect& camera, const GameConfig& gameConfig) {
 		auto view = reg.view<CameraFollowComponent, TransformComponent>();
 		for (auto entity : view) {

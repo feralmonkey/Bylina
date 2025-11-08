@@ -40,6 +40,7 @@ Map = {
                     scale = { x = 1.0, y = 1.0 },
                     rotation = 0.0, -- degrees
                 },
+                stats = {},
                 rigidbody = {
                     velocity = { x = 0.0, y = 0.0 }
                 },
@@ -62,12 +63,6 @@ Map = {
                     height = 16,
                     offset = { x = 0, y = 0 }
                 },
-                --keyboard_controller = {
-                    --up_velocity = { x = 0, y = -50 },
-                    --right_velocity = { x = 50, y = 0 },
-                    --down_velocity = { x = 0, y = 50 },
-                    --left_velocity = { x = -50, y = 0 }
-                --},
                 camera_follow = {
                     follow = true
                 }
