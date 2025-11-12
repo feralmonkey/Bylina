@@ -1,20 +1,23 @@
 ﻿#pragma once
 
-#include <SDL.h>
 #include "entt.hpp"
-#include <spdlog/spdlog.h>
 #include <fstream>
+#include <SDL.h>
+#include <spdlog/spdlog.h>
 #include <unordered_map>
 #include <vector>
-#include "../events/MenuOpenEvent.h"
+#include "../Constants.h"
+#include "../components/AnimationComponent.h"
+#include "../components/MenuComponent.h"
+#include "../components/SpriteComponent.h"
+#include "../components/TagComponents.h"
+#include "../components/TextComponent.h"
+#include "../enums/InputState.h"
 #include "../events/MenuCloseEvent.h"
 #include "../events/MenuNavigateEvent.h"
+#include "../events/MenuOpenEvent.h"
 #include "../libs/nlohmann/json.hpp"
-#include "../components/SpriteComponent.h"
-#include "../components/TextComponent.h"
-#include "../components/MenuComponent.h"
-#include "../components/TagComponents.h"
-#include "../enums/InputState.h"
+
 
 class RenderTextSystem {
 
@@ -173,7 +176,7 @@ private:
 	                    DrawChar(registry, tileX, tileY, x, y);
 	                } else {
 	                    // blank
-	                    DrawChar(registry, 88, 24, x, y);
+	                    DrawChar(registry, SPRITE_BLANK_X, SPRITE_BLANK_Y, x, y);
 	                }
 	                x += tileSize;
 	            }
@@ -198,12 +201,11 @@ private:
 
 	        // 4. draw "more" indicator if there are more pages
 	        if (hasMore) {
-	            // put it above bottom-right, or bottom-left; your choice
-	            // here's bottom-right-1 inside the box
-	            int moreX = camera.x + textLabel.xOffset + (textLabel.width - 2) * tileSize;
-	            int moreY = camera.y + textLabel.yOffset + (textLabel.height - 2) * tileSize;
-	            // assume '>' is in your charLookup
-	            auto [mx, my] = charLookup['>'];
+	            // put the next page cursor in the center of the bottom border
+	            const int moreX = camera.x + textLabel.xOffset + ((textLabel.width) * tileSize / 2); // todo - rigolo : it's getting there but this doesn't look quite right
+	            const int moreY = camera.y + textLabel.yOffset + (textLabel.height - 1) * tileSize;
+
+	            auto [mx, my] = charLookup['<'];
 	            DrawChar(registry, mx, my, moreX, moreY);
 	        }
 	    }
@@ -231,6 +233,13 @@ private:
 		registry.emplace<SpriteComponent>(textWindow, "character-tiles", tileSize, tileSize, 10, false, srcx, srcy);
 		registry.emplace<TransformComponent>(textWindow, glm::vec2(dstx * (tileScale), dsty * (tileScale)), glm::vec2(tileScale, tileScale), 0.0);
 		registry.emplace<SpriteTag>(textWindow);
+
+		// animate next-page cursor
+		// todo rigolo - this works but animation engine automatically assumes the next x-tile is for animation
+		if (srcx == SPRITE_MORETEXT_X && srcy == SPRITE_MORETEXT_Y) {
+			registry.emplace<AnimationComponent>(textWindow, 2, 3, 2);
+		}
+
 	}
 
 public:
