@@ -8,13 +8,15 @@
 #include <spdlog/spdlog.h>
 #include <string>
 
+// todo rigolo - can probably kill this...
 class MenuSystem {
 public:
 
 private:
 
+    /*
     std::string BuildMenuText(const MenuComponent& menu) {
-        std::string message = "//"; // start with newline marker
+        std::string message = "//"; // start with a newline marker
         for (size_t i = 0; i < menu.options.size(); i++) {
             if (i == menu.currentIndex) {
                 message += "> " + menu.options[i] + "//"; // cursor
@@ -25,4 +27,5 @@ private:
         }
         return message;
     }
+    */
 };

@@ -97,7 +97,7 @@ void Update() {
         		rb.velocity = {0.0f, 0.0f};
         		rb.inMotion = false;        // if you have this flag
         	}
-        	
+
             pos = transform.position + collider.offset;
         }
 

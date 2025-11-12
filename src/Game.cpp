@@ -106,8 +106,8 @@ void Game::Setup() {
 	// load first level
 	MapLoader loader;
 	lua.open_libraries(sol::lib::base, sol::lib::math, sol::lib::os);
-	//const std::string mapName = "init";
-	const std::string mapName = "overworld";
+	const std::string mapName = "init";
+	//const std::string mapName = "overworld";
 	loader.LoadMap(lua, registry, assetStore, renderer, mapName, config);
 
 	// not actually using this here am I...
