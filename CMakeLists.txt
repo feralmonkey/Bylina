@@ -52,6 +52,8 @@ set(HEADER_FILES
         src/GameConfig.h
         src/components/StatsComponent.h
         src/components/TileMap.h
+        src/components/PortalComponent.h
+        src/events/MapChangeEvent.h
 )
 
 # ==== Include Directories ====

@@ -9,6 +9,7 @@
 #include "components/KeyboardControlComponent.h"
 #include "components/NPCComponent.h"
 #include "components/PlayerComponent.h"
+#include "components/PortalComponent.h"
 #include "components/RigidBodyComponent.h"
 #include "components/ScriptComponent.h"
 #include "components/SpriteComponent.h"
@@ -269,6 +270,20 @@ void MapLoader::LoadMap(sol::state& lua, entt::registry& registry, const std::un
 						entity["components"]["boxcollider"]["offset"]["x"].get_or(0),
 						entity["components"]["boxcollider"]["offset"]["y"].get_or(0)
 					)
+				);
+			}
+
+			//portal
+			sol::optional<sol::table> portal = entity["components"]["portal"];
+			if (portal) {
+				sol::table p = *portal;
+				std::string target = p["target_map"].get<std::string>();
+				float spawnX = p["spawn_x"].get_or(0.0f);
+				float spawnY = p["spawn_y"].get_or(0.0f);
+
+				registry.emplace<PortalComponent>(
+					newEntity,
+					PortalComponent{ target, glm::vec2{ spawnX, spawnY } }
 				);
 			}
 

@@ -8,6 +8,7 @@
 //#include "Constants.h"
 #include "GameConfig.h"
 #include "enums/InputState.h"
+#include "events/MapChangeEvent.h"
 
 // Forward declarations
 class AssetStore;
@@ -48,8 +49,9 @@ private:
 	std::unique_ptr<MenuSystem> menuSystem;
 	std::unique_ptr<NPCSystem> npcSystem;
 	std::unique_ptr<ScriptSystem> scriptSystem;
-	
 
+	// private handlers
+	void OnMapChange(const MapChangeEvent& e);
 
 public:
 	Game();

@@ -96,6 +96,9 @@ void Game::Initialize() {
 	npcSystem = std::make_unique<NPCSystem>(registry, dispatcher, *textSystem);
 	scriptSystem = std::make_unique<ScriptSystem>();
 
+	// hook up map changing events
+	dispatcher.sink<MapChangeEvent>().connect<&Game::OnMapChange>(*this);
+
 	gameIsRunning = true;
 }
 
@@ -106,13 +109,44 @@ void Game::Setup() {
 	// load first level
 	MapLoader loader;
 	lua.open_libraries(sol::lib::base, sol::lib::math, sol::lib::os);
-	const std::string mapName = "init";
-	//const std::string mapName = "overworld";
+	//const std::string mapName = "init";
+	const std::string mapName = "overworld";
 	loader.LoadMap(lua, registry, assetStore, renderer, mapName, config);
 
 	// not actually using this here am I...
 	collisionSystem->SetMapDimensions(config.mapWidth, config.mapHeight);
 }
+
+void Game::OnMapChange(const MapChangeEvent& e) {
+	spdlog::info("Changing map to {}...", e.targetMap);
+
+	// 1. Clear current world
+	registry.clear();
+	if (registry.ctx().contains<TilemapData>()) {
+		registry.ctx().erase<TilemapData>();
+	}
+
+	// 2. Reload the new map
+	MapLoader loader;
+	loader.LoadMap(lua, registry, assetStore, renderer, e.targetMap, config);
+
+	// 3. Place the player at the desired spawn
+	auto view = registry.view<PlayerComponent, TransformComponent>();
+	for (auto entity : view) {
+		auto& transform = view.get<TransformComponent>(entity);
+		transform.position = e.spawnPosition;
+		transform.previousPosition = e.spawnPosition;
+	}
+
+	// 4. Update the collision system with new map dimensions if needed
+	// todo rigolo
+	// collisionSystem->SetMapDimensions(gameConfig.mapWidth, gameConfig.mapHeight);
+
+	// 5. reset the camera
+	camera.x = 0;
+	camera.y = 0;
+}
+
 
 void Game::Run() {
 	Setup();
