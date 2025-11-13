@@ -234,6 +234,10 @@ private:
 		registry.emplace<TransformComponent>(textWindow, glm::vec2(dstx * (tileScale), dsty * (tileScale)), glm::vec2(tileScale, tileScale), 0.0);
 		registry.emplace<SpriteTag>(textWindow);
 
+		if (inputStack[inputStack.size() - 1] == InputState::TextBox) {
+			registry.emplace<TextCharacterTag>(textWindow);
+		}
+
 		// animate next-page cursor
 		// todo rigolo - this works but animation engine automatically assumes the next x-tile is for animation
 		if (srcx == SPRITE_MORETEXT_X && srcy == SPRITE_MORETEXT_Y) {
@@ -279,30 +283,62 @@ public:
 			.connect<&RenderTextSystem::RenderAllMenus>(*this);   // todo rigolo - this function needs to be updated
 	}
 
-	// possibly duplicate efforts with Clear Text. It works right now but maybe can clean up
-	inline void ClearTextBox() const {
-
-		// if player hits cancel button, and we are already at the bottom of the stack
-		if (inputStack.back() == InputState::PlayerControl) {
-			return;
-		}
-
-		// This works by clearing the screen. The images get written again immediately next frame
+	// clear all text windows todo rigolo - rename this
+	void ClearTextBox() {
+		// remove all glyph sprites
 		auto view = registry.view<SpriteTag>();
-		for (const auto entity : view) {
-			registry.destroy(entity);
+		for (auto e : view) registry.destroy(e);
+
+		// remove textbox entity/component so HasActiveTextBox() goes false
+		if (textBoxEntity != entt::null && registry.valid(textBoxEntity)) {
+			if (registry.all_of<TextComponent>(textBoxEntity)) {
+				registry.remove<TextComponent>(textBoxEntity);
+			}
+			registry.destroy(textBoxEntity);    // or keep and reuse; if so, at least remove TextComponent
+			textBoxEntity = entt::null;
 		}
 
-		// take control away from the text box
-		inputStack.pop_back();
+		// pop input state if textbox owned it
+		if (!inputStack.empty() && inputStack.back() != InputState::PlayerControl) {
+			BackToPlayer();
+		}
 	}
 
-	// more of a clear screen...
+	// clear the current text box
 	void ClearText() const {
-		auto view = registry.view<SpriteTag>();
+		auto view = registry.view<TextCharacterTag>();
 		for (const auto entity : view) {
 			registry.destroy(entity);
 		}
+	}
+
+	bool HasActiveTextBox() const {
+		if (textBoxEntity == entt::null || !registry.valid(textBoxEntity)) return false;
+		if (!registry.all_of<TextComponent>(textBoxEntity)) return false;
+		const auto& tc = registry.get<TextComponent>(textBoxEntity);
+		return !tc.pages.empty(); // or just `return true;` if you don't store pages
+	}
+
+	void BackToPlayer() const {
+		while (inputStack.at(inputStack.size() - 1) != InputState::PlayerControl) {
+			inputStack.pop_back();
+		}
+	}
+
+	// Returns true if it consumed the action (either paged or closed)
+	bool AdvancePageOrClose() {
+		if (!HasActiveTextBox()) return false;
+
+		auto &tc = registry.get<TextComponent>(textBoxEntity);
+		if (tc.currentPage + 1 < static_cast<int>(tc.pages.size())) {
+			tc.currentPage++;
+			ClearText();
+			RenderTextBox();
+		} else {
+			ClearTextBox(); // <-- fully clears state
+			BackToPlayer();
+		}
+		return true;
 	}
 
 	void RenderAllMenus() {
