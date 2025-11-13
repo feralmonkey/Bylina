@@ -234,8 +234,9 @@ private:
 		registry.emplace<TransformComponent>(textWindow, glm::vec2(dstx * (tileScale), dsty * (tileScale)), glm::vec2(tileScale, tileScale), 0.0);
 		registry.emplace<SpriteTag>(textWindow);
 
+		// todo rigolo - adding the layer for the text, need to streamline my clean up before I have dialog trees
 		if (inputStack[inputStack.size() - 1] == InputState::TextBox) {
-			registry.emplace<TextCharacterTag>(textWindow);
+			registry.emplace<TextCharacterTag>(textWindow, inputStack.size());
 		}
 
 		// animate next-page cursor
