@@ -4,11 +4,13 @@
 #include <spdlog/spdlog.h>
 #include "../components/BoxColliderComponent.h"
 #include "../components/PlayerComponent.h"
+#include "../components/PortalComponent.h"
 #include "../components/RigidBodyComponent.h"
 #include "../components/TagComponents.h"
 #include "../components/TileMap.h"
 #include "../components/TransformComponent.h"
 #include "../events/CollisionEvent.h"
+#include "../events/MapChangeEvent.h"
 #include "../systems/ISystem.h"
 
 class CollisionSystem : public ISystem {
@@ -97,7 +99,7 @@ void Update() {
         		rb.velocity = {0.0f, 0.0f};
         		rb.inMotion = false;        // if you have this flag
         	}
-        	
+
             pos = transform.position + collider.offset;
         }
 
@@ -165,22 +167,37 @@ void Update() {
 class CollisionResolutionSystem : public ISystem {
 private:
 	entt::registry& registry;
+	entt::dispatcher& dispatcher;
 
 public:
 	CollisionResolutionSystem(entt::registry& reg, entt::dispatcher& dispatcher)
-		: registry(reg) {
+		: registry(reg), dispatcher(dispatcher) {
 		dispatcher.sink<CollisionEvent>().connect<&CollisionResolutionSystem::OnCollision>(*this);
 	}
 
-	void OnCollision(const CollisionEvent& event) {
-		auto entityA = event.a;
-		auto entityB = event.b;
+	void OnCollision(const CollisionEvent& event) const {
+		const auto entityA = event.a;
+		const auto entityB = event.b;
 
-		bool aIsPlayer = registry.any_of<PlayerComponent>(entityA);
-		bool bIsPlayer = registry.any_of<PlayerComponent>(entityB);
+		const bool aIsPlayer = registry.any_of<PlayerComponent>(entityA);
+		const bool bIsPlayer = registry.any_of<PlayerComponent>(entityB);
 
 		bool aIsNPC = registry.any_of<NPCTag>(entityA);
 		bool bIsNPC = registry.any_of<NPCTag>(entityB);
+
+		bool aIsPortal = registry.any_of<PortalComponent>(entityA);
+		bool bIsPortal = registry.any_of<PortalComponent>(entityB);
+
+		// Player vs Portal => request map change
+		if (aIsPlayer && bIsPortal) {
+			const auto& portal = registry.get<PortalComponent>(entityB);
+			dispatcher.enqueue<MapChangeEvent>({ portal.targetMap, portal.spawnPosition });
+			return;
+		} else if (bIsPlayer && aIsPortal) {
+			const auto& portal = registry.get<PortalComponent>(entityA);
+			dispatcher.enqueue<MapChangeEvent>({ portal.targetMap, portal.spawnPosition });
+			return;
+		}
 
 		// Player vs NPC
 		if ((aIsPlayer && bIsNPC) || (bIsPlayer && aIsNPC)) {

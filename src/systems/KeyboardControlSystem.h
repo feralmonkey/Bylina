@@ -47,7 +47,7 @@ private:
 
 	// Simplified - just set movement intent
 	void StartMovement(RigidBodyComponent& rigidBody, TransformComponent& transform, int x, int y, Direction direction) {
-		// Only start new movement if not already moving
+		// Only start a new movement if not already moving
 		if (rigidBody.inMotion) {
 			return;
 		}
@@ -94,12 +94,16 @@ private:
 				break;
 			}
 			case SDL_SCANCODE_X: {
-				spdlog::info("action button pressed - opening menu");
+
+				// If a text box is active, use action to page/close it
+				//if (textSystem.AdvancePageOrClose()) {
+				//	break;
+				//}
+
 				inputStack.push_back(InputState::MenuControl);
 				
 				// Create a menu entity
 				entt::entity menu = reg.create();
-
 				reg.emplace<MenuComponent>(menu,
 					std::vector<std::string>{"Talk", "Cast", "Use", "Search", "Status", "Equip", "Order"},
 					0,
@@ -150,6 +154,7 @@ private:
 						const auto& transform = inner_view.get<TransformComponent>(inner_entity);
 
 						dispatcher.enqueue<TalkEvent>(transform.position, rigidBody.direction);
+						inputStack.push_back(InputState::TextBox);
 					}
 					break;
 				case SDL_SCANCODE_Z: 
@@ -160,6 +165,21 @@ private:
 				default:
 					break;
 				}
+			}
+		}
+	}
+
+	void TextControl(const KeyPressedEvent& e) const {
+		if (e.event.type == SDL_KEYDOWN) {
+			switch (e.event.key.keysym.scancode) {
+				case SDL_SCANCODE_X:
+					textSystem.AdvancePageOrClose();
+					break;
+				case SDL_SCANCODE_Z:
+					textSystem.ClearTextBox();
+					break;
+				default:
+					break;
 			}
 		}
 	}
@@ -238,6 +258,10 @@ public:
 		else if (currentInput == InputState::MenuControl) {
 			/*std::cout << "MenuControl" << std::endl;*/
 			MenuControl(e);
+			return;
+		}
+		else if (currentInput == InputState::TextBox) {
+			TextControl(e);
 			return;
 		}
 		std::cout << "NoControl" << std::endl;

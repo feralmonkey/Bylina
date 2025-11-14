@@ -1,23 +1,23 @@
 ﻿#pragma once
 
-#include <iostream>
-#include <SDL.h>
 #include "entt.hpp"
-#include <spdlog/spdlog.h>
 #include <fstream>
+#include <SDL.h>
+#include <spdlog/spdlog.h>
 #include <unordered_map>
 #include <vector>
-#include <memory>
-#include "../events/MenuOpenEvent.h"
+#include "../Constants.h"
+#include "../components/AnimationComponent.h"
+#include "../components/MenuComponent.h"
+#include "../components/SpriteComponent.h"
+#include "../components/TagComponents.h"
+#include "../components/TextComponent.h"
+#include "../enums/InputState.h"
 #include "../events/MenuCloseEvent.h"
 #include "../events/MenuNavigateEvent.h"
+#include "../events/MenuOpenEvent.h"
 #include "../libs/nlohmann/json.hpp"
-#include "../systems/ISystem.h"
-#include "../components/SpriteComponent.h"
-#include "../components/TextComponent.h"
-#include "../components/MenuComponent.h"
-#include "../components/TagComponents.h"
-#include "../enums/InputState.h"
+
 
 class RenderTextSystem {
 
@@ -31,108 +31,184 @@ private:
 	std::unordered_map<char, std::pair<int, int>> charLookup;
 
 	// menu pointer variables
-	int currentIndex = 0;
+	//int currentIndex = 0;
 	std::vector<std::string> menuSelectTracker;
 
+	// break the text into words
+	static std::vector<std::string> splitWords(const std::string& text) {
+	    std::vector<std::string> words;
+	    std::string current;
+	    for (char c : text) {
+	        if (c == ' ') {
+	            if (!current.empty()) {
+	                words.push_back(current);
+	                current.clear();
+	            }
+	            words.push_back(" "); // keep spaces
+	        } else if (c == '/') {
+	            // manual newline marker becomes its own "word"
+	            if (!current.empty()) {
+	                words.push_back(current);
+	                current.clear();
+	            }
+	            words.push_back("\n");
+	        } else {
+	            current.push_back(c);
+	        }
+	    }
+	    if (!current.empty()) {
+	    words.push_back(current);
+	    }
+	    return words;
+	}
+
+	// turn text into lines that fit the box width (in characters)
+	static std::vector<std::string> wrapToLines(const std::string& text, const int boxInnerWidth) {
+	    // boxInnerWidth = textLabel.width - 2 (borders)
+	    const auto words = splitWords(text);
+	    std::vector<std::string> lines;
+	    std::string line;
+
+	    for (auto& w : words) {
+	        if (w == "\n") {
+	            // force line break
+	            lines.push_back(line);
+	            line.clear();
+	            continue;
+	        }
+
+	        // try adding this word
+	        std::string candidate = line;
+	        if (!candidate.empty()) candidate += w;
+	        else candidate = w;
+
+	        if (static_cast<int>(candidate.size()) > boxInnerWidth) {
+	            // if the current line is full, push and start a new one
+	            if (!line.empty()) {
+	                lines.push_back(line);
+	            }
+	            // if the word itself is longer than the line, just push it as is
+	            if (static_cast<int>(w.size()) > boxInnerWidth) {
+	                lines.push_back(w.substr(0, boxInnerWidth));
+	                line.clear();
+	            } else {
+	                line = w;
+	            }
+	        } else {
+	            line = candidate;
+	        }
+	    }
+
+	    if (!line.empty()) {
+	        lines.push_back(line);
+	    }
+
+	    return lines;
+	}
+
+	// split lines into pages based on box height
+	static std::vector<std::vector<std::string>> paginate(
+	    const std::vector<std::string>& lines,
+	    const int boxInnerHeight
+	) {
+	    // boxInnerHeight = textLabel.height - 2 (top/bottom border)
+	    std::vector<std::vector<std::string>> pages;
+	    for (size_t i = 0; i < lines.size();) {
+	        std::vector<std::string> page;
+	        for (int r = 0; r <= boxInnerHeight && i < lines.size(); ++r, ++i) {
+	            page.push_back(lines[i]);
+	        }
+	        pages.push_back(std::move(page));
+	    }
+	    return pages;
+	}
+
 	void RenderTextBox() {
-		auto view = registry.view<TextComponent>();
+	    auto view = registry.view<TextComponent>();
 
-		for (auto entity : view) {
-			const auto textLabel = view.get<TextComponent>(entity);
-			std::cout << "View Size: " << view.size() << std::endl;
-			// get the first character and convert hex character to integer
-			int x = camera.x + textLabel.xOffset;
-			int y = camera.y + textLabel.yOffset;
+	    for (const auto entity : view) {
+	        const auto& textLabel = view.get<TextComponent>(entity);
 
-			// draw top left corner
-			DrawChar(registry, 0, 0, x, y);
-			x += tileSize;
+	        int x = camera.x + textLabel.xOffset;
+	        int y = camera.y + textLabel.yOffset;
 
-			// draw top border
-			for (int i = 1; i < textLabel.width; i++) {
-				DrawChar(registry, 32, 0, x, y);
-				x += tileSize;
-			}
+	        // 1. draw frame (same as before)
+	        // top-left
+	        DrawChar(registry, 0, 0, x, y);
+	        x += tileSize;
 
-			// draw top right corner
-			DrawChar(registry, 8, 0, x, y);
+	        // top border
+	        for (int i = 1; i < textLabel.width; i++) {
+	            DrawChar(registry, 32, 0, x, y);
+	            x += tileSize;
+	        }
+	        // top-right
+	        DrawChar(registry, 8, 0, x, y);
 
-			// reset values for next line
-			x = camera.x + textLabel.xOffset;
-			y += tileSize;
+	        // reset
+	        x = camera.x + textLabel.xOffset;
+	        y += tileSize;
 
+	        // figure out what page to show
+	        const auto& pages = textLabel.pages;
+	        const int pageIndex = textLabel.currentPage;
+	        const bool hasMore = (pageIndex + 1 < static_cast<int>(pages.size()));
 
-			// draw text rows
-			int textCounter = 0;
-			bool pauseLine = false;
-			for (int i = 1; i < textLabel.height - 1; i++) {
-				// left border
-				DrawChar(registry, 48, 0, x, y);
-				x += tileSize;
-				pauseLine = false;
+	        const auto& lines = pages.empty() ? std::vector<std::string>{} : pages[pageIndex];
 
-				// draw characters
-				for (int j = 1; j < textLabel.width; j++) {
+	        const int innerHeight = textLabel.height - 2;
+	        const int innerWidth  = textLabel.width  - 2;
 
-					// if we still have additional characters in the text label then print the next character
-					// otherwise just print a black square
-					if (textCounter < static_cast<int>(textLabel.text.size())) {
-						char character = textLabel.text[textCounter];
+	        // 2. draw text rows
+	        for (int row = 0; row < innerHeight; ++row) {
+	            // left border
+	            DrawChar(registry, 48, 0, x, y);
+	            x += tileSize;
 
-						if (character == '/') {
-							if (j > 1) {
-								pauseLine = true;
-								DrawChar(registry, 88, 24, x, y);
-								x += tileSize;
-								textCounter++;
-								continue;
-							}
-							else {
-								continue;
-							}
-						}
-						if (pauseLine) {
-							DrawChar(registry, 88, 24, x, y);
-							x += tileSize;
-							continue;
-						}
+	            // the line we want to draw (if any)
+	            std::string line = (row < static_cast<int>(lines.size())) ? lines[row] : "";
 
-						textCounter++;
-						auto [tileX, tileY] = charLookup[character];
-						int srcRectX = tileX;
-						int srcRectY = tileY;
+	            // draw characters
+	            for (int col = 0; col <= innerWidth; ++col) {
+	                if (col < static_cast<int>(line.size())) {
+	                    char character = line[col];
+	                    auto [tileX, tileY] = charLookup[character];
+	                    DrawChar(registry, tileX, tileY, x, y);
+	                } else {
+	                    // blank
+	                    DrawChar(registry, SPRITE_BLANK_X, SPRITE_BLANK_Y, x, y);
+	                }
+	                x += tileSize;
+	            }
 
-						DrawChar(registry, srcRectX, srcRectY, x, y);
-						x += tileSize;
-					}
-					else {
-						DrawChar(registry, 88, 24, x, y);
-						x += tileSize;
-					}
-				}
+	            // right border
+	            DrawChar(registry, 56, 0, x, y);
+	            y += tileSize;
+	            x = camera.x + textLabel.xOffset;
+	        }
 
-				// right border
-				DrawChar(registry, 56, 0, x, y);
-				y += tileSize;
+	        // 3. draw bottom border
+	        // bottom-left
+	        DrawChar(registry, 16, 0, x, y);
+	        x += tileSize;
+	        // bottom border
+	        for (int i = 1; i < textLabel.width; i++) {
+	            DrawChar(registry, 40, 0, x, y);
+	            x += tileSize;
+	        }
+	        // bottom-right
+	        DrawChar(registry, 24, 0, x, y);
 
-				// reset values for next line
-				x = camera.x + textLabel.xOffset;
-				pauseLine = false;
-			}
+	        // 4. draw "more" indicator if there are more pages
+	        if (hasMore) {
+	            // put the next page cursor in the center of the bottom border
+	            const int moreX = camera.x + textLabel.xOffset + ((textLabel.width) * tileSize / 2); // todo - rigolo : it's getting there but this doesn't look quite right
+	            const int moreY = camera.y + textLabel.yOffset + (textLabel.height - 1) * tileSize;
 
-			// draw bottom left corner
-			DrawChar(registry, 16, 0, x, y);
-			x += tileSize;
-
-			// draw bottom border
-			for (int i = 1; i < textLabel.width; i++) {
-				DrawChar(registry, 40, 0, x, y);
-				x += tileSize;
-			}
-
-			//// draw bottom right corner
-			DrawChar(registry, 24, 0, x, y);
-		}
+	            auto [mx, my] = charLookup['<'];
+	            DrawChar(registry, mx, my, moreX, moreY);
+	        }
+	    }
 	}
 
 	void RenderMenu(const MenuComponent& menu) {
@@ -152,12 +228,23 @@ private:
 		TextBox(message, 9, 16, 8, 16);
 	}
 
-	void DrawChar(entt::registry& registry, int srcx, int srcy, int dstx, int dsty) {
-		//std::cout << "dstx, dsty: " << dstx << " , " << dsty << std::endl;
-		entt::entity textWindow = registry.create();
+	void DrawChar(entt::registry& registry, const int srcx, const int srcy, const int dstx, const int dsty) {
+		const entt::entity textWindow = registry.create();
 		registry.emplace<SpriteComponent>(textWindow, "character-tiles", tileSize, tileSize, 10, false, srcx, srcy);
 		registry.emplace<TransformComponent>(textWindow, glm::vec2(dstx * (tileScale), dsty * (tileScale)), glm::vec2(tileScale, tileScale), 0.0);
 		registry.emplace<SpriteTag>(textWindow);
+
+		// todo rigolo - adding the layer for the text, need to streamline my clean up before I have dialog trees
+		if (inputStack[inputStack.size() - 1] == InputState::TextBox) {
+			registry.emplace<TextCharacterTag>(textWindow, inputStack.size());
+		}
+
+		// animate next-page cursor
+		// todo rigolo - this works but animation engine automatically assumes the next x-tile is for animation
+		if (srcx == SPRITE_MORETEXT_X && srcy == SPRITE_MORETEXT_Y) {
+			registry.emplace<AnimationComponent>(textWindow, 2, 3, 2);
+		}
+
 	}
 
 public:
@@ -197,34 +284,67 @@ public:
 			.connect<&RenderTextSystem::RenderAllMenus>(*this);   // todo rigolo - this function needs to be updated
 	}
 
-	inline void ClearTextBox() {
-
-		// if player hits cancel button and we are already at the bottom of the stack
-		if (inputStack.back() == InputState::PlayerControl) {
-			return;
-		}
-
-		// TODO RIGOLO - wait - sprite tag? This works but now I've forgotten how!  maybe it works accidentally because we're not giving tiles and the character this tag?
+	// clear all text windows todo rigolo - rename this
+	void ClearTextBox() {
+		// remove all glyph sprites
 		auto view = registry.view<SpriteTag>();
-		for (auto entity : view) {
-			registry.destroy(entity);
+		for (auto e : view) registry.destroy(e);
+
+		// remove textbox entity/component so HasActiveTextBox() goes false
+		if (textBoxEntity != entt::null && registry.valid(textBoxEntity)) {
+			if (registry.all_of<TextComponent>(textBoxEntity)) {
+				registry.remove<TextComponent>(textBoxEntity);
+			}
+			registry.destroy(textBoxEntity);    // or keep and reuse; if so, at least remove TextComponent
+			textBoxEntity = entt::null;
 		}
 
-		// take control away from the text box
-		inputStack.pop_back();
+		// pop input state if textbox owned it
+		if (!inputStack.empty() && inputStack.back() != InputState::PlayerControl) {
+			BackToPlayer();
+		}
 	}
 
-	void ClearText() {
-		auto view = registry.view<SpriteTag>();
-		for (auto entity : view) {
+	// clear the current text box
+	void ClearText() const {
+		auto view = registry.view<TextCharacterTag>();
+		for (const auto entity : view) {
 			registry.destroy(entity);
 		}
+	}
+
+	bool HasActiveTextBox() const {
+		if (textBoxEntity == entt::null || !registry.valid(textBoxEntity)) return false;
+		if (!registry.all_of<TextComponent>(textBoxEntity)) return false;
+		const auto& tc = registry.get<TextComponent>(textBoxEntity);
+		return !tc.pages.empty(); // or just `return true;` if you don't store pages
+	}
+
+	void BackToPlayer() const {
+		while (inputStack.at(inputStack.size() - 1) != InputState::PlayerControl) {
+			inputStack.pop_back();
+		}
+	}
+
+	// Returns true if it consumed the action (either paged or closed)
+	bool AdvancePageOrClose() {
+		if (!HasActiveTextBox()) return false;
+
+		auto &tc = registry.get<TextComponent>(textBoxEntity);
+		if (tc.currentPage + 1 < static_cast<int>(tc.pages.size())) {
+			tc.currentPage++;
+			ClearText();
+			RenderTextBox();
+		} else {
+			ClearTextBox(); // <-- fully clears state
+			BackToPlayer();
+		}
+		return true;
 	}
 
 	void RenderAllMenus() {
-		spdlog::info("here");
 		auto view = registry.view<MenuComponent>();
-		for (auto entity : view) {
+		for (const auto entity : view) {
 			const auto& menu = view.get<MenuComponent>(entity);
 			if (menu.isActive) {
 				RenderMenu(menu);
@@ -233,28 +353,24 @@ public:
 	}
 
 	entt::entity textBoxEntity = entt::null;
+
 	void TextBox(std::string message, int width = 18, int height = 8, int xOffset = 40, int yOffset = 176) {
 		if (textBoxEntity == entt::null || !registry.valid(textBoxEntity)) {
 			textBoxEntity = registry.create();
 		}
-		// TODO RIGOLO - this still doesn't work as it should : really look up emplace_or_replace
-		registry.emplace_or_replace<TextComponent>(textBoxEntity, message, width, height, xOffset, yOffset);
+
+		// inner space (no borders)
+		const int innerWidth  = width  - 2;
+		const int innerHeight = height - 2;
+
+		// wrap + paginate
+		const auto lines = wrapToLines(message, innerWidth);
+		auto pages = paginate(lines, innerHeight);
+
+		auto& tc = registry.emplace_or_replace<TextComponent>(textBoxEntity, message, width, height, xOffset, yOffset);
+		tc.pages = std::move(pages);
+		tc.currentPage = 0;
 
 		RenderTextBox();
-	}
-
-	void UpdateMenu(entt::entity entity, MenuComponent& menu) {
-		std::string message = "//";
-		for (int i = 0; i < static_cast<int>(menu.options.size()); i++) {
-			if (i == menu.currentIndex) {
-				message += "> " + menu.options[i] + "//";
-			}
-			else {
-				message += "  " + menu.options[i] + "//";
-			}
-		}
-
-		auto& text = registry.get<TextComponent>(entity);
-		text.text = message;
 	}
 };

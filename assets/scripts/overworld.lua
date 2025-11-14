@@ -67,6 +67,26 @@ Map = {
                     follow = true
                 }
             }
+        },
+        {
+            tag = "town",
+            components = {
+                portal = {
+                    target_map = "init",
+                    spawn_x = 0,
+                    spawn_y = 160,
+                },
+                transform = {
+                    position = { x = 288, y = 208 },
+                    scale = { x = 1.0, y = 1.0 },
+                    rotation = 0.0, -- degrees
+                },
+                boxcollider = {
+                    width = 16,
+                    height = 16,
+                    offset = { x = 0, y = 0 }
+                }
+            }
         }
     }
 }

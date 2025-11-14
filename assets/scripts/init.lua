@@ -101,7 +101,7 @@ Map = {
                 npc = {
                     name = "anna",
                     conversation = {
-                        default = "I'm looking for/my lost puppy /Zoe. Can you helpme find her?",
+                        default = "I'm looking for my lost puppy Zoe. Can you help me find her? I do miss her so terribly. She is the best dog ever.",
                         found = "Thank you!"
                     },
                     pattern = MovementPattern.Random,
